@@ -1,13 +1,3 @@
-<!--
-Instalar antes
-
-curl -s http://getcomposer.org/installer | php
-php composer.phar install --no-dev
-
-php5-cgi -f xmltoelastic.php codpes=XXXXXXXX
-
--->
-
 <?php 
 
 	include ('functions_xmltoelastic.php');
