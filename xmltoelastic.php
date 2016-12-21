@@ -5,7 +5,6 @@
 	
 	$curriculo = simplexml_load_file('xml/'.$_GET["codpes"].'.xml');
 	
-	
 	//Pegar os dados do usuário
 	
 	$id_lattes = $curriculo->attributes()->{'NUMERO-IDENTIFICADOR'};
@@ -59,12 +58,14 @@
 	//print_r($query_lattes);
 	store_curriculo ($client,$id_lattes,$query_lattes);
 	
-	
+if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})){
 	foreach ($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'}->{'TRABALHO-EM-EVENTOS'} as $trab_evento) {
 		
 		// Dados básicos do trabalho
 		$natureza = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'NATUREZA'};
 		$titulo = str_replace('"','',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO'});
+		$titulo = str_replace('?','',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO'});
+		$titulo = str_replace(':',' - ',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO'});
 		$ano = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'ANO-DO-TRABALHO'};
 		$pais = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'PAIS-DO-EVENTO'};
 		$idioma = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'IDIOMA'};
@@ -72,7 +73,8 @@
 		$url = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'HOME-PAGE-DO-TRABALHO'};
 		$flag_relevancia = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'FLAG-RELEVANCIA'};
 		$doi = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'DOI'};
-		$title = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO-INGLES'};
+		$title = str_replace('"','',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO-INGLES'});
+		$title = str_replace('?','',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO-INGLES'});
 		$flag_divulgacao_cientifica = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'FLAG-DIVULGACAO-CIENTIFICA'};
 		
 		// Detalhamento do trabalho		
@@ -161,6 +163,7 @@
 			$id_match[] = '{"id_match":"'.$result["_id"].'","nota":"'.$result["_score"].'"}';
 		}
 		
+		$area_set = "";
 		if (isset($area_do_conhecimento_array)){
 			$area_set = '"area_do_conhecimento":['.implode(",",$area_do_conhecimento_array).'],';
 		}
@@ -220,12 +223,16 @@
 	unset($area_do_conhecimento_array);
 	unset($id_match);        
     } 
-    
+}
+
+if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'ARTIGOS-PUBLICADOS'})){    
 	foreach ($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'ARTIGOS-PUBLICADOS'}->{'ARTIGO-PUBLICADO'} as $artigo_publicado) {
 		
 		// Dados básicos do trabalho
 		$natureza = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'NATUREZA'};
 		$titulo = str_replace('"','',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO'});
+		$titulo = str_replace('?','',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO'});
+		$titulo = str_replace(':',' - ',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO'});
 		$ano = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'ANO-DO-ARTIGO'};
 		$pais = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'PAIS-DE-PUBLICACAO'};
 		$idioma = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'IDIOMA'};
@@ -233,7 +240,9 @@
 		$url = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'HOME-PAGE-DO-TRABALHO'};
 		$flag_relevancia = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'FLAG-RELEVANCIA'};
 		$doi = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'DOI'};
-		$title = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO-INGLES'};
+		$title = str_replace('"','',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO-INGLES'});
+		$title = str_replace('?','',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO-INGLES'});
+		$title = str_replace(':',' - ',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO-INGLES'});
 		$flag_divulgacao_cientifica = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'FLAG-DIVULGACAO-CIENTIFICA'};
 		
 		// Detalhamento do artigo		
@@ -365,8 +374,9 @@
 				},
 				"doc_as_upsert" : true
 			}';
-		//print_r($query);
-		store_record($client,$sha256,$query);
+			
+		    store_record($client,$sha256,$query);
+		    
 
         // Unset
 	unset($autor);
@@ -375,7 +385,7 @@
 	unset($area_do_conhecimento_array);
 	unset($id_match);        
     }     
-
+}
 
 ?>
 
