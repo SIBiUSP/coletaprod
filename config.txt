@@ -1,0 +1,4 @@
+PUT lattes/_settings
+{
+  "index.mapping.total_fields.limit": 20000
+}
