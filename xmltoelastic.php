@@ -91,25 +91,26 @@
 		
 		// Palavras chave
 		
-				
-		if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-1'})){
-			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-1'};
-		}
-		if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-2'})){
-			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-2'};
-		}
-		if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-3'})){
-			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-3'};
-		}
-		if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-4'})){
-			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-4'};
-		}						
-		if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-5'})){
-			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-5'};
-		}
-		if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-6'})){
-			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-6'};
-		}	
+		if (isset($trab_evento->{'PALAVRAS-CHAVE'})){		
+            if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-1'})){
+                $palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-1'};
+            }
+            if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-2'})){
+                $palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-2'};
+            }
+            if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-3'})){
+                $palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-3'};
+            }
+            if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-4'})){
+                $palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-4'};
+            }						
+            if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-5'})){
+                $palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-5'};
+            }
+            if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-6'})){
+                $palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-6'};
+            }
+        }
 		
 
 		//print_r($palavras_chave);
