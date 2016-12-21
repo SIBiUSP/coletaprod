@@ -13,6 +13,19 @@ function store_record ($client,$sha256,$query){
  
 }
 
+function store_curriculo ($client,$id_lattes,$query){
+    
+    $params = [
+        'index' => 'trabalhos',
+        'type' => 'curriculo',
+        'id' => "$id_lattes",
+        'body' => $query
+    ];
+    $response = $client->update($params);
+    echo ''.($response["_id"]).', '.($response["result"]).', '.($response["_shards"]['successful']).'<br/>';   
+ 
+}
+
 function compararRegistrosLattes ($client,$query_year,$query_title,$query_nome_do_evento,$query_tipo) {
  
     $query = '

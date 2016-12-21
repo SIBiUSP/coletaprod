@@ -4,6 +4,8 @@ Instalar antes
 curl -s http://getcomposer.org/installer | php
 php composer.phar install --no-dev
 
+php5-cgi -f xmltoelastic.php codpes=XXXXXXXX
+
 -->
 
 <?php 
@@ -15,15 +17,63 @@ php composer.phar install --no-dev
 	$hosts = [
 		'200.144.183.86' 
 	]; 
+
 	/* Load libraries for PHP composer */ 
 	require (__DIR__.'/vendor/autoload.php'); 
+
 	/* Load Elasticsearch Client */ 
 	$client = \Elasticsearch\ClientBuilder::create()->setHosts($hosts)->build(); 
 
-	//print_r($_GET);
+
 	
-	$curriculo = simplexml_load_file(''.$_GET["codpes"].'.xml');
-	//print_r($curriculo); 	
+	$curriculo = simplexml_load_file('xml/'.$_GET["codpes"].'.xml');
+	
+	
+	//Pegar os dados do usuário
+	
+	$id_lattes = $curriculo->attributes()->{'NUMERO-IDENTIFICADOR'};
+	
+	$query_lattes = 
+			'{
+				"doc":{
+					"id_usp": "'.$_GET["codpes"].'",
+					"data_atualizacao": "'.$curriculo->attributes()->{'DATA-ATUALIZACAO'}.'",
+					"hora_atualizacao": "'.$curriculo->attributes()->{'HORA-ATUALIZACAO'}.'",
+					"nome_completo": "'.$curriculo->{'DADOS-GERAIS'}->attributes()->{'NOME-COMPLETO'}.'",
+					"nome_em_citacoes_bibliograficas":"'.$curriculo->{'DADOS-GERAIS'}->attributes()->{'NOME-EM-CITACOES-BIBLIOGRAFICAS'}.'",
+					"nacionalidade":"'.$curriculo->{'DADOS-GERAIS'}->attributes()->{'NACIONALIDADE'}.'",	
+					"pais_de_nascimento":"'.$curriculo->{'DADOS-GERAIS'}->attributes()->{'PAIS-DE-NASCIMENTO'}.'",
+					"uf_nascimento":"'.$curriculo->{'DADOS-GERAIS'}->attributes()->{'UF-NASCIMENTO'}.'",
+					"cidade_nascimento":"'.$curriculo->{'DADOS-GERAIS'}->attributes()->{'CIDADE-NASCIMENTO'}.'",
+					"data_falecimento":"'.$curriculo->{'DADOS-GERAIS'}->attributes()->{'DATA-FALECIMENTO'}.'",
+					"sigla_pais_nacionalidade":"'.$curriculo->{'DADOS-GERAIS'}->attributes()->{'SIGLA-PAIS-NACIONALIDADE'}.'",
+					"pais_de_nacionalidade":"'.$curriculo->{'DADOS-GERAIS'}->attributes()->{'PAIS-DE-NACIONALIDADE'}.'",
+					"resumo_cv": {
+						"texto_resumo_cv_rh": "'.$curriculo->{'DADOS-GERAIS'}->{'RESUMO-CV'}->attributes()->{'TEXTO-RESUMO-CV-RH'}.'",
+						"texto_resumo_cv_rh_en": "'.$curriculo->{'DADOS-GERAIS'}->{'RESUMO-CV'}->attributes()->{'TEXTO-RESUMO-CV-RH-EN'}.'"
+					},
+					"endereco_profissional":{
+						"codigo_instituicao_empresa": "'.$curriculo->{'DADOS-GERAIS'}->{'ENDERECO'}->{'ENDERECO-PROFISSIONAL'}->attributes()->{'CODIGO-INSTITUICAO-EMPRESA'}.'",
+						"nome_instituicao_empresa": "'.$curriculo->{'DADOS-GERAIS'}->{'ENDERECO'}->{'ENDERECO-PROFISSIONAL'}->attributes()->{'NOME-INSTITUICAO-EMPRESA'}.'",
+						"codigo_orgao": "'.$curriculo->{'DADOS-GERAIS'}->{'ENDERECO'}->{'ENDERECO-PROFISSIONAL'}->attributes()->{'CODIGO-ORGAO'}.'",
+						"nome_orgao": "'.$curriculo->{'DADOS-GERAIS'}->{'ENDERECO'}->{'ENDERECO-PROFISSIONAL'}->attributes()->{'NOME-ORGAO'}.'",
+						"codigo_unidade": "'.$curriculo->{'DADOS-GERAIS'}->{'ENDERECO'}->{'ENDERECO-PROFISSIONAL'}->attributes()->{'CODIGO-UNIDADE'}.'",
+						"nome_unidade": "'.$curriculo->{'DADOS-GERAIS'}->{'ENDERECO'}->{'ENDERECO-PROFISSIONAL'}->attributes()->{'NOME-UNIDADE'}.'",
+						"logradouro_complemento": "'.$curriculo->{'DADOS-GERAIS'}->{'ENDERECO'}->{'ENDERECO-PROFISSIONAL'}->attributes()->{'LOGRADOURO-COMPLEMENTO'}.'",
+						"pais": "'.$curriculo->{'DADOS-GERAIS'}->{'ENDERECO'}->{'ENDERECO-PROFISSIONAL'}->attributes()->{'PAIS'}.'",
+						"uf": "'.$curriculo->{'DADOS-GERAIS'}->{'ENDERECO'}->{'ENDERECO-PROFISSIONAL'}->attributes()->{'UF'}.'",
+						"cep": "'.$curriculo->{'DADOS-GERAIS'}->{'ENDERECO'}->{'ENDERECO-PROFISSIONAL'}->attributes()->{'CEP'}.'",
+						"cidade": "'.$curriculo->{'DADOS-GERAIS'}->{'ENDERECO'}->{'ENDERECO-PROFISSIONAL'}->attributes()->{'CIDADE'}.'",
+						"bairro": "'.$curriculo->{'DADOS-GERAIS'}->{'ENDERECO'}->{'ENDERECO-PROFISSIONAL'}->attributes()->{'BAIRRO'}.'"
+					}					
+					
+				},
+				"doc_as_upsert" : true
+			}';
+	
+	//print_r($query_lattes);
+	store_curriculo ($client,$id_lattes,$query_lattes);
+	
 	
 	foreach ($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'}->{'TRABALHO-EM-EVENTOS'} as $trab_evento) {
 		
@@ -65,22 +115,22 @@ php composer.phar install --no-dev
 		// Palavras chave
 		
 				
-		if (!empty($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-1'})){
+		if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-1'})){
 			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-1'};
 		}
-		if (!empty($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-2'})){
+		if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-2'})){
 			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-2'};
 		}
-		if (!empty($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-3'})){
+		if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-3'})){
 			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-3'};
 		}
-		if (!empty($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-4'})){
+		if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-4'})){
 			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-4'};
 		}						
-		if (!empty($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-5'})){
+		if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-5'})){
 			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-5'};
 		}
-		if (!empty($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-6'})){
+		if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-6'})){
 			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-6'};
 		}	
 		
