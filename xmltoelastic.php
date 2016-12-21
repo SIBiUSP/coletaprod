@@ -10,6 +10,17 @@
 	
 	$id_lattes = $curriculo->attributes()->{'NUMERO-IDENTIFICADOR'};
 	
+	$resumo_cv = "";
+	if (isset($curriculo->{'DADOS-GERAIS'}->{'RESUMO-CV'})) {	
+		$texto_resumo_cv_rh = '"texto_resumo_cv_rh": "'.$curriculo->{'DADOS-GERAIS'}->{'RESUMO-CV'}->attributes()->{'TEXTO-RESUMO-CV-RH'}.'",';	
+		$texto_resumo_cv_rh_en = '"texto_resumo_cv_rh_en": "'.$curriculo->{'DADOS-GERAIS'}->{'RESUMO-CV'}->attributes()->{'TEXTO-RESUMO-CV-RH-EN'}.'"';
+		$resumo_cv = '"resumo_cv": {
+						'.$texto_resumo_cv_rh.'
+						'.$texto_resumo_cv_rh_en.'
+				},';
+		
+	}
+	
 	$query_lattes = 
 			'{
 				"doc":{
@@ -25,10 +36,7 @@
 					"data_falecimento":"'.$curriculo->{'DADOS-GERAIS'}->attributes()->{'DATA-FALECIMENTO'}.'",
 					"sigla_pais_nacionalidade":"'.$curriculo->{'DADOS-GERAIS'}->attributes()->{'SIGLA-PAIS-NACIONALIDADE'}.'",
 					"pais_de_nacionalidade":"'.$curriculo->{'DADOS-GERAIS'}->attributes()->{'PAIS-DE-NACIONALIDADE'}.'",
-					"resumo_cv": {
-						"texto_resumo_cv_rh": "'.$curriculo->{'DADOS-GERAIS'}->{'RESUMO-CV'}->attributes()->{'TEXTO-RESUMO-CV-RH'}.'",
-						"texto_resumo_cv_rh_en": "'.$curriculo->{'DADOS-GERAIS'}->{'RESUMO-CV'}->attributes()->{'TEXTO-RESUMO-CV-RH-EN'}.'"
-					},
+					'.$resumo_cv.'
 					"endereco_profissional":{
 						"codigo_instituicao_empresa": "'.$curriculo->{'DADOS-GERAIS'}->{'ENDERECO'}->{'ENDERECO-PROFISSIONAL'}->attributes()->{'CODIGO-INSTITUICAO-EMPRESA'}.'",
 						"nome_instituicao_empresa": "'.$curriculo->{'DADOS-GERAIS'}->{'ENDERECO'}->{'ENDERECO-PROFISSIONAL'}->attributes()->{'NOME-INSTITUICAO-EMPRESA'}.'",
@@ -91,26 +99,27 @@
 		
 		// Palavras chave
 		
+		$palavras_chave = [];
 		if (isset($trab_evento->{'PALAVRAS-CHAVE'})){		
-            if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-1'})){
-                $palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-1'};
-            }
-            if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-2'})){
-                $palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-2'};
-            }
-            if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-3'})){
-                $palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-3'};
-            }
-            if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-4'})){
-                $palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-4'};
-            }						
-            if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-5'})){
-                $palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-5'};
-            }
-            if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-6'})){
-                $palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-6'};
-            }
-        }
+		    if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-1'})){
+			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-1'};
+		    }
+		    if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-2'})){
+			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-2'};
+		    }
+		    if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-3'})){
+			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-3'};
+		    }
+		    if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-4'})){
+			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-4'};
+		    }						
+		    if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-5'})){
+			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-5'};
+		    }
+		    if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-6'})){
+			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-6'};
+		    }
+		}
 		
 
 		//print_r($palavras_chave);
@@ -159,7 +168,9 @@
 		$idmatch_set = "";
 		if (isset($id_match)){
 			$idmatch_set = '"ids_match":['.implode(",",$id_match).'],';
-		}					
+		}
+		
+							
 		
 		$query = 
 			'{
