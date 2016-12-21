@@ -3,8 +3,8 @@
 function store_record ($client,$sha256,$query){
     
     $params = [
-        'index' => 'trabalhos',
-        'type' => 'lattes',
+        'index' => 'lattes',
+        'type' => 'trabalhos',
         'id' => "$sha256",
         'body' => $query
     ];
@@ -16,7 +16,7 @@ function store_record ($client,$sha256,$query){
 function store_curriculo ($client,$id_lattes,$query){
     
     $params = [
-        'index' => 'trabalhos',
+        'index' => 'lattes',
         'type' => 'curriculo',
         'id' => "$id_lattes",
         'body' => $query
@@ -76,8 +76,8 @@ function compararRegistrosLattes ($client,$query_year,$query_title,$query_nome_d
     //print_r($query);
     
     $params = [
-        'index' => 'trabalhos',
-        'type' => 'lattes',   
+        'index' => 'lattes',
+        'type' => 'trabalhos',   
         'body' => $query
     ];
      
@@ -176,8 +176,8 @@ function compararDoi($client,$query_doi) {
     //print_r($query);
     
     $params = [
-        'index' => 'trabalhos',
-        'type' => 'lattes',   
+        'index' => 'lattes',
+        'type' => 'trabalhos',   
         'body' => $query
     ];
      
@@ -187,6 +187,75 @@ function compararDoi($client,$query_doi) {
     
     return $response;
 
+}
+
+function analisa_get($get) {
+    
+    $search_fields = "";
+    if (!empty($get['fields'])) {
+        $search_fields = implode('","',$get['fields']);  
+    } else {            
+        $search_fields = "_all";
+    }    
+    
+    if (!empty($get['search'])){
+        $get['search'] = str_replace('"','\"',$get['search']);
+    }
+    
+    /* Pagination */
+    if (isset($get['page'])) {
+        $page = $get['page'];
+        unset($get['page']);
+    } else {
+        $page = 1;
+    }
+    
+    /* Pagination variables */
+    $limit = 20;
+    $skip = ($page - 1) * $limit;
+    $next = ($page + 1);
+    $prev = ($page - 1);
+    $sort = array('year' => -1);       
+    
+    if (!empty($get['codpes'])){        
+        $get['search'][] = 'codpes:'.$get['codpes'].'';
+    }
+    
+    if (!empty($get['assunto'])){        
+        $get['search'][] = 'subject:\"'.$get['assunto'].'\"';
+    }    
+    
+    if (!empty($get['search'])){
+        $query = implode(" ", $get['search']); 
+    } else {
+        $query = "*";
+    }
+    
+    $search_term = '
+        "query_string" : {
+            "fields" : ["'.$search_fields.'"],
+            "query" : "'.$query.'",
+            "default_operator": "AND",
+            "analyzer":"portuguese",
+            "phrase_slop":10
+        }                
+    ';    
+    
+    $query_complete = '{
+        "sort" : [
+                { "ano.keyword" : "desc" }
+            ],    
+        "query": {
+        '.$search_term.'
+        }
+    }';
+    $query_aggregate = '
+        "query": {
+            '.$search_term.'
+        },
+    ';
+ 
+    return compact('page','get','new_get','query_complete','query_aggregate','url','escaped_url','limit','termo_consulta','data_inicio','data_fim','skip');
 }
 
 ?>
