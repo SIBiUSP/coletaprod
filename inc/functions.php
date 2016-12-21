@@ -147,8 +147,8 @@ function compararRegistrosLattesArtigos($client,$query_year,$query_title,$query_
     //print_r($query);
     
     $params = [
-        'index' => 'trabalhos',
-        'type' => 'lattes',   
+        'index' => 'lattes',
+        'type' => 'trabalhos',   
         'body' => $query
     ];
      
