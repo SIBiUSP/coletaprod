@@ -89,6 +89,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})){
 		// Detalhamento do trabalho		
 		$classificacao_do_evento = $trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'CLASSIFICACAO-DO-EVENTO'};
 		$nome_do_evento = str_replace('&','',$trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'NOME-DO-EVENTO'});
+        $nome_do_evento = str_replace(';','',$trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'NOME-DO-EVENTO'});
 		$cidade_do_evento = $trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'CIDADE-DO-EVENTO'};
 		$ano_de_realizacao_do_evento = $trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'ANO-DE-REALIZACAO'};
 		$titulo_dos_anais = $trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'TITULO-DOS-ANAIS-OU-PROCEEDINGS'};
