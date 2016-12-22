@@ -11,8 +11,10 @@
 	
 	$resumo_cv = "";
 	if (isset($curriculo->{'DADOS-GERAIS'}->{'RESUMO-CV'})) {	
-		$texto_resumo_cv_rh = '"texto_resumo_cv_rh": "'.$curriculo->{'DADOS-GERAIS'}->{'RESUMO-CV'}->attributes()->{'TEXTO-RESUMO-CV-RH'}.'",';	
-		$texto_resumo_cv_rh_en = '"texto_resumo_cv_rh_en": "'.$curriculo->{'DADOS-GERAIS'}->{'RESUMO-CV'}->attributes()->{'TEXTO-RESUMO-CV-RH-EN'}.'"';
+		$texto_resumo_cv_rh = '"texto_resumo_cv_rh": "'.str_replace('"','',$curriculo->{'DADOS-GERAIS'}->{'RESUMO-CV'}->attributes()->{'TEXTO-RESUMO-CV-RH'}).'",';
+		$texto_resumo_cv_rh = trim(preg_replace('/\s+/', ' ', $texto_resumo_cv_rh));	
+		$texto_resumo_cv_rh_en = '"texto_resumo_cv_rh_en": "'.str_replace('"','',$curriculo->{'DADOS-GERAIS'}->{'RESUMO-CV'}->attributes()->{'TEXTO-RESUMO-CV-RH-EN'}).'"';
+		$texto_resumo_cv_rh_en = trim(preg_replace('/\s+/', ' ', $texto_resumo_cv_rh_en));
 		$resumo_cv = '"resumo_cv": {
 						'.$texto_resumo_cv_rh.'
 						'.$texto_resumo_cv_rh_en.'
@@ -55,6 +57,11 @@
 				"doc_as_upsert" : true
 			}';
 	
+	    //$id_file = fopen("xml/$id_lattes.json", "w") or die("Unable to open file!");
+            //$txt = $query_lattes;
+            //fwrite($id_file, $txt);
+            //fclose($id_file);
+	
 	//print_r($query_lattes);
 	store_curriculo ($client,$id_lattes,$query_lattes);
 	
@@ -63,6 +70,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})){
 		
 		// Dados básicos do trabalho
 		$natureza = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'NATUREZA'};
+		$titulo = str_replace('"','',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO'});
 		$titulo = str_replace('"','',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO'});
 		$titulo = str_replace('?','',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO'});
 		$titulo = str_replace(':',' - ',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO'});
@@ -74,6 +82,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})){
 		$flag_relevancia = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'FLAG-RELEVANCIA'};
 		$doi = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'DOI'};
 		$title = str_replace('"','',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO-INGLES'});
+		$titulo = str_replace('"','',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO'});
 		$title = str_replace('?','',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO-INGLES'});
 		$flag_divulgacao_cientifica = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'FLAG-DIVULGACAO-CIENTIFICA'};
 		
@@ -156,6 +165,8 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})){
 				
 		$sha256 = hash('sha256', ''.$natureza.$titulo.$ano.$pais.$nome_do_evento.$pagina_inicial.$url.$doi.'');
 		
+		echo 'Evento: '.$sha256.'';
+		print_r($titulo);
 		
 		$results =  compararRegistrosLattes($client,$ano,$titulo,$nome_do_evento,"TRABALHO-EM-EVENTOS");
 		
@@ -213,8 +224,13 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})){
 				},
 				"doc_as_upsert" : true
 			}';
-		//print_r($query);
-		store_record($client,$sha256,$query);
+				
+            //$myfile = fopen("xml/$sha256.json", "w") or die("Unable to open file!");
+            //$txt = $query;
+            //fwrite($myfile, $txt);
+            //fclose($myfile);
+	    
+	    store_record($client,$sha256,$query);			
 
         // Unset
 	unset($autor);
@@ -231,6 +247,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'ARTIGOS-PUBLICADOS'})){
 		// Dados básicos do trabalho
 		$natureza = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'NATUREZA'};
 		$titulo = str_replace('"','',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO'});
+		$titulo = str_replace('"','',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO'});
 		$titulo = str_replace('?','',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO'});
 		$titulo = str_replace(':',' - ',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO'});
 		$ano = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'ANO-DO-ARTIGO'};
@@ -240,6 +257,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'ARTIGOS-PUBLICADOS'})){
 		$url = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'HOME-PAGE-DO-TRABALHO'};
 		$flag_relevancia = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'FLAG-RELEVANCIA'};
 		$doi = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'DOI'};
+		$title = str_replace('"','',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO-INGLES'});
 		$title = str_replace('"','',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO-INGLES'});
 		$title = str_replace('?','',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO-INGLES'});
 		$title = str_replace(':',' - ',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO-INGLES'});
@@ -316,7 +334,10 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'ARTIGOS-PUBLICADOS'})){
 			}
 		}
 				
-		$sha256 = hash('sha256', ''.$natureza.$titulo.$ano.$pais.$titulo_do_periodico.$pagina_inicial.$url.$doi.'');
+		$sha256_artigo = hash('sha256', ''.$natureza.$titulo.$ano.$pais.$titulo_do_periodico.$pagina_inicial.$url.$doi.'');
+		
+		echo 'Artigo: '.$sha256_artigo.'';
+		print_r($titulo);
 		
 		
 		if ($doi != "") {
@@ -375,7 +396,13 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'ARTIGOS-PUBLICADOS'})){
 				"doc_as_upsert" : true
 			}';
 			
-		    store_record($client,$sha256,$query);
+            //$myfile = fopen("xml/$sha256_artigo.json", "w") or die("Unable to open file!");
+            //$txt = $query;
+            //fwrite($myfile, $txt);
+            //fclose($myfile);			
+
+	    //print_r($query);				
+	    store_record($client,$sha256_artigo,$query);
 		    
 
         // Unset
