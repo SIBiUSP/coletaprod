@@ -403,4 +403,62 @@ class facets {
     
 }
 
+function query_bdpi($query_title,$query_year) {
+
+    $query = '
+    {
+        "min_score": 5,
+        "query":{
+            "bool": {
+                "should": [	
+                    {
+                        "multi_match" : {
+                            "query":      "'.$query_title.'",
+                            "type":       "cross_fields",
+                            "fields":     [ "title" ],
+                            "minimum_should_match": "80%" 
+                         }
+                    },	    
+                    {
+                        "multi_match" : {
+                            "query":      "'.$query_year.'",
+                            "type":       "best_fields",
+                            "fields":     [ "year" ],
+                            "minimum_should_match": "75%" 
+                        }
+                    }
+                ],
+                "minimum_should_match" : 1               
+            }
+        }
+    }
+    ';
+    
+    //print_r($query);
+    //172.31.0.90
+        
+    $ch = curl_init();
+    $method = "POST";
+    $url = "http://172.31.0.90/sibi/producao/_search";
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_PORT, 9200);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
+    $result = curl_exec($ch);
+    curl_close($ch);
+    $data = json_decode($result, TRUE);
+    
+    if ($data["hits"]["total"] > 0){
+        echo '<div class="uk-alert">';
+        echo '<h3>Registros similares na BDPI</h3>';
+        foreach ($data["hits"]["hits"] as $match){
+            //var_dump($match);
+            echo '<a href="http://bdpi.usp.br/single.php?_id='.$match["_id"].'">'.$match["_source"]["title"].'</a>';
+        }
+        echo '</div>';
+    }
+    return $data;
+}
+
 ?>

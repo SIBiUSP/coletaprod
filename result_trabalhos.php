@@ -188,7 +188,7 @@
                                     
                                     <ul class="uk-list">
                                         <li class="uk-margin-top uk-h4">
-                                            <strong><a href="single.php?_id=<?php echo  $r['_id'];?>"><?php echo $r["_source"]['titulo'];?> (<?php echo $r["_source"]['ano']; ?>)</a></strong>
+                                            <strong><?php echo $r["_source"]['titulo'];?> (<?php echo $r["_source"]['ano']; ?>)</strong>
                                         </li>
                                         <li class="uk-h6">
                                             Autores:
@@ -225,11 +225,9 @@
                                             <?php endforeach;?>
                                             <?php endif; ?>
                                         </li>
-                                        <?php if (!empty($r["_source"]['fatorimpacto'])) : ?>
-                                        <li class="uk-h6">
-                                            <p>Fator de impacto da publicação: <?php echo $r["_source"]['fatorimpacto'][0]; ?></p>
-                                        </li>
-                                        <?php endif; ?>
+                                       
+                                        <?php query_bdpi($r["_source"]['titulo'],$r["_source"]['ano']); ?>
+                                            
                                     </ul>
                                 </div>
                             </div>
