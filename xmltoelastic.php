@@ -168,6 +168,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})){
 		
 		echo 'Evento: '.$sha256.'';
 		print_r($titulo);
+        print_r($nome_do_evento);
 		
 		$results =  compararRegistrosLattes($client,$ano,$titulo,$nome_do_evento,"TRABALHO-EM-EVENTOS");
 		
