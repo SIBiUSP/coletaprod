@@ -13,7 +13,7 @@
             /* Define variables */
             define('authorUSP','authorUSP');
         ?> 
-        <title>Lattes Universidade de São Paulo</title>
+        <title>Lattes USP</title>
         <!-- Facebook Tags - START -->
         <meta property="og:locale" content="pt_BR">
         <meta property="og:url" content="http://bdpi.usp.br">
