@@ -36,6 +36,18 @@
         <script src="inc/uikit/js/components/datepicker.min.js"></script>
         <script src="inc/uikit/js/components/tooltip.min.js"></script>
         
+        <script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
+        <script>
+              function SaveAsFile(t,f,m) {
+                    try {
+                        var b = new Blob([t],{type:m});
+                        saveAs(b, f);
+                    } catch (e) {
+                        window.open("data:"+m+"," + encodeURIComponent(t), '_blank','');
+                    }
+                }
+        </script>         
+        
     </head>
     <body>
         <?php include('inc/navbar.php'); ?>        
@@ -227,6 +239,62 @@
                                         </li>
                                        
                                         <?php query_bdpi($r["_source"]['titulo'],$r["_source"]['ano']); ?>
+                                        
+                                        <li class="uk-h6">
+                                        <?php
+                                            
+                                            //print_r($r["_source"]);
+                                            
+                                            $author_number = count($r["_source"]['autores']);
+                                            
+                                            $record = [];
+                                            $record[] = "000000001 FMT   L BK";
+                                            $record[] = "000000001 LDR   L ^^^^^nam^^22^^^^^Ia^4500";
+                                            $record[] = "000000001 BAS   L \$\$a04";
+                                            $record[] = "000000001 008   L ^^^^^^s^^^^^^^^^^^^^^^^^^^^^^000^0^^^^^d";
+                                            if (isset($r["_source"]['doi'])){
+                                                $record[] = '000000001 0247  L \$\$a'.$r["_source"]["doi"].'\$\$2DOI';         
+                                            } 
+                                            $record[] = "000000001 040   L \$\$aUSP/SIBI";
+                                            $record[] = '000000001 0410  L \$\$a';
+                                            $record[] = '000000001 044   L \$\$a';
+                                            if ($author_number > 1) {
+                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['autores'][0]["nome_completo_do_autor"].'';
+                                                for ($i = 1; $i < $author_number; $i++) {
+                                                    $record[] = '000000001 7001  L \$\$a'.$r["_source"]['autores'][$i]["nome_completo_do_autor"].'';
+                                                }
+                                            } else {
+                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['autores'][0]["nome_completo_do_autor"].'';
+                                            }                                            
+                                            $record[] = '000000001 24510 L \$\$a'.$r["_source"]["titulo"].'';                                            
+                                            if (isset($r["_source"]['evento'])){  
+                                                $record[] = '000000001 260   L \$\$a'.$r["_source"]["evento"]["cidade_da_editora"].'\$\$b'.$r["_source"]["evento"]["nome_da_editora"].'\$\$c'.$r["_source"]["ano"].'';
+                                            }
+                                            $record[] = '000000001 650 7 L \$\$a';
+                                            
+                                            if (isset($r["_source"]['evento'])){
+                                                $record[] = '000000001 7112  L \$\$a'.$r["_source"]["evento"]["nome_do_evento"].'\$\$d('.$r["_source"]["evento"]["ano_de_realizacao_do_evento"].'\$\$c'.$r["_source"]["evento"]["cidade_do_evento"].')';
+                                                
+                                                $record[] = '000000001 7730  L \$\$t'.$r["_source"]["evento"]["titulo_dos_anais"].'\$\$x'.$r["_source"]["evento"]["isbn"].'\$\$hv.'.$r["_source"]["evento"]["volume_dos_anais"].', n.'.$r["_source"]["evento"]["fasciculo_dos_anais"].', p.'.$r["_source"]["evento"]["pagina_inicial"].'-'.$r["_source"]["evento"]["pagina_final"].', '.$r["_source"]["evento"]["ano_de_realizacao_do_evento"].'';
+                                            }
+                                            
+                                            
+                                            if (isset($r["_source"]['doi'])){                                            
+                                                $record[] = '000000001 8564  L \$\$zClicar sobre o botão para acesso ao texto completo\$\$uhttp://dx.doi.org/'.$r["_source"]["doi"].'\$\$3DOI';           
+                                            }                           
+                                            
+                                            $record[] = '000000001 945   L \$\$a\$\$b\$\$c\$\$j'.$r["_source"]["ano"].'\$\$l';
+                                            $record[] = '000000001 946   L \$\$a';
+                                            
+                                            $record_blob = implode("\\n", $record);
+                                            
+                                            echo '<h4>Exportar</h4>';
+                                            echo '<p><button  class="ui blue label" onclick="SaveAsFile(\''.$record_blob.'\',\'aleph.seq\',\'text/plain;charset=utf-8\')">Baixar ALEPH Sequencial</button></p>';
+                                            unset($record);
+                                            unset($record_blob);
+                                            
+                                        ?> 
+                                        </li>
                                             
                                     </ul>
                                 </div>
