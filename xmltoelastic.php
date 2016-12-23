@@ -70,10 +70,18 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})){
 		
 		// Dados básicos do trabalho
 		$natureza = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'NATUREZA'};
-		$titulo = str_replace('"','',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO'});
-		$titulo = str_replace('"','',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO'});
-		$titulo = str_replace('?','',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO'});
-		$titulo = str_replace(':',' - ',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO'});
+		
+		$titulo = trim(preg_replace('/\s\s+/', ' ',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO'}));
+		$titulo = trim(preg_replace('~[\r\n]+~', ' ',$titulo));
+		$titulo = str_replace('"','',$titulo);
+		$titulo = str_replace("'","",$titulo);
+		$titulo = str_replace('?','',$titulo);
+		$titulo = str_replace(':',' - ',$titulo);
+		$titulo = str_replace(';',' - ',$titulo);
+		$titulo = str_replace('&',' - ',$titulo);
+		$titulo = str_replace('\t',' - ',$titulo);
+		$titulo = str_replace('&#9;',' - ',$titulo);
+		
 		$ano = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'ANO-DO-TRABALHO'};
 		$pais = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'PAIS-DO-EVENTO'};
 		$idioma = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'IDIOMA'};
@@ -81,18 +89,41 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})){
 		$url = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'HOME-PAGE-DO-TRABALHO'};
 		$flag_relevancia = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'FLAG-RELEVANCIA'};
 		$doi = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'DOI'};
-		$title = str_replace('"','',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO-INGLES'});
-		$titulo = str_replace('"','',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO'});
-		$title = str_replace('?','',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO-INGLES'});
+		
+		$title = trim(preg_replace('/\s\s+/', ' ',$trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'TITULO-DO-TRABALHO-INGLES'}));
+		$title = trim(preg_replace('~[\r\n]+~', ' ',$title));
+		$title = str_replace('"','',$title);
+		$title = str_replace("'","",$title);
+		$title = str_replace('?','',$title);
+		$title = str_replace(':',' - ',$title);
+		$title = str_replace(';',' - ',$title);
+		$title = str_replace('&',' - ',$title);
+		$title = str_replace('\t',' - ',$title);	
+		$title = str_replace('&#9;',' - ',$title);			
+		
 		$flag_divulgacao_cientifica = $trab_evento->{'DADOS-BASICOS-DO-TRABALHO'}->attributes()->{'FLAG-DIVULGACAO-CIENTIFICA'};
 		
 		// Detalhamento do trabalho		
 		$classificacao_do_evento = $trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'CLASSIFICACAO-DO-EVENTO'};
+		
 		$nome_do_evento = str_replace('&','',$trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'NOME-DO-EVENTO'});
-        $nome_do_evento = str_replace(';','',$trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'NOME-DO-EVENTO'});
+		$nome_do_evento = str_replace(';','',$nome_do_evento);
+		$nome_do_evento = str_replace('"','',$nome_do_evento);
+		$nome_do_evento = str_replace("'","",$nome_do_evento);
+		$nome_do_evento = str_replace('\t','',$nome_do_evento);
+		$nome_do_evento = str_replace('&#9;','',$nome_do_evento);
+		
 		$cidade_do_evento = $trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'CIDADE-DO-EVENTO'};
 		$ano_de_realizacao_do_evento = $trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'ANO-DE-REALIZACAO'};
 		$titulo_dos_anais = $trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'TITULO-DOS-ANAIS-OU-PROCEEDINGS'};
+		
+		$titulo_dos_anais = str_replace('"','',$titulo_dos_anais);
+		$titulo_dos_anais = str_replace('&','',$titulo_dos_anais);
+		$titulo_dos_anais = str_replace('#','',$titulo_dos_anais);
+		$titulo_dos_anais = str_replace(';','',$titulo_dos_anais);
+		$titulo_dos_anais = str_replace('\t','',$titulo_dos_anais);
+		$titulo_dos_anais = str_replace('&#9;','',$titulo_dos_anais);
+				
 		$volume_dos_anais = $trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'VOLUME'};
 		$fasciculo_dos_anais = $trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'FASCICULO'};
 		$serie_dos_anais = $trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'SERIE'};
@@ -100,6 +131,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})){
 		$pagina_final = $trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'PAGINA-FINAL'};
 		$isbn = $trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'ISBN'};
 		$nome_da_editora = $trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'NOME-DA-EDITORA'};
+		$nome_da_editora = str_replace('\\','',$nome_da_editora);
 		$cidade_da_editora = $trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'CIDADE-DA-EDITORA'};
 		$nome_do_evento_ingles = $trab_evento->{'DETALHAMENTO-DO-TRABALHO'}->attributes()->{'NOME-DO-EVENTO-INGLES'};
 		
@@ -131,6 +163,18 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})){
 		    if (isset($trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-6'})){
 			$palavras_chave[] = $trab_evento->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-6'};
 		    }
+		    
+		$palavras_chave = trim(preg_replace('/\s\s+/', ' ',$palavras_chave));
+		$palavras_chave = trim(preg_replace('~[\r\n]+~', ' ',$palavras_chave));
+		$palavras_chave = str_replace('"','',$palavras_chave);
+		$palavras_chave = str_replace("'","",$palavras_chave);
+		$palavras_chave = str_replace('?','',$palavras_chave);
+		$palavras_chave = str_replace(':',' - ',$palavras_chave);
+		$palavras_chave = str_replace(';',' - ',$palavras_chave);
+		$palavras_chave = str_replace('&',' - ',$palavras_chave);
+		$palavras_chave = str_replace('\t',' - ',$palavras_chave);	
+		$palavras_chave = str_replace('&#9;',' - ',$palavras_chave);		    
+		    
 		}
 		
 
@@ -232,7 +276,17 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})){
             //fwrite($myfile, $txt);
             //fclose($myfile);
 	    
-	    store_record($client,$sha256,$query);			
+	$query  = trim(preg_replace('/\s\s+/', ' ',$query));
+	$query = str_replace('\t',' - ',$query);
+	$query = str_replace('&#9;',' - ',$query);
+	    
+	$result = json_decode($query);
+
+	if (json_last_error() === JSON_ERROR_NONE) {
+	     store_record($client,$sha256,$query);
+	}
+	    
+	   			
 
         // Unset
 	unset($autor);
@@ -248,10 +302,19 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'ARTIGOS-PUBLICADOS'})){
 		
 		// Dados básicos do trabalho
 		$natureza = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'NATUREZA'};
-		$titulo = str_replace('"','',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO'});
-		$titulo = str_replace('"','',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO'});
-		$titulo = str_replace('?','',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO'});
-		$titulo = str_replace(':',' - ',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO'});
+		
+		
+		$titulo = trim(preg_replace('/\s\s+/', ' ',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO'}));
+		$titulo = trim(preg_replace('~[\r\n]+~', ' ',$titulo));
+		$titulo = str_replace('"','',$titulo);
+		$titulo = str_replace('?','',$titulo);
+		$titulo = str_replace(':',' - ',$titulo);
+		$titulo = str_replace(';',' - ',$titulo);
+		$titulo = str_replace('&',' - ',$titulo);
+		$titulo = str_replace('\t',' - ',$titulo);
+		$titulo = str_replace('&#9;',' - ',$titulo);				
+				
+
 		$ano = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'ANO-DO-ARTIGO'};
 		$pais = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'PAIS-DE-PUBLICACAO'};
 		$idioma = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'IDIOMA'};
@@ -259,14 +322,32 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'ARTIGOS-PUBLICADOS'})){
 		$url = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'HOME-PAGE-DO-TRABALHO'};
 		$flag_relevancia = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'FLAG-RELEVANCIA'};
 		$doi = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'DOI'};
-		$title = str_replace('"','',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO-INGLES'});
-		$title = str_replace('"','',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO-INGLES'});
-		$title = str_replace('?','',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO-INGLES'});
-		$title = str_replace(':',' - ',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO-INGLES'});
+		
+		
+		$title = trim(preg_replace('/\s\s+/', ' ',$artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'TITULO-DO-ARTIGO-INGLES'}));
+		$title = trim(preg_replace('~[\r\n]+~', ' ',$title));
+		$title = str_replace('"','',$title);
+		$title = str_replace('?','',$title);
+		$title = str_replace(':',' - ',$title);
+		$title = str_replace(';',' - ',$title);
+		$title = str_replace('&',' - ',$title);
+		$title = str_replace('\t',' - ',$title);	
+		$title = str_replace('&#9;',' - ',$title);					
+
 		$flag_divulgacao_cientifica = $artigo_publicado->{'DADOS-BASICOS-DO-ARTIGO'}->attributes()->{'FLAG-DIVULGACAO-CIENTIFICA'};
 		
 		// Detalhamento do artigo		
 		$titulo_do_periodico = $artigo_publicado->{'DETALHAMENTO-DO-ARTIGO'}->attributes()->{'TITULO-DO-PERIODICO-OU-REVISTA'};
+		$titulo_do_periodico = trim(preg_replace('~[\r\n]+~', ' ',$titulo_do_periodico));
+		$titulo_do_periodico = str_replace('"','',$titulo_do_periodico);
+		$titulo_do_periodico = str_replace('?','',$titulo_do_periodico);
+		$titulo_do_periodico = str_replace(':',' - ',$titulo_do_periodico);
+		$titulo_do_periodico = str_replace(';',' - ',$titulo_do_periodico);
+		$titulo_do_periodico = str_replace('&',' - ',$titulo_do_periodico);
+		$titulo_do_periodico = str_replace('\t',' - ',$titulo_do_periodico);	
+		$titulo_do_periodico = str_replace('&#9;',' - ',$titulo_do_periodico);		
+		
+		
 		$issn = $artigo_publicado->{'DETALHAMENTO-DO-ARTIGO'}->attributes()->{'ISSN'};
 		$volume = $artigo_publicado->{'DETALHAMENTO-DO-ARTIGO'}->attributes()->{'VOLUME'};
 		$fasciculo = $artigo_publicado->{'DETALHAMENTO-DO-ARTIGO'}->attributes()->{'FASCICULO'};
@@ -303,7 +384,20 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'ARTIGOS-PUBLICADOS'})){
 			if (isset($artigo_publicado->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-6'})){
 				$palavras_chave[] = $artigo_publicado->{'PALAVRAS-CHAVE'}->attributes()->{'PALAVRA-CHAVE-6'};
 			}
-		}		
+			
+			$palavras_chave = trim(preg_replace('/\s\s+/', ' ',$palavras_chave));
+			$palavras_chave = trim(preg_replace('~[\r\n]+~', ' ',$palavras_chave));
+			$palavras_chave = str_replace('"','',$palavras_chave);
+			$palavras_chave = str_replace("'","",$palavras_chave);
+			$palavras_chave = str_replace('?','',$palavras_chave);
+			$palavras_chave = str_replace(':',' - ',$palavras_chave);
+			$palavras_chave = str_replace(';',' - ',$palavras_chave);
+			$palavras_chave = str_replace('&',' - ',$palavras_chave);
+			$palavras_chave = str_replace('\t',' - ',$palavras_chave);	
+			$palavras_chave = str_replace('&#9;',' - ',$palavras_chave);
+		}	
+		
+		
 		
 
 		//print_r($palavras_chave);
@@ -378,7 +472,6 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'ARTIGOS-PUBLICADOS'})){
 					"meio_de_divulgacao": "'.$meio_de_divulgacao.'",
 					"url": "'.$url.'",
 					"doi": "'.$doi.'",
-					"title": "'.$title.'",
 					"periodico":{
 						"titulo_do_periodico":"'.$titulo_do_periodico.'",
 						"issn":"'.$issn.'",
