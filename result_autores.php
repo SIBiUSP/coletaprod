@@ -90,6 +90,8 @@
         $facets_users->facet_user("endereco_profissional.pais",100,"País do endereço profissional",null);
         $facets_users->facet_user("endereco_profissional.cidade",100,"Cidade do endereço profissional",null);
         
+        $facets_users->facet_user("formacao_academica_titulacao_graduacao.nome_instituicao",100,"Instituição em que cursou graduação",null);
+        
         $facets_users->facet_user("data_atualizacao",100,"Data de atualização do currículo",null);
         
     ?>
@@ -180,7 +182,7 @@
                                     
                                     <ul class="uk-list">
                                         <li class="uk-margin-top uk-h4">
-                                            <strong><?php echo '<a href="result_trabalhos.php?search[]=id_usp.keyword:&quot;'.$r["_source"]["id_usp"].'&quot;">'.$r["_source"]['nome_completo'].'</a>';?></strong>
+                                            <strong><?php echo '<a href="result_trabalhos.php?search[]=id_lattes.keyword:&quot;'.$r["_id"].'&quot;">'.$r["_source"]['nome_completo'].'</a>';?></strong>
                                         </li>
                                         <?php if (isset($r["_source"]['resumo_cv'])): ?>
                                         <li>                                            

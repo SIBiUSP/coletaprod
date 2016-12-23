@@ -2,7 +2,7 @@
             <div class="uk-container uk-container-center">
 
             <nav class="uk-margin-top">
-                <a class="uk-navbar-brand uk-hidden-small" href="index.php" style="color:white">Lattes USP</a>
+                <a class="uk-navbar-brand uk-hidden-small" href="index.php" style="color:white">Coleta Produção USP</a>
                 <ul class="uk-navbar-nav uk-hidden-small">
                     <li>
                         <a href="index.php" style="color:white">Início</a>

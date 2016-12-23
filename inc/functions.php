@@ -22,7 +22,7 @@ function store_curriculo ($client,$id_lattes,$query){
         'body' => $query
     ];
     $response = $client->update($params);
-    echo ''.($response["_id"]).', '.($response["result"]).', '.($response["_shards"]['successful']).'<br/>';   
+    return $response;       
  
 }
 
@@ -241,10 +241,7 @@ function analisa_get($get) {
         }                
     ';    
     
-    $query_complete = '{
-        "sort" : [
-                { "ano.keyword" : "desc" }
-            ],    
+    $query_complete = '{   
         "query": {
         '.$search_term.'
         }
@@ -605,6 +602,21 @@ function query_bdpi($query_title,$query_year) {
         echo '</div>';
     }
     return $data;
+}
+
+function coleta_json_lattes($id_lattes) {
+    
+    $ch = curl_init();
+    $method = "GET";
+    $url = "http://buscacv.cnpq.br/buscacv/rest/espelhocurriculo/$id_lattes";
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
+    $result = curl_exec($ch);
+    curl_close($ch);
+    $data = json_decode($result, TRUE);
+    return $data;
+    
 }
 
 ?>
