@@ -82,6 +82,7 @@
         
         $facets->facet("natureza",10,"Natureza",null);
         $facets->facet("tipo",10,"Tipo de material",null);
+        $facets->facet("tag",10,"Tag",null);
         
         $facets->facet("autores.nome_completo_do_autor",100,"Nome completo do autor",null);
         $facets->facet("autores.nro_id_cnpq",100,"Número do lattes",null);
@@ -237,6 +238,12 @@
                                             <?php endforeach;?>
                                             <?php endif; ?>
                                         </li>
+                                        
+                                        <?php if (!empty($r["_source"]['ids_match'])) : ?>  
+                                        <?php foreach ($r["_source"]['ids_match'] as $id_match) : ?>
+                                            <?php match_id($id_match["id_match"],$id_match["nota"],$client);?>
+                                        <?php endforeach;?>
+                                        <?php endif; ?>
                                        
                                         <?php query_bdpi($r["_source"]['titulo'],$r["_source"]['ano']); ?>
                                         

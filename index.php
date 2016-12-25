@@ -13,7 +13,7 @@
             /* Define variables */
             define('authorUSP','authorUSP');
         ?> 
-        <title>Lattes USP</title>
+        <title>Coleta Produção USP</title>
         <!-- Facebook Tags - START -->
         <meta property="og:locale" content="pt_BR">
         <meta property="og:url" content="http://bdpi.usp.br">
@@ -58,7 +58,8 @@
                         <form class="uk-form" action="jsontoelastic.php" method="get">
                             <fieldset data-uk-margin>
                                 <legend>Inserir ID do curriculo que deseja incluir</legend>
-                                <input type="text" placeholder="Insira o ID do Curriculo" class="uk-form-width-large" name="id_lattes" data-validation="required">                                       
+                                <input type="text" placeholder="Insira o ID do Curriculo" class="uk-form-width-medium" name="id_lattes" data-validation="required">
+                                <input type="text" placeholder="Insira uma tag para formar um grupo" class="uk-form-width-medium" name="tag">
                                 <button class="uk-button-primary">Incluir</button><br/>                                    
                             </fieldset>
                         </form>                          
@@ -80,7 +81,7 @@
                     <div class="uk-width-5-6">
                         <h2 class="uk-h3">Tipo de material</h2>
                         <ul class="uk-list uk-list-striped">
-                            <!--< ?php unidadeUSP_inicio($client); ? > -->
+                            <?php tipo_inicio($client); ?>
                         </ul>                            
                     </div>
                 </div>
@@ -91,9 +92,9 @@
                         <i class="uk-icon-file uk-icon-large uk-text-primary"></i>
                     </div>
                     <div class="uk-width-5-6">
-                        <h2 class="uk-h3">Base</h2>
+                        <h2 class="uk-h3">Fonte</h2>
                         <ul class="uk-list uk-list-striped">
-                            <!-- < ?php base_inicio($client); ?> -->
+                            <?php fonte_inicio($client); ?> 
                         </ul>
                     </div>
                 </div>
@@ -106,7 +107,8 @@
                     <div class="uk-width-5-6">
                         <h2 class="uk-h3">Nossos números</h2>
                         <ul class="uk-list uk-list-striped">
-                            <!-- <li>< ?php echo number_format(contar_registros($client),0,',','.'); ?> registros</li> -->
+                            <li><?php echo number_format(contar_registros($client),0,',','.'); ?> registros</li> 
+                            <li><?php echo number_format(contar_autores($client),0,',','.'); ?> currículos</li>
                             <!-- <li>< ?php echo number_format(contar_unicos("authorUSP",$client),0,',','.'); ?> autores vinculados à USP</li> -->                                
                         </ul>
                     </div>

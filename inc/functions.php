@@ -1,5 +1,62 @@
 <?php
 
+function match_id ($_id,$nota,$client) {
+    
+    $params = [
+        'index' => 'lattes',
+        'type' => 'trabalhos',
+        '_source' => ['titulo','tipo','ano'],
+        'id' => ''.$_id.''
+    ];
+    $response = $client->get($params);
+
+    echo '<div class="uk-alert uk-alert-danger">';
+    echo '<h3>Registros similares no Coleta Produção USP</h3>';
+        echo '<p><a href="http://bdpi.usp.br/single.php?_id='.$_id.'">'.$response["_source"]["tipo"].' - '.$response["_source"]["titulo"].' ('.$response["_source"]["ano"].')</a></p>';
+    echo '</div>';
+        
+    
+    //return $response;    
+}
+
+function contar_registros ($client) {
+    $query_all = '
+        {
+            "query": {
+                "match_all": {}
+            }
+        }        
+    ';
+    $params = [
+        'index' => 'lattes',
+        'type' => 'trabalhos',
+        'size'=> 0,
+        'body' => $query_all
+    ];
+    $response = $client->search($params);
+    return $response['hits']['total'];
+    print_r($response);
+}
+
+function contar_autores ($client) {
+    $query_all = '
+        {
+            "query": {
+                "match_all": {}
+            }
+        }        
+    ';
+    $params = [
+        'index' => 'lattes',
+        'type' => 'curriculo',
+        'size'=> 0,
+        'body' => $query_all
+    ];
+    $response = $client->search($params);
+    return $response['hits']['total'];
+    print_r($response);
+}
+
 function store_record ($client,$sha256,$query){
     
     $params = [
@@ -160,6 +217,171 @@ function compararRegistrosLattesArtigos($client,$query_year,$query_title,$query_
 
 }
 
+function compararRegistrosLattesLivros($client,$query_title,$query_isbn,$query_tipo) {
+ 
+    $query = '
+    {
+        "min_score": 3,
+        "query":{
+            "bool": {
+                "should": [
+                    {
+                        "multi_match" : {
+                            "query":      "'.$query_tipo.'",
+                            "type":       "cross_fields",
+                            "fields":     [ "tipo" ],
+                            "minimum_should_match": "100%" 
+                         }
+                    },
+                    {
+                        "multi_match" : {
+                            "query":      "'.$query_isbn.'",
+                            "type":       "cross_fields",
+                            "fields":     [ "isbn" ],
+                            "minimum_should_match": "100%" 
+                         }
+                    },			    		
+                    {
+                        "multi_match" : {
+                            "query":      "'.$query_title.'",
+                            "type":       "cross_fields",
+                            "fields":     [ "titulo" ],
+                            "minimum_should_match": "90%" 
+                         }
+                    }
+                ],
+                "minimum_should_match" : 2               
+            }
+        }
+    }
+    ';
+    
+    //print_r($query);
+    
+    $params = [
+        'index' => 'lattes',
+        'type' => 'trabalhos',   
+        'body' => $query
+    ];
+     
+    $response = $client->search($params);
+    
+    //print_r($response); 
+    
+    return $response;
+
+}
+
+function compararRegistrosLattesCapitulos($client,$query_title,$query_titulo_do_livro,$query_tipo) {
+ 
+    $query = '
+    {
+        "min_score": 2,
+        "query":{
+            "bool": {
+                "should": [
+                    {
+                        "multi_match" : {
+                            "query":      "'.$query_tipo.'",
+                            "type":       "cross_fields",
+                            "fields":     [ "tipo" ],
+                            "minimum_should_match": "100%" 
+                         }
+                    },		    		
+                    {
+                        "multi_match" : {
+                            "query":      "'.$query_title.'",
+                            "type":       "cross_fields",
+                            "fields":     [ "titulo" ],
+                            "minimum_should_match": "90%" 
+                         }
+                    },
+                    {
+                        "multi_match" : {
+                            "query":      "'.$query_titulo_do_livro.'",
+                            "type":       "cross_fields",
+                            "fields":     [ "capitulo_do_livro.titulo_do_livro" ],
+                            "minimum_should_match": "90%" 
+                         }
+                    }                    
+                ],
+                "minimum_should_match" : 3               
+            }
+        }
+    }
+    ';
+    
+    //print_r($query);
+    
+    $params = [
+        'index' => 'lattes',
+        'type' => 'trabalhos',   
+        'body' => $query
+    ];
+     
+    $response = $client->search($params);
+    
+    //print_r($response); 
+    
+    return $response;
+
+}
+
+function compararRegistrosLattesMidiaSocial($client,$query_title,$query_url,$query_tipo) {
+ 
+    $query = '
+    {
+        "min_score": 3,
+        "query":{
+            "bool": {
+                "should": [
+                    {
+                        "multi_match" : {
+                            "query":      "'.$query_tipo.'",
+                            "type":       "cross_fields",
+                            "fields":     [ "tipo" ],
+                            "minimum_should_match": "100%" 
+                         }
+                    },		    		
+                    {
+                        "multi_match" : {
+                            "query":      "'.$query_title.'",
+                            "type":       "cross_fields",
+                            "fields":     [ "titulo" ],
+                            "minimum_should_match": "90%" 
+                         }
+                    },
+                    {
+                        "multi_match" : {
+                            "query":      "'.$query_url.'",
+                            "type":       "cross_fields",
+                            "fields":     [ "url" ],
+                            "minimum_should_match": "100%" 
+                         }
+                    }                    
+                ],
+                "minimum_should_match" : 2               
+            }
+        }
+    }
+    ';
+    
+    //print_r($query);
+    
+    $params = [
+        'index' => 'lattes',
+        'type' => 'trabalhos',   
+        'body' => $query
+    ];
+     
+    $response = $client->search($params);
+    
+    //print_r($response); 
+    
+    return $response;
+
+}
+
 function compararDoi($client,$query_doi) {
  
     $query = '
@@ -241,7 +463,10 @@ function analisa_get($get) {
         }                
     ';    
     
-    $query_complete = '{   
+    $query_complete = '{
+        "sort" : [
+                { "ano.keyword" : "desc" }
+        ],     
         "query": {
         '.$search_term.'
         }
@@ -493,7 +718,7 @@ class facets_users {
             "aggs" : {
                 "ranges" : {
                     "range" : {
-                        "field" : "metrics.'.$campo.'",
+                        "field" : "'.$campo.'",
                         "ranges" : [
                             { "to" : 1 },
                             { "from" : 1, "to" : 2 },
@@ -513,6 +738,8 @@ class facets_users {
             'size'=> 0,          
             'body' => $query
         ];
+        //print_r($query);
+        
         $response = $client->search($params); 
         //print_r($response);
         echo '<li class="uk-parent">';    
@@ -616,6 +843,58 @@ function coleta_json_lattes($id_lattes) {
     curl_close($ch);
     $data = json_decode($result, TRUE);
     return $data;
+    
+}
+
+function fonte_inicio($client) {
+    $query = '{
+        "aggs": {
+            "group_by_state": {
+                "terms": {
+                    "field": "source.keyword",                    
+                    "size" : 5
+                }
+            }
+        }
+    }';
+    
+    $params = [
+        'index' => 'lattes',
+        'type' => 'trabalhos',
+        'size'=> 0,
+        'body' => $query
+    ];    
+    
+    $response = $client->search($params);
+    foreach ($response["aggregations"]["group_by_state"]["buckets"] as $facets) {
+        echo '<li><a href="result_trabalhos.php?search[]=source.keyword:&quot;'.$facets['key'].'&quot;">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a></li>';
+    }   
+    
+}
+
+function tipo_inicio($client) {
+    $query = '{
+        "aggs": {
+            "group_by_state": {
+                "terms": {
+                    "field": "tipo.keyword",                    
+                    "size" : 5
+                }
+            }
+        }
+    }';
+    
+    $params = [
+        'index' => 'lattes',
+        'type' => 'trabalhos',
+        'size'=> 0,
+        'body' => $query
+    ];    
+    
+    $response = $client->search($params);
+    foreach ($response["aggregations"]["group_by_state"]["buckets"] as $facets) {
+        echo '<li><a href="result_trabalhos.php?search[]=tipo.keyword:&quot;'.$facets['key'].'&quot;">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a></li>';
+    }   
     
 }
 

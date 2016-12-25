@@ -81,6 +81,7 @@
         $facets_users->query_aggregate = $query_aggregate;
                 
         $facets_users->facet_user("id_usp",100,"Número USP",null);
+        $facets_users->facet_user("tag",100,"Tag",null);
         $facets_users->facet_user("nacionalidade",100,"Nacionalidade",null);
         $facets_users->facet_user("pais_de_nascimento",100,"País de nascimento",null);
                 
@@ -91,6 +92,24 @@
         $facets_users->facet_user("endereco_profissional.cidade",100,"Cidade do endereço profissional",null);
         
         $facets_users->facet_user("formacao_academica_titulacao_graduacao.nome_instituicao",100,"Instituição em que cursou graduação",null);
+        $facets_users->facet_user("formacao_academica_titulacao_graduacao.nome_curso",100,"Nome do curso na graduação",null);
+        $facets_users->facet_user("formacao_academica_titulacao_graduacao.status_do_curso",100,"Status do curso na graduação",null);
+        $facets_users->facet_user("formacao_academica_titulacao_mestrado.nome_instituicao",100,"Instituição em que cursou mestrado",null);
+        $facets_users->facet_user("formacao_academica_titulacao_mestrado.nome_curso",100,"Nome do curso no mestrado",null);
+        $facets_users->facet_user("formacao_academica_titulacao_mestrado.status_do_curso",100,"Status do curso no mestrado",null);        
+        $facets_users->facet_user("formacao_academica_titulacao_mestradoProfissionalizante.nome_instituicao",100,"Instituição em que cursou mestrado profissional",null);
+        $facets_users->facet_user("formacao_academica_titulacao_mestradoProfissionalizante.nome_curso",100,"Nome do curso no mestrado profissional",null);
+        $facets_users->facet_user("formacao_academica_titulacao_mestradoProfissionalizante.status_do_curso",100,"Status do curso no mestrado profissional",null); 
+        $facets_users->facet_user("formacao_academica_titulacao_doutorado.nome_instituicao",100,"Instituição em que cursou doutorado",null);
+        $facets_users->facet_user("formacao_academica_titulacao_doutorado.nome_curso",100,"Nome do curso no doutorado",null);
+        $facets_users->facet_user("formacao_academica_titulacao_doutorado.status_do_curso",100,"Status do curso no doutorado",null);   
+        $facets_users->facet_user("formacao_academica_titulacao_livreDocencia.nome_instituicao",100,"Instituição em que cursou livre docência",null);       
+        $facets_users->facet_user("atuacao_profissional.nome_instituicao",100,"Instituição em que atuou profissionalmente",null);
+        
+        $facets_users->facet_user("citacoes.scielo.numero_citacoes",100,"Citações na Scielo",null);
+        $facets_users->facet_user("citacoes.scopus.numero_citacoes",100,"Citações na Scopus",null);
+        $facets_users->facet_user("citacoes.web_of_science.numero_citacoes",100,"Citações na Web of Science",null);
+        $facets_users->facet_user("citacoes.outras.numero_citacoes",100,"Citações em outras bases",null);        
         
         $facets_users->facet_user("data_atualizacao",100,"Data de atualização do currículo",null);
         
