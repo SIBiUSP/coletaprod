@@ -1,10 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br" dir="ltr">
+    <head>
+        <?php 
+            include('inc/config.php');             
+            include('inc/meta-header.php');
+            include('inc/functions.php');
+            
+            if(!empty($_SESSION['oauthuserdata'])) { 
+                store_user($_SESSION['oauthuserdata'],$client);
+            }
+        ;      
+
+        ?> 
+        <title>Conversor do Lattes para o ElasticSearch - Coleta Produção USP</title>
+        <!-- Facebook Tags - START -->
+        <meta property="og:locale" content="pt_BR">
+        <meta property="og:url" content="http://bdpi.usp.br">
+        <meta property="og:title" content="Coleta Produção USP - Página Principal">
+        <meta property="og:site_name" content="Coleta Produção USP">
+        <meta property="og:description" content="Memória documental da produção científica, técnica e artística gerada nas Unidades da Universidade de São Paulo.">
+        <meta property="og:image" content="http://www.imagens.usp.br/wp-content/uploads/USP.jpg">
+        <meta property="og:image:type" content="image/jpeg">
+        <meta property="og:image:width" content="800"> 
+        <meta property="og:image:height" content="600"> 
+        <meta property="og:type" content="website">
+        <!-- Facebook Tags - END -->
+        
+    </head>
+
+    <body>     
+        
+        <?php include('inc/navbar.php'); ?>
+        
+        <div class="uk-container uk-container-center uk-margin-large-bottom">
+            <div class="uk-width-medium-1-1">
+
 <?php 
-    
-    include ('inc/config.php');
-	include ('inc/functions.php');
 
     $cursor = coleta_json_lattes($_GET["id_lattes"]);
     
+    //print_r($cursor);
+
+    $doc_curriculo_array = [];
+    $doc_curriculo_array[] = '"source":"Base Lattes"';
+    $doc_curriculo_array[] = '"tag": ["'.$_GET["tag"].'"]';
+    $doc_curriculo_array[] = '"data_atualizacao": "'.$cursor["docs"][0]["dataAtualizacao"].'"';
+    $doc_curriculo_array[] = '"nome_completo": "'.$cursor["docs"][0]["dadosGerais"]["nomeCompleto"].'"';
+    $doc_curriculo_array[] = '"nome_em_citacoes_bibliograficas":"'.$cursor["docs"][0]["dadosGerais"]["nomeEmCitacoesBibliograficas"].'"';
+    $doc_curriculo_array[] = '"nacionalidade":"'.$cursor["docs"][0]["dadosGerais"]["nacionalidade"].'"';
+    $doc_curriculo_array[] = '"pais_de_nascimento":"'.$cursor["docs"][0]["dadosGerais"]["paisDeNascimento"].'"';
+    $doc_curriculo_array[] = '"sigla_pais_nacionalidade":"'.$cursor["docs"][0]["dadosGerais"]["siglaPaisNacionalidade"].'"';
+    $doc_curriculo_array[] = '"pais_de_nacionalidade":"'.$cursor["docs"][0]["dadosGerais"]["paisDeNacionalidade"].'"';
+
+
+
 	$resumo_cv = "";
 	if (isset($cursor["docs"][0]["dadosGerais"]["resumoCv"])) {
         $texto_resumo_cv_rh[] = '"texto_resumo_cv_rh": "'.str_replace('"','\"',$cursor["docs"][0]["dadosGerais"]["resumoCv"]["textoResumoCvRh"]).'"';
@@ -19,18 +68,46 @@
 	}
 
     foreach ($cursor["docs"][0]["producaoBibliografica"]["artigosPublicados"]["totalQuadroCitacoes"] as $citacoes) {
-        $citacoes_array[] = '{"'.str_replace(" ","_",strtolower($citacoes["nomeBase"])).'": { 
-            "nome_base":"'.$citacoes["nomeBase"].'",
-            "codigo_base":"'.$citacoes["codigoBase"].'",
-            "sequencial_indicador":"'.$citacoes["sequencialIndicador"].'",
-            "numero_citacoes":"'.$citacoes["numeroCitacoes"].'",
-            "data_citacao":"'.$citacoes["dataCitacao"].'",
-            "texto_argumento":"'.$citacoes["textoArgumento"].'",
-            "indice_h":"'.$citacoes["indiceH"].'",
-            "numero_trabalhos":"'.$citacoes["numeroTrabalhos"].'",
-            "uri_pesquisador_base":"'.$citacoes["uriPesquisadorBase"].'",
-            "uri_logo_base":"'.$citacoes["uriLogoBase"].'"
-        }}';   
+        $citacoes_base_array = [];
+        if(isset($citacoes["nomeBase"])) {
+            $citacoes_base_array[] = '"nome_base":"'.$citacoes["nomeBase"].'"';
+        }
+        if(isset($citacoes["codigoBase"])) {
+            $citacoes_base_array[] = '"codigo_base":"'.$citacoes["codigoBase"].'"';
+        }
+        if(isset($citacoes["sequencialIndicador"])) {
+            $citacoes_base_array[] = '"sequencial_indicador":"'.$citacoes["sequencialIndicador"].'"';
+        }
+        if(isset($citacoes["numeroCitacoes"])) {
+            $citacoes_base_array[] = '"numero_citacoes":"'.$citacoes["numeroCitacoes"].'"';
+        }
+        if(isset($citacoes["dataCitacao"])) {
+            $citacoes_base_array[] = '"data_citacao":"'.$citacoes["dataCitacao"].'"';
+        }
+        if(isset($citacoes["textoArgumento"])) {
+            $citacoes_base_array[] = '"texto_argumento":"'.$citacoes["textoArgumento"].'"';
+        }        
+        if(isset($citacoes["indiceH"])) {
+            $citacoes_base_array[] = '"indice_h":"'.$citacoes["indiceH"].'"';
+        }
+        if(isset($citacoes["numeroTrabalhos"])) {
+            $citacoes_base_array[] = '"numero_trabalhos":"'.$citacoes["numeroTrabalhos"].'"';
+        }          
+        if(isset($citacoes["uriPesquisadorBase"])) {
+            $citacoes_base_array[] = '"uri_pesquisador_base":"'.$citacoes["uriPesquisadorBase"].'"';
+        } 
+        if(isset($citacoes["uriLogoBase"])) {
+            $citacoes_base_array[] = '"uri_logo_base":"'.$citacoes["uriLogoBase"].'"';
+        }        
+        
+        $citacoes_array[] = '{
+            "'.str_replace(" ","_",strtolower($citacoes["nomeBase"])).'": 
+                { 
+                    '.implode(",",$citacoes_base_array).'
+                }
+        }';
+        
+        unset ($citacoes_base_array);
     }
 
     $formacao_graduacao = [];
@@ -213,16 +290,38 @@
             foreach ($cursor["docs"][0]["dadosGerais"]["atuacoesProfissionais"]["atuacaoProfissional"] as $atuacao_profissional) {
                 
                 foreach ($atuacao_profissional["vinculos"] as $vinculos) {
+                    
+                    $vinculos_base_array = [];
+                    if(isset($vinculos["tipoDeVinculo"])) {
+                        $citacoes_base_array[] = '"tipo_de_vinculo":"'.$vinculos["tipoDeVinculo"].'"';
+                    }                    
+                    if(isset($vinculos["enquadramentoFuncional"])) {
+                        $citacoes_base_array[] = '"enquadramento_funcional":"'.$vinculos["enquadramentoFuncional"].'"';
+                    }  
+                    if(isset($vinculos["cargaHorariaSemanal"])) {
+                        $citacoes_base_array[] = '"carga_horaria_semanal":"'.$vinculos["cargaHorariaSemanal"].'"';
+                    }
+                    if(isset($vinculos["flagDedicacaoExclusiva"])) {
+                        $citacoes_base_array[] = '"flag_dedicacao_exclusiva":"'.$vinculos["flagDedicacaoExclusiva"].'"';
+                    }                     
+                    if(isset($vinculos["anoInicio"],$vinculos["mesInicio"])) {
+                        $citacoes_base_array[] = '"inicio":"'.$vinculos["anoInicio"].$vinculos["mesInicio"].'"';
+                    }
+                    if(isset($vinculos["anoFim"],$vinculos["mesFim"])) {
+                        $citacoes_base_array[] = '"fim":"'.$vinculos["anoFim"].$vinculos["mesFim"].'"';
+                    }
+                    if(isset($vinculos["flagVinculoEmpregaticio"])) {
+                        $citacoes_base_array[] = '"flag_vinculo_empregaticio":"'.$vinculos["flagVinculoEmpregaticio"].'"';
+                    }
+                    if(isset($vinculos["outroEnquadramentoFuncionalInformado"])) {
+                        $citacoes_base_array[] = '"outro_enquadramento_funcional_informado":"'.$vinculos["outroEnquadramentoFuncionalInformado"].'"';
+                    }                     
+                    
                     $vinculos_array[] = '{
-                        "tipo_de_vinculo":"'.$vinculos["tipoDeVinculo"].'",
-                        "enquadramento_funcional":"'.$vinculos["enquadramentoFuncional"].'",
-                        "carga_horaria_semanal":"'.$vinculos["cargaHorariaSemanal"].'",
-                        "flag_dedicacao_exclusiva":"'.$vinculos["flagDedicacaoExclusiva"].'",
-                        "inicio":"'.$vinculos["anoInicio"].$vinculos["mesInicio"].'",
-                        "fim":"'.$vinculos["anoFim"].$vinculos["mesFim"].'",
-                        "flag_vinculo_empregaticio":"'.$vinculos["flagVinculoEmpregaticio"].'",
-                        "outro_enquadramento_funcional_informado":"'.$vinculos["outroEnquadramentoFuncionalInformado"].'"
+                        '.implode(",",$citacoes_base_array).'
                     }';
+                    
+                    unset($citacoes_base_array);
                 }
                 
                 $atuacao_profissional_array[] = '{
@@ -238,15 +337,7 @@
 	$query_lattes = 
 			'{
 				"doc":{
-                    "source":"Base Lattes",
-                    "tag": ["'.$_GET["tag"].'"],
-                    "data_atualizacao": "'.$cursor["docs"][0]["dataAtualizacao"].'",
-					"nome_completo": "'.$cursor["docs"][0]["dadosGerais"]["nomeCompleto"].'",
-					"nome_em_citacoes_bibliograficas":"'.$cursor["docs"][0]["dadosGerais"]["nomeEmCitacoesBibliograficas"].'",
-					"nacionalidade":"'.$cursor["docs"][0]["dadosGerais"]["nacionalidade"].'",	
-					"pais_de_nascimento":"'.$cursor["docs"][0]["dadosGerais"]["paisDeNascimento"].'",
-					"sigla_pais_nacionalidade":"'.$cursor["docs"][0]["dadosGerais"]["siglaPaisNacionalidade"].'",
-					"pais_de_nacionalidade":"'.$cursor["docs"][0]["dadosGerais"]["paisDeNacionalidade"].'",
+                    '.implode(",",$doc_curriculo_array).',					
 					'.$resumo_cv.'
 					"endereco_profissional":{'.implode(",",$endereco_profissional).'},
                     "citacoes":['.implode(",",$citacoes_array).'],
@@ -260,21 +351,43 @@
 				"doc_as_upsert" : true
 			}';
     
-    print_r($query_lattes);
+    
     $resultado_curriculo = store_curriculo ($client,$_GET["id_lattes"],$query_lattes);
+    print_r($resultado_curriculo);
 
-    if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
+//Parser de Trabalhos-em-Eventos
+
+if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
         
         foreach ($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"]["trabalhoEmEventos"] as $trab_evento) {
             
         if (isset($trab_evento["dadosBasicosDoTrabalho"]["doi"])) {
             $doi = '"doi": "'.$trab_evento["dadosBasicosDoTrabalho"]["doi"].'",';
+        } else {
+            $doi = "";
         }
             
-		foreach ($trab_evento["autores"]  as $autores) {
-		
-			$autores_array[] = '{ "nome_completo_do_autor":"'.$autores["nomeCompletoDoAutor"].'", "nome_para_citacao":"'.$autores["nomeParaCitacao"].'", "ordem_de_autoria":"'.$autores["ordemDeAutoria"].'", "nro_id_cnpq":"'.$autores["nroIdCnpq"].'" }';
-										
+            
+		foreach ($trab_evento["autores"]  as $autores) {		
+			$autores_base_array = [];
+            
+            if(isset($autores["nomeCompletoDoAutor"])) {
+                $autores_base_array[] = '"nome_completo_do_autor":"'.$autores["nomeCompletoDoAutor"].'"';
+            }
+            if(isset($autores["nomeParaCitacao"])) {
+                $autores_base_array[] = '"nome_para_citacao":"'.$autores["nomeParaCitacao"].'"';
+            }  
+            if(isset($autores["ordemDeAutoria"])) {
+                $autores_base_array[] = '"ordem_de_autoria":"'.$autores["ordemDeAutoria"].'"';
+            }              
+            if(isset($autores["nroIdCnpq"])) {
+                $autores_base_array[] = '"nro_id_cnpq":"'.$autores["nroIdCnpq"].'"';
+            }  
+            
+            $autores_array[] = '{ 
+                '.implode(",",$autores_base_array).'
+            }';
+            unset($autores_base_array);
 		}
 
 		$palavras_chave = [];
@@ -302,12 +415,23 @@
         
 		if (isset($trab_evento["areasDoConhecimento"])) {
 			foreach ($trab_evento["areasDoConhecimento"] as $area_do_conhecimento) {
+                    $area_do_conhecimento_base_array = [];
+                    if (isset($area_do_conhecimento["nomeGrandeAreaDoConhecimento"])){
+                        $area_do_conhecimento_base_array[] = '"nome_grande_area_do_conhecimento":"'.$area_do_conhecimento["nomeGrandeAreaDoConhecimento"].'"';
+                    }
+                    if (isset($area_do_conhecimento["nomeDaAreaDoConhecimento"])){
+                        $area_do_conhecimento_base_array[] = '"nome_da_area_do_conhecimento":"'.$area_do_conhecimento["nomeDaAreaDoConhecimento"].'"';
+                    }
+                    if (isset($area_do_conhecimento["nomeDaSubAreaDoConhecimento"])){
+                        $area_do_conhecimento_base_array[] = '"nome_da_sub_area_do_conhecimento":"'.$area_do_conhecimento["nomeDaSubAreaDoConhecimento"].'"';
+                    }
+                    if (isset($area_do_conhecimento["nomeDaEspecialidade"])){
+                        $area_do_conhecimento_base_array[] = '"nome_da_especialidade":"'.$area_do_conhecimento["nomeDaEspecialidade"].'"';
+                    }                
 					$area_do_conhecimento_array[] = '{
-						"nome_grande_area_do_conhecimento":"'.$area_do_conhecimento["nomeGrandeAreaDoConhecimento"].'",
-						"nome_da_area_do_conhecimento":"'.$area_do_conhecimento["nomeDaAreaDoConhecimento"].'",
-						"nome_da_sub_area_do_conhecimento":"'.$area_do_conhecimento["nomeDaSubAreaDoConhecimento"].'",
-						"nome_da_especialidade":"'.$area_do_conhecimento["nomeDaEspecialidade"].'"
-					}'; 								
+						'.implode(",",$area_do_conhecimento_base_array).'
+					}';
+                    unset($area_do_conhecimento_base_array);
 			}
 		} 
             
@@ -315,6 +439,44 @@
 		if (isset($area_do_conhecimento_array)){
 			$area_set = '"area_do_conhecimento":['.implode(",",$area_do_conhecimento_array).'],';
 		}
+    
+//Define variáveis            
+        if(!isset($trab_evento["detalhamentoDoTrabalho"]["paginaInicial"])){
+            $trab_evento["detalhamentoDoTrabalho"]["paginaInicial"] = "";            
+        }
+        if(!isset($trab_evento["detalhamentoDoTrabalho"]["paginaFinal"])){
+            $trab_evento["detalhamentoDoTrabalho"]["paginaFinal"] = "";            
+        }             
+        if(!isset($trab_evento["dadosBasicosDoTrabalho"]["doi"])){
+            $trab_evento["dadosBasicosDoTrabalho"]["doi"] = "";            
+        }
+        if(!isset($trab_evento["detalhamentoDoTrabalho"]["isbn"])){
+            $trab_evento["detalhamentoDoTrabalho"]["isbn"] = "";            
+        }
+        if(!isset($trab_evento["dadosBasicosDoTrabalho"]["homePageDoTrabalho"])){
+            $trab_evento["dadosBasicosDoTrabalho"]["homePageDoTrabalho"] = "";            
+        }
+        if(!isset($trab_evento["detalhamentoDoTrabalho"]["nomeDaEditora"])){
+            $trab_evento["detalhamentoDoTrabalho"]["nomeDaEditora"] = "";            
+        }  
+        if(!isset($trab_evento["detalhamentoDoTrabalho"]["cidadeDaEditora"])){
+            $trab_evento["detalhamentoDoTrabalho"]["cidadeDaEditora"] = "";            
+        }
+        if(!isset($trab_evento["detalhamentoDoTrabalho"]["anoDeRealizacao"])){
+            $trab_evento["detalhamentoDoTrabalho"]["anoDeRealizacao"] = "";            
+        }            
+ 
+// Checar - início            
+        if(!isset($trab_evento["detalhamentoDoTrabalho"]["volumeDosAnais"])){
+            $trab_evento["detalhamentoDoTrabalho"]["volumeDosAnais"] = "";            
+        }              
+        if(!isset($trab_evento["detalhamentoDoTrabalho"]["fasciculoDosAnais"])){
+            $trab_evento["detalhamentoDoTrabalho"]["fasciculoDosAnais"] = "";            
+        }
+        if(!isset($trab_evento["detalhamentoDoTrabalho"]["serieDosAnais"])){
+            $trab_evento["detalhamentoDoTrabalho"]["serieDosAnais"] = "";            
+        }   
+// Checar - fim            
             
 		$sha256 = hash('sha256', ''.$trab_evento["dadosBasicosDoTrabalho"]["natureza"].$trab_evento["dadosBasicosDoTrabalho"]["tituloDoTrabalho"].$trab_evento["dadosBasicosDoTrabalho"]["anoDoTrabalho"].$trab_evento["dadosBasicosDoTrabalho"]["paisDoEvento"].$trab_evento["detalhamentoDoTrabalho"]["nomeDoEvento"].$trab_evento["detalhamentoDoTrabalho"]["paginaInicial"].$trab_evento["dadosBasicosDoTrabalho"]["homePageDoTrabalho"].$trab_evento["dadosBasicosDoTrabalho"]["doi"].'');
 		
@@ -350,9 +512,9 @@
 						"cidade_do_evento": "'.$trab_evento["detalhamentoDoTrabalho"]["cidadeDoEvento"].'",
 						"ano_de_realizacao_do_evento": "'.$trab_evento["detalhamentoDoTrabalho"]["anoDeRealizacao"].'",
 						"titulo_dos_anais": "'.str_replace('"','',$trab_evento["detalhamentoDoTrabalho"]["tituloDosAnaisOuProceedings"]).'",
-						"volume_dos_anais": "'.$volume_dos_anais.'",
-						"fasciculo_dos_anais": "'.$fasciculo_dos_anais.'",
-						"serie_dos_anais": "'.$serie_dos_anais.'",
+						"volume_dos_anais": "'.$trab_evento["detalhamentoDoTrabalho"]["volumeDosAnais"].'",
+						"fasciculo_dos_anais": "'.$trab_evento["detalhamentoDoTrabalho"]["fasciculoDosAnais"].'",
+						"serie_dos_anais": "'.$trab_evento["detalhamentoDoTrabalho"]["serieDosAnais"].'",
 						"pagina_inicial": "'.$trab_evento["detalhamentoDoTrabalho"]["paginaInicial"].'",
 						"pagina_final": "'.$trab_evento["detalhamentoDoTrabalho"]["paginaFinal"].'",
 						"isbn": "'.$trab_evento["detalhamentoDoTrabalho"]["isbn"].'",
@@ -393,10 +555,26 @@
             $doi = '"doi": "'.$artigo_publicado["dadosBasicosDoArtigo"]["doi"].'",';
         }
             
-		foreach ($artigo_publicado["autores"]  as $autores) {
-		
-			$autores_array[] = '{ "nome_completo_do_autor":"'.$autores["nomeCompletoDoAutor"].'", "nome_para_citacao":"'.$autores["nomeParaCitacao"].'", "ordem_de_autoria":"'.$autores["ordemDeAutoria"].'", "nro_id_cnpq":"'.$autores["nroIdCnpq"].'" }';
-										
+		foreach ($artigo_publicado["autores"]  as $autores) {		
+			$autores_base_array = [];
+            
+            if(isset($autores["nomeCompletoDoAutor"])) {
+                $autores_base_array[] = '"nome_completo_do_autor":"'.$autores["nomeCompletoDoAutor"].'"';
+            }
+            if(isset($autores["nomeParaCitacao"])) {
+                $autores_base_array[] = '"nome_para_citacao":"'.$autores["nomeParaCitacao"].'"';
+            }  
+            if(isset($autores["ordemDeAutoria"])) {
+                $autores_base_array[] = '"ordem_de_autoria":"'.$autores["ordemDeAutoria"].'"';
+            }              
+            if(isset($autores["nroIdCnpq"])) {
+                $autores_base_array[] = '"nro_id_cnpq":"'.$autores["nroIdCnpq"].'"';
+            }  
+            
+            $autores_array[] = '{ 
+                '.implode(",",$autores_base_array).'
+            }';
+            unset($autores_base_array);
 		}
 
 		$palavras_chave = [];
@@ -424,12 +602,23 @@
         
 		if (isset($artigo_publicado["areasDoConhecimento"])) {
 			foreach ($artigo_publicado["areasDoConhecimento"] as $area_do_conhecimento) {
+                    $area_do_conhecimento_base_array = [];
+                    if (isset($area_do_conhecimento["nomeGrandeAreaDoConhecimento"])){
+                        $area_do_conhecimento_base_array[] = '"nome_grande_area_do_conhecimento":"'.$area_do_conhecimento["nomeGrandeAreaDoConhecimento"].'"';
+                    }
+                    if (isset($area_do_conhecimento["nomeDaAreaDoConhecimento"])){
+                        $area_do_conhecimento_base_array[] = '"nome_da_area_do_conhecimento":"'.$area_do_conhecimento["nomeDaAreaDoConhecimento"].'"';
+                    }
+                    if (isset($area_do_conhecimento["nomeDaSubAreaDoConhecimento"])){
+                        $area_do_conhecimento_base_array[] = '"nome_da_sub_area_do_conhecimento":"'.$area_do_conhecimento["nomeDaSubAreaDoConhecimento"].'"';
+                    }
+                    if (isset($area_do_conhecimento["nomeDaEspecialidade"])){
+                        $area_do_conhecimento_base_array[] = '"nome_da_especialidade":"'.$area_do_conhecimento["nomeDaEspecialidade"].'"';
+                    }                
 					$area_do_conhecimento_array[] = '{
-						"nome_grande_area_do_conhecimento":"'.$area_do_conhecimento["nomeGrandeAreaDoConhecimento"].'",
-						"nome_da_area_do_conhecimento":"'.$area_do_conhecimento["nomeDaAreaDoConhecimento"].'",
-						"nome_da_sub_area_do_conhecimento":"'.$area_do_conhecimento["nomeDaSubAreaDoConhecimento"].'",
-						"nome_da_especialidade":"'.$area_do_conhecimento["nomeDaEspecialidade"].'"
-					}'; 								
+						'.implode(",",$area_do_conhecimento_base_array).'
+					}';
+                    unset($area_do_conhecimento_base_array);
 			}
 		} 
             
@@ -437,6 +626,33 @@
 		if (isset($area_do_conhecimento_array)){
 			$area_set = '"area_do_conhecimento":['.implode(",",$area_do_conhecimento_array).'],';
 		}
+            
+// Define variáveis
+        if(!isset($artigo_publicado["dadosBasicosDoArtigo"]["anoDoTrabalho"])){
+            $artigo_publicado["dadosBasicosDoArtigo"]["anoDoTrabalho"] = "";            
+        }
+        if(!isset($artigo_publicado["dadosBasicosDoArtigo"]["homePageDoTrabalho"])){
+            $artigo_publicado["dadosBasicosDoArtigo"]["homePageDoTrabalho"] = "";            
+        }
+        if(!isset($artigo_publicado["detalhamentoDoArtigo"]["fasciculo"])){
+            $artigo_publicado["detalhamentoDoArtigo"]["fasciculo"] = "";            
+        } 
+        if(!isset($artigo_publicado["detalhamentoDoArtigo"]["serie"])){
+            $artigo_publicado["detalhamentoDoArtigo"]["serie"] = "";            
+        }
+        if(!isset($artigo_publicado["detalhamentoDoArtigo"]["paginaInicial"])){
+            $artigo_publicado["detalhamentoDoArtigo"]["paginaInicial"] = "";            
+        } 
+        if(!isset($artigo_publicado["detalhamentoDoArtigo"]["paginaFinal"])){
+            $artigo_publicado["detalhamentoDoArtigo"]["paginaFinal"] = "";            
+        }
+        if(!isset($artigo_publicado["detalhamentoDoArtigo"]["localDePublicacao"])){
+            $artigo_publicado["detalhamentoDoArtigo"]["localDePublicacao"] = "";            
+        }
+        if(!isset($artigo_publicado["dadosBasicosDoArtigo"]["doi"])){
+            $artigo_publicado["dadosBasicosDoArtigo"]["doi"] = "";            
+        }             
+//Define variáveis - fim            
             
 		$sha256 = hash('sha256', ''.$artigo_publicado["dadosBasicosDoArtigo"]["natureza"].$artigo_publicado["dadosBasicosDoArtigo"]["tituloDoArtigo"].$artigo_publicado["dadosBasicosDoArtigo"]["anoDoTrabalho"].$artigo_publicado["detalhamentoDoArtigo"]["tituloDoPeriodicoOuRevista"].$artigo_publicado["detalhamentoDoArtigo"]["paginaInicial"].$artigo_publicado["dadosBasicosDoArtigo"]["homePageDoTrabalho"].$artigo_publicado["dadosBasicosDoArtigo"]["doi"].'');
 		
@@ -461,7 +677,6 @@
 					"natureza": "'.$artigo_publicado["dadosBasicosDoArtigo"]["natureza"].'",
 					"titulo": "'.str_replace('"','',$artigo_publicado["dadosBasicosDoArtigo"]["tituloDoArtigo"]).'",
 					"ano": "'.$artigo_publicado["dadosBasicosDoArtigo"]["anoDoArtigo"].'",
-					"pais": "'.$artigo_publicado["dadosBasicosDoArtigo"]["paisDoEvento"].'",
 					"idioma": "'.$artigo_publicado["dadosBasicosDoArtigo"]["idioma"].'",
 					"meio_de_divulgacao": "'.$artigo_publicado["dadosBasicosDoArtigo"]["meioDeDivulgacao"].'",
 					"url": "'.$artigo_publicado["dadosBasicosDoArtigo"]["homePageDoTrabalho"].'",
@@ -514,10 +729,26 @@
                     $doi = "";
                 }
 
-                foreach ($livro_publicado["autores"]  as $autores) {
+                foreach ($livro_publicado["autores"]  as $autores) {		
+                    $autores_base_array = [];
 
-                    $autores_array[] = '{ "nome_completo_do_autor":"'.$autores["nomeCompletoDoAutor"].'", "nome_para_citacao":"'.$autores["nomeParaCitacao"].'", "ordem_de_autoria":"'.$autores["ordemDeAutoria"].'", "nro_id_cnpq":"'.$autores["nroIdCnpq"].'" }';
+                    if(isset($autores["nomeCompletoDoAutor"])) {
+                        $autores_base_array[] = '"nome_completo_do_autor":"'.$autores["nomeCompletoDoAutor"].'"';
+                    }
+                    if(isset($autores["nomeParaCitacao"])) {
+                        $autores_base_array[] = '"nome_para_citacao":"'.$autores["nomeParaCitacao"].'"';
+                    }  
+                    if(isset($autores["ordemDeAutoria"])) {
+                        $autores_base_array[] = '"ordem_de_autoria":"'.$autores["ordemDeAutoria"].'"';
+                    }              
+                    if(isset($autores["nroIdCnpq"])) {
+                        $autores_base_array[] = '"nro_id_cnpq":"'.$autores["nroIdCnpq"].'"';
+                    }  
 
+                    $autores_array[] = '{ 
+                        '.implode(",",$autores_base_array).'
+                    }';
+                    unset($autores_base_array);
                 }
 
                 $palavras_chave = [];
@@ -525,19 +756,19 @@
                     if (isset($livro_publicado["palavrasChave"]["palavraChave1"])){
                     $palavras_chave[] = $livro_publicado["palavrasChave"]["palavraChave1"];
                     }
-                    if (isset($artigo_publicado["palavrasChave"]["palavraChave2"])){
+                    if (isset($livro_publicado["palavrasChave"]["palavraChave2"])){
                     $palavras_chave[] = $livro_publicado["palavrasChave"]["palavraChave2"];
                     }
-                    if (isset($artigo_publicado["palavrasChave"]["palavraChave3"])){
+                    if (isset($livro_publicado["palavrasChave"]["palavraChave3"])){
                     $palavras_chave[] = $livro_publicado["palavrasChave"]["palavraChave3"];
                     }
-                    if (isset($artigo_publicado["palavrasChave"]["palavraChave4"])){
+                    if (isset($livro_publicado["palavrasChave"]["palavraChave4"])){
                     $palavras_chave[] = $livro_publicado["palavrasChave"]["palavraChave4"];
                     }						
-                    if (isset($artigo_publicado["palavrasChave"]["palavraChave5"])){
+                    if (isset($livro_publicado["palavrasChave"]["palavraChave5"])){
                     $palavras_chave[] = $livro_publicado["palavrasChave"]["palavraChave5"];
                     }
-                    if (isset($artigo_publicado["palavrasChave"]["palavraChave6"])){
+                    if (isset($livro_publicado["palavrasChave"]["palavraChave6"])){
                     $palavras_chave[] = $livro_publicado["palavrasChave"]["palavraChave6"];
                     }
                 }
@@ -545,21 +776,38 @@
         
                 if (isset($livro_publicado["areasDoConhecimento"])) {
                     foreach ($livro_publicado["areasDoConhecimento"] as $area_do_conhecimento) {
+                            $area_do_conhecimento_base_array = [];
+                            if (isset($area_do_conhecimento["nomeGrandeAreaDoConhecimento"])){
+                                $area_do_conhecimento_base_array[] = '"nome_grande_area_do_conhecimento":"'.$area_do_conhecimento["nomeGrandeAreaDoConhecimento"].'"';
+                            }
+                            if (isset($area_do_conhecimento["nomeDaAreaDoConhecimento"])){
+                                $area_do_conhecimento_base_array[] = '"nome_da_area_do_conhecimento":"'.$area_do_conhecimento["nomeDaAreaDoConhecimento"].'"';
+                            }
+                            if (isset($area_do_conhecimento["nomeDaSubAreaDoConhecimento"])){
+                                $area_do_conhecimento_base_array[] = '"nome_da_sub_area_do_conhecimento":"'.$area_do_conhecimento["nomeDaSubAreaDoConhecimento"].'"';
+                            }
+                            if (isset($area_do_conhecimento["nomeDaEspecialidade"])){
+                                $area_do_conhecimento_base_array[] = '"nome_da_especialidade":"'.$area_do_conhecimento["nomeDaEspecialidade"].'"';
+                            }                
                             $area_do_conhecimento_array[] = '{
-                                "nome_grande_area_do_conhecimento":"'.$area_do_conhecimento["nomeGrandeAreaDoConhecimento"].'",
-                                "nome_da_area_do_conhecimento":"'.$area_do_conhecimento["nomeDaAreaDoConhecimento"].'",
-                                "nome_da_sub_area_do_conhecimento":"'.$area_do_conhecimento["nomeDaSubAreaDoConhecimento"].'",
-                                "nome_da_especialidade":"'.$area_do_conhecimento["nomeDaEspecialidade"].'"
-                            }'; 								
+                                '.implode(",",$area_do_conhecimento_base_array).'
+                            }';
+                            unset($area_do_conhecimento_base_array);
                     }
-                } 
+                }  
             
                 $area_set = "";
                 if (isset($area_do_conhecimento_array)){
                     $area_set = '"area_do_conhecimento":['.implode(",",$area_do_conhecimento_array).'],';
                 }
             
-		        $sha256 = hash('sha256', ''.$livro_publicado["dadosBasicosDoLivro"]["natureza"].$livro_publicado["dadosBasicosDoLivro"]["tituloDoLivro"].$livro_publicado["detalhamentoDoLivro"]["isbn"].'');              
+// Define variáveis
+        if(!isset($livro_publicado["detalhamentoDoLivro"]["numeroDaEdicaoRevisao"])){
+            $livro_publicado["detalhamentoDoLivro"]["numeroDaEdicaoRevisao"] = "";            
+        }           
+//Define variáveis - fim   
+                
+                $sha256 = hash('sha256', ''.$livro_publicado["dadosBasicosDoLivro"]["natureza"].$livro_publicado["dadosBasicosDoLivro"]["tituloDoLivro"].$livro_publicado["detalhamentoDoLivro"]["isbn"].'');              
                 $results =  compararRegistrosLattesLivros($client,str_replace('"','',$livro_publicado["dadosBasicosDoLivro"]["tituloDoLivro"]),str_replace('"','',$livro_publicado["detalhamentoDoLivro"]["isbn"]),"LIVRO-PUBLICADO");
 		
                 foreach ($results["hits"]["hits"] as $result) {			
@@ -625,10 +873,26 @@
                     $doi = "";
                 }
 
-                foreach ($capitulo_publicado["autores"]  as $autores) {
+                foreach ($capitulo_publicado["autores"]  as $autores) {		
+                    $autores_base_array = [];
 
-                    $autores_array[] = '{ "nome_completo_do_autor":"'.$autores["nomeCompletoDoAutor"].'", "nome_para_citacao":"'.$autores["nomeParaCitacao"].'", "ordem_de_autoria":"'.$autores["ordemDeAutoria"].'", "nro_id_cnpq":"'.$autores["nroIdCnpq"].'" }';
+                    if(isset($autores["nomeCompletoDoAutor"])) {
+                        $autores_base_array[] = '"nome_completo_do_autor":"'.$autores["nomeCompletoDoAutor"].'"';
+                    }
+                    if(isset($autores["nomeParaCitacao"])) {
+                        $autores_base_array[] = '"nome_para_citacao":"'.$autores["nomeParaCitacao"].'"';
+                    }  
+                    if(isset($autores["ordemDeAutoria"])) {
+                        $autores_base_array[] = '"ordem_de_autoria":"'.$autores["ordemDeAutoria"].'"';
+                    }              
+                    if(isset($autores["nroIdCnpq"])) {
+                        $autores_base_array[] = '"nro_id_cnpq":"'.$autores["nroIdCnpq"].'"';
+                    }  
 
+                    $autores_array[] = '{ 
+                        '.implode(",",$autores_base_array).'
+                    }';
+                    unset($autores_base_array);
                 }
 
                 $palavras_chave = [];
@@ -636,19 +900,19 @@
                     if (isset($capitulo_publicado["palavrasChave"]["palavraChave1"])){
                     $palavras_chave[] = $capitulo_publicado["palavrasChave"]["palavraChave1"];
                     }
-                    if (isset($artigo_publicado["palavrasChave"]["palavraChave2"])){
+                    if (isset($capitulo_publicado["palavrasChave"]["palavraChave2"])){
                     $palavras_chave[] = $capitulo_publicado["palavrasChave"]["palavraChave2"];
                     }
-                    if (isset($artigo_publicado["palavrasChave"]["palavraChave3"])){
+                    if (isset($capitulo_publicado["palavrasChave"]["palavraChave3"])){
                     $palavras_chave[] = $capitulo_publicado["palavrasChave"]["palavraChave3"];
                     }
-                    if (isset($artigo_publicado["palavrasChave"]["palavraChave4"])){
+                    if (isset($capitulo_publicado["palavrasChave"]["palavraChave4"])){
                     $palavras_chave[] = $capitulo_publicado["palavrasChave"]["palavraChave4"];
                     }						
-                    if (isset($artigo_publicado["palavrasChave"]["palavraChave5"])){
+                    if (isset($capitulo_publicado["palavrasChave"]["palavraChave5"])){
                     $palavras_chave[] = $capitulo_publicado["palavrasChave"]["palavraChave5"];
                     }
-                    if (isset($artigo_publicado["palavrasChave"]["palavraChave6"])){
+                    if (isset($capitulo_publicado["palavrasChave"]["palavraChave6"])){
                     $palavras_chave[] = $capitulo_publicado["palavrasChave"]["palavraChave6"];
                     }
                 }
@@ -656,12 +920,23 @@
         
                 if (isset($capitulo_publicado["areasDoConhecimento"])) {
                     foreach ($capitulo_publicado["areasDoConhecimento"] as $area_do_conhecimento) {
+                            $area_do_conhecimento_base_array = [];
+                            if (isset($area_do_conhecimento["nomeGrandeAreaDoConhecimento"])){
+                                $area_do_conhecimento_base_array[] = '"nome_grande_area_do_conhecimento":"'.$area_do_conhecimento["nomeGrandeAreaDoConhecimento"].'"';
+                            }
+                            if (isset($area_do_conhecimento["nomeDaAreaDoConhecimento"])){
+                                $area_do_conhecimento_base_array[] = '"nome_da_area_do_conhecimento":"'.$area_do_conhecimento["nomeDaAreaDoConhecimento"].'"';
+                            }
+                            if (isset($area_do_conhecimento["nomeDaSubAreaDoConhecimento"])){
+                                $area_do_conhecimento_base_array[] = '"nome_da_sub_area_do_conhecimento":"'.$area_do_conhecimento["nomeDaSubAreaDoConhecimento"].'"';
+                            }
+                            if (isset($area_do_conhecimento["nomeDaEspecialidade"])){
+                                $area_do_conhecimento_base_array[] = '"nome_da_especialidade":"'.$area_do_conhecimento["nomeDaEspecialidade"].'"';
+                            }                
                             $area_do_conhecimento_array[] = '{
-                                "nome_grande_area_do_conhecimento":"'.$area_do_conhecimento["nomeGrandeAreaDoConhecimento"].'",
-                                "nome_da_area_do_conhecimento":"'.$area_do_conhecimento["nomeDaAreaDoConhecimento"].'",
-                                "nome_da_sub_area_do_conhecimento":"'.$area_do_conhecimento["nomeDaSubAreaDoConhecimento"].'",
-                                "nome_da_especialidade":"'.$area_do_conhecimento["nomeDaEspecialidade"].'"
-                            }'; 								
+                                '.implode(",",$area_do_conhecimento_base_array).'
+                            }';
+                            unset($area_do_conhecimento_base_array);
                     }
                 } 
             
@@ -669,6 +944,21 @@
                 if (isset($area_do_conhecimento_array)){
                     $area_set = '"area_do_conhecimento":['.implode(",",$area_do_conhecimento_array).'],';
                 }
+
+// Define variáveis
+        if(!isset($capitulo_publicado["dadosBasicosDoCapitulo"]["natureza"])){
+            $capitulo_publicado["dadosBasicosDoCapitulo"]["natureza"] = "";            
+        }
+        if(!isset($capitulo_publicado["dadosBasicosDoCapitulo"]["homePageDoTrabalho"])){
+            $capitulo_publicado["dadosBasicosDoCapitulo"]["homePageDoTrabalho"] = "";            
+        }
+        if(!isset($capitulo_publicado["detalhamentoDoCapitulo"]["numeroDeVolumes"])){
+            $capitulo_publicado["detalhamentoDoCapitulo"]["numeroDeVolumes"] = "";            
+        }
+        if(!isset($capitulo_publicado["detalhamentoDoCapitulo"]["numeroDaEdicaoRevisao"])){
+            $capitulo_publicado["detalhamentoDoCapitulo"]["numeroDaEdicaoRevisao"] = "";            
+        }                 
+//Define variáveis - fim                   
             
 		        $sha256 = hash('sha256', ''.$capitulo_publicado["dadosBasicosDoCapitulo"]["natureza"].$capitulo_publicado["dadosBasicosDoCapitulo"]["tituloDoCapituloDoLivro"].$capitulo_publicado["detalhamentoDoCapitulo"]["isbn"].'');                
 		
@@ -837,7 +1127,17 @@ if (isset($cursor["docs"][0]["producaoTecnica"]["demaisTiposDeProducaoTecnica"][
         
     }
 }
-
-echo '<script>window.location = \'http://bdpife2.sibi.usp.br/coletaprod/result_trabalhos.php?search[]=id_lattes.keyword:"'.$_GET["id_lattes"].'"\'</script>';
         
 ?>
+            </div>
+                
+            <?php include('inc/footer.php'); ?>
+        </div>
+        
+        
+        <?php include('inc/offcanvas.php'); ?>
+        
+    </body>
+</html>
+
+<?php sleep(5); echo '<script>window.location = \'http://bdpife2.sibi.usp.br/coletaprod/result_trabalhos.php?search[]=id_lattes.keyword:"'.$_GET["id_lattes"].'"\'</script>';?>

@@ -51,7 +51,9 @@
                         <form class="uk-form" action="result_autores.php" method="get">
                             <fieldset data-uk-margin>
                                 <legend>Pesquisa por autor - <a href="result_autores.php">Ver todos</a></legend>
-                                <input type="text" placeholder="Pesquise por nome do autor ou número USP" class="uk-form-width-large" name="search[]" data-validation="required">                                       
+                                <input type="text" placeholder="Pesquise por nome do autor ou número USP" class="uk-form-width-large" name="search[]" data-validation="required">
+                                <input type="hidden" name="fields[]" value="nome_completo">                                
+                                <input type="hidden" name="fields[]" value="nome_em_citacoes_bibliograficas">
                                 <button class="uk-button-primary">Buscar</button><br/>                                    
                             </fieldset>
                         </form>

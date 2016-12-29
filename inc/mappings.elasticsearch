@@ -759,7 +759,7 @@ PUT /lattes/curriculo/_mapping
                     }
                   },
                   "numero_citacoes": {
-                    "type": "text",
+                    "type": "short",
                     "fields": {
                       "keyword": {
                         "type": "keyword",
@@ -768,7 +768,7 @@ PUT /lattes/curriculo/_mapping
                     }
                   },
                   "numero_trabalhos": {
-                    "type": "text",
+                    "type": "short",
                     "fields": {
                       "keyword": {
                         "type": "keyword",
@@ -853,7 +853,7 @@ PUT /lattes/curriculo/_mapping
                     }
                   },
                   "numero_citacoes": {
-                    "type": "text",
+                    "type": "short",
                     "fields": {
                       "keyword": {
                         "type": "keyword",
@@ -862,7 +862,7 @@ PUT /lattes/curriculo/_mapping
                     }
                   },
                   "numero_trabalhos": {
-                    "type": "text",
+                    "type": "short",
                     "fields": {
                       "keyword": {
                         "type": "keyword",
@@ -947,7 +947,7 @@ PUT /lattes/curriculo/_mapping
                     }
                   },
                   "numero_citacoes": {
-                    "type": "text",
+                    "type": "short",
                     "fields": {
                       "keyword": {
                         "type": "keyword",
@@ -956,7 +956,7 @@ PUT /lattes/curriculo/_mapping
                     }
                   },
                   "numero_trabalhos": {
-                    "type": "text",
+                    "type": "short",
                     "fields": {
                       "keyword": {
                         "type": "keyword",
@@ -1041,7 +1041,7 @@ PUT /lattes/curriculo/_mapping
                     }
                   },
                   "numero_citacoes": {
-                    "type": "text",
+                    "type": "short",
                     "fields": {
                       "keyword": {
                         "type": "keyword",
@@ -1050,7 +1050,7 @@ PUT /lattes/curriculo/_mapping
                     }
                   },
                   "numero_trabalhos": {
-                    "type": "text",
+                    "type": "short",
                     "fields": {
                       "keyword": {
                         "type": "keyword",
@@ -2051,6 +2051,7 @@ PUT /lattes/curriculo/_mapping
           },
           "nome_completo": {
             "type": "text",
+            "analyzer": "portuguese",
             "fields": {
               "keyword": {
                 "type": "keyword",
@@ -2060,6 +2061,7 @@ PUT /lattes/curriculo/_mapping
           },
           "nome_em_citacoes_bibliograficas": {
             "type": "text",
+            "analyzer": "portuguese",
             "fields": {
               "keyword": {
                 "type": "keyword",

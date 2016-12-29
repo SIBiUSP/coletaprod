@@ -1,5 +1,16 @@
 <?php
 
+function query_one_elastic ($_id,$client) {
+    
+    $params = [
+        'index' => 'lattes',
+        'type' => 'trabalhos',
+        'id' => ''.$_id.''
+    ];
+    $response = $client->get($params);
+    return $response;    
+}
+
 function match_id ($_id,$nota,$client) {
     
     $params = [
@@ -66,7 +77,7 @@ function store_record ($client,$sha256,$query){
         'body' => $query
     ];
     $response = $client->update($params);
-    echo ''.($response["_id"]).', '.($response["result"]).', '.($response["_shards"]['successful']).'<br/>';   
+    echo '<br/>Resultado: '.($response["_id"]).', '.($response["result"]).', '.($response["_shards"]['successful']).'<br/>';   
  
 }
 
@@ -840,6 +851,8 @@ function coleta_json_lattes($id_lattes) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
     $result = curl_exec($ch);
+    $info = curl_getinfo($ch);
+    var_dump($info);    
     curl_close($ch);
     $data = json_decode($result, TRUE);
     return $data;
