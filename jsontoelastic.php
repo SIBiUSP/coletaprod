@@ -1140,4 +1140,4 @@ if (isset($cursor["docs"][0]["producaoTecnica"]["demaisTiposDeProducaoTecnica"][
     </body>
 </html>
 
-<?php sleep(5); echo '<script>window.location = \'http://bdpife2.sibi.usp.br/coletaprod/result_trabalhos.php?search[]=id_lattes.keyword:"'.$_GET["id_lattes"].'"\'</script>';?>
+<?php sleep(5); echo '<script>window.location = \'http://bdpife2.sibi.usp.br/coletaprod/result_trabalhos.php?search[]=id_lattes.keyword:"'.$_GET["id_lattes"].'"\'</script>'; ?>
