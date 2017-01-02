@@ -16,10 +16,10 @@
         <title>Coleta Produção USP</title>
         <!-- Facebook Tags - START -->
         <meta property="og:locale" content="pt_BR">
-        <meta property="og:url" content="http://bdpi.usp.br">
+        <meta property="og:url" content="http://bdpife2.sibi.usp.br/coletaprod">
         <meta property="og:title" content="Coleta Produção USP - Página Principal">
         <meta property="og:site_name" content="Coleta Produção USP">
-        <meta property="og:description" content="Memória documental da produção científica, técnica e artística gerada nas Unidades da Universidade de São Paulo.">
+        <meta property="og:description" content="Sistema de coleta de produção em diversas fontes.">
         <meta property="og:image" content="http://www.imagens.usp.br/wp-content/uploads/USP.jpg">
         <meta property="og:image:type" content="image/jpeg">
         <meta property="og:image:width" content="800"> 

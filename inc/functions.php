@@ -858,7 +858,7 @@ function coleta_json_lattes($id_lattes) {
         $data = json_decode($result, TRUE);
         return $data;        
     } else {
-        echo '<br/><br/><br/><h2>Erro ao obter o arquivo da Base do Lattes, favor tentar novamente. <a href="index.php">Clique aqui para voltar a página inicial</a></h2>';
+        echo '<br/><br/><br/><h2>Erro '.$info["http_code"].' ao obter o arquivo da Base do Lattes, favor tentar novamente. <a href="index.php">Clique aqui para voltar a página inicial</a></h2>';
         //var_dump($info);    
         curl_close($ch);
         exit();
