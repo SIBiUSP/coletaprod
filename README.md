@@ -9,7 +9,9 @@ php composer.phar install --no-dev
 php5-cgi -f xmltoelastic.php codpes=XXXXXXXX
 
 Autores:
+
   Tiago Rodrigo Marçal Murakami
+  
   Jan Leduc de Lara
 
 Para citar, use o DOI: 
