@@ -20,10 +20,10 @@ function match_id ($_id,$nota,$client) {
         'id' => ''.$_id.''
     ];
     $response = $client->get($params);
-
+    
     echo '<div class="uk-alert uk-alert-danger">';
     echo '<h3>Registros similares no Coleta Produção USP</h3>';
-        echo '<p><a href="http://bdpi.usp.br/single.php?_id='.$_id.'">'.$response["_source"]["tipo"].' - '.$response["_source"]["titulo"].' ('.$response["_source"]["ano"].')</a></p>';
+        echo '<p><a href="http://bdpife2.sibi.usp.br/coletaprod/result_trabalhos.php?&search[]=+_id:&quot;'.$_id.'&quot;">'.$response["_source"]["tipo"].' - '.$response["_source"]["titulo"].' ('.$response["_source"]["ano"].') - Nota de proximidade: '.$nota.'</a></p>';
     echo '</div>';
         
     
