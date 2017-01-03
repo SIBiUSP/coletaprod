@@ -221,16 +221,6 @@
                                         <?php if (!empty($r["_source"]['ispartof'])) : ?><li class="uk-h6">In: <a href="result_trabalhos.php?search[]=ispartof.keyword:&quot;<?php echo $r["_source"]['ispartof'];?>&quot;"><?php echo $r["_source"]['ispartof'];?></a></li><?php endif; ?>
                                         
                                         <li class="uk-h6">
-                                            Unidades USP:
-                                            <?php if (!empty($r["_source"]['unidadeUSP'])) : ?>
-                                            <?php $unique =  array_unique($r["_source"]['unidadeUSP']); ?>
-                                            <?php foreach ($unique as $unidadeUSP) : ?>
-                                                <a href="result_trabalhos.php?search[]=unidadeUSP.keyword:&quot;<?php echo $unidadeUSP;?>&quot;"><?php echo $unidadeUSP;?></a>
-                                            <?php endforeach;?>
-                                            <?php endif; ?>
-                                        </li>
-                                        
-                                        <li class="uk-h6">
                                             Assuntos:
                                             <?php if (!empty($r["_source"]['palavras_chave'])) : ?>
                                             <?php foreach ($r["_source"]['palavras_chave'] as $assunto) : ?>

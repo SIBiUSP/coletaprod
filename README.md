@@ -5,6 +5,10 @@ Fontes possíveis:
 
     Base Lattes
 
+#Dependencias
+
+Elasticsearch 5 ou superior
+
 #Instalação
 
 curl -s http://getcomposer.org/installer | php

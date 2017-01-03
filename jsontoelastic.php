@@ -54,7 +54,7 @@
     $doc_curriculo_array = [];
     $doc_curriculo_array[] = '"source":"Base Lattes"';
     $doc_curriculo_array[] = '"tag": ["'.$_GET["tag"].'"]';
-    $doc_curriculo_array[] = '"data_atualizacao": "'.$cursor["docs"][0]["dataAtualizacao"].'"';
+    $doc_curriculo_array[] = '"data_atualizacao": "'.substr($cursor["docs"][0]["dataAtualizacao"],4,4)."-".substr($cursor["docs"][0]["dataAtualizacao"],2,2).'"';
     $doc_curriculo_array[] = '"nome_completo": "'.$cursor["docs"][0]["dadosGerais"]["nomeCompleto"].'"';
     $doc_curriculo_array[] = '"nome_em_citacoes_bibliograficas":"'.$cursor["docs"][0]["dadosGerais"]["nomeEmCitacoesBibliograficas"].'"';
     $doc_curriculo_array[] = '"nacionalidade":"'.$cursor["docs"][0]["dadosGerais"]["nacionalidade"].'"';
@@ -361,7 +361,7 @@
 				"doc_as_upsert" : true
 			}';
     
-    
+    //print_r($query_lattes);
     $resultado_curriculo = store_curriculo ($client,$cursor["docs"][0]["numeroIdentificador"],$query_lattes);
     print_r($resultado_curriculo);
 
@@ -539,7 +539,9 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
 				},
 				"doc_as_upsert" : true
 			}';            
+        
             
+        //print_r($query_evento);    
         $resultado_evento = store_record($client,$sha256,$query_evento);
         print_r($resultado_evento);     
 
@@ -709,7 +711,8 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
 				},
 				"doc_as_upsert" : true
 			}';            
-            
+        
+        //print_r($query_artigo);    
         $resultado_artigo = store_record($client,$sha256,$query_artigo);
         print_r($resultado_artigo);    
             
@@ -848,7 +851,7 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
                                 "numero_de_paginas":"'.$livro_publicado["detalhamentoDoLivro"]["numeroDePaginas"].'",						
                                 "numero_da_edicao_revisao":"'.$livro_publicado["detalhamentoDoLivro"]["numeroDaEdicaoRevisao"].'",
                                 "cidade_da_editora":"'.$livro_publicado["detalhamentoDoLivro"]["cidadeDaEditora"].'",
-                                "nome_da_editora":"'.$livro_publicado["detalhamentoDoLivro"]["nomeDaEditora"].'"
+                                "nome_da_editora":"'.str_replace('"','',$livro_publicado["detalhamentoDoLivro"]["nomeDaEditora"]).'"
                             },
                             "palavras_chave":["'.implode('","',$palavras_chave).'"],					
                             '.$area_set.'					
@@ -859,7 +862,7 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
                         "doc_as_upsert" : true
                     }';
                 
-            
+                //print_r($query_livro);
                 $resultado_livro = store_record($client,$sha256,$query_livro);
                 print_r($resultado_livro);    
             
@@ -1006,7 +1009,7 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
                                 "isbn":"'.$capitulo_publicado["detalhamentoDoCapitulo"]["isbn"].'",                                
                                 "numero_da_edicao_revisao":"'.$capitulo_publicado["detalhamentoDoCapitulo"]["numeroDaEdicaoRevisao"].'",
                                 "cidade_da_editora":"'.$capitulo_publicado["detalhamentoDoCapitulo"]["cidadeDaEditora"].'",
-                                "nome_da_editora":"'.$capitulo_publicado["detalhamentoDoCapitulo"]["nomeDaEditora"].'"
+                                "nome_da_editora":"'.str_replace('"','',$capitulo_publicado["detalhamentoDoCapitulo"]["nomeDaEditora"]).'"
                             },
                             "palavras_chave":["'.implode('","',$palavras_chave).'"],					
                             '.$area_set.'					
@@ -1018,7 +1021,7 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
                     }';
                 
  
-            
+                //print_r($query_capitulo);
                 $resultado_capitulo = store_record($client,$sha256,$query_capitulo);
                 print_r($resultado_capitulo);    
             
@@ -1149,7 +1152,6 @@ if (isset($cursor["docs"][0]["producaoTecnica"]["demaisTiposDeProducaoTecnica"][
         
     </body>
 </html>
-
 <?php if (!isset($_GET["path_download"])) :?>
     <?php sleep(5); echo '<script>window.location = \'http://bdpife2.sibi.usp.br/coletaprod/result_trabalhos.php?search[]=id_lattes.keyword:"'.$cursor["docs"][0]["numeroIdentificador"].'"\'</script>'; ?>
 <?php endif; ?>
