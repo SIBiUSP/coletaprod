@@ -37,9 +37,19 @@
 
 <?php 
 
-    $cursor = coleta_json_lattes($_GET["id_lattes"]);
+                
+    if (isset($_GET["id_lattes"])) {
+        $cursor = coleta_json_lattes($_GET["id_lattes"]);
+    } elseif (isset($_GET["path_download"])) {
+        $cursor = coleta_json_download_lattes($_GET["path_download"]);
+    } else {
+        echo '<p>Não foi informado nenhum ID</p>';
+    }            
+    
     
     //print_r($cursor);
+    //echo '<br/>';            
+    //print_r($cursor["docs"][0]["numeroIdentificador"]);            
 
     $doc_curriculo_array = [];
     $doc_curriculo_array[] = '"source":"Base Lattes"';
@@ -352,7 +362,7 @@
 			}';
     
     
-    $resultado_curriculo = store_curriculo ($client,$_GET["id_lattes"],$query_lattes);
+    $resultado_curriculo = store_curriculo ($client,$cursor["docs"][0]["numeroIdentificador"],$query_lattes);
     print_r($resultado_curriculo);
 
 //Parser de Trabalhos-em-Eventos
@@ -495,7 +505,7 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
 			'{
 				"doc":{
                     "source":"Base Lattes", 
-					"id_lattes": ["'.$_GET["id_lattes"].'"],
+					"id_lattes": ["'.$cursor["docs"][0]["numeroIdentificador"].'"],
                     "tag": ["'.$_GET["tag"].'"],
 					"tipo":"TRABALHO-EM-EVENTOS",
 					"natureza": "'.$trab_evento["dadosBasicosDoTrabalho"]["natureza"].'",
@@ -671,7 +681,7 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
 			'{
 				"doc":{
                     "source":"Base Lattes", 
-					"id_lattes": ["'.$_GET["id_lattes"].'"],
+					"id_lattes": ["'.$cursor["docs"][0]["numeroIdentificador"].'"],
                     "tag": ["'.$_GET["tag"].'"],
 					"tipo":"ARTIGO-PUBLICADO",
 					"natureza": "'.$artigo_publicado["dadosBasicosDoArtigo"]["natureza"].'",
@@ -823,7 +833,7 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
                     '{
                         "doc":{
                             "source":"Base Lattes", 
-                            "id_lattes": ["'.$_GET["id_lattes"].'"],
+                            "id_lattes": ["'.$cursor["docs"][0]["numeroIdentificador"].'"],
                             "tag": ["'.$_GET["tag"].'"],
                             "tipo":"LIVRO-PUBLICADO",
                             "natureza": "'.$livro_publicado["dadosBasicosDoLivro"]["natureza"].'",
@@ -977,7 +987,7 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
                     '{
                         "doc":{
                             "source":"Base Lattes", 
-                            "id_lattes": ["'.$_GET["id_lattes"].'"],
+                            "id_lattes": ["'.$cursor["docs"][0]["numeroIdentificador"].'"],
                             "tag": ["'.$_GET["tag"].'"],
                             "tipo":"CAPITULO-DE-LIVRO",
                             "natureza": "'.$capitulo_publicado["dadosBasicosDoCapitulo"]["natureza"].'",
@@ -1091,7 +1101,7 @@ if (isset($cursor["docs"][0]["producaoTecnica"]["demaisTiposDeProducaoTecnica"][
                 '{
                     "doc":{
                         "source":"Base Lattes", 
-                        "id_lattes": ["'.$_GET["id_lattes"].'"],
+                        "id_lattes": ["'.$cursor["docs"][0]["numeroIdentificador"].'"],
                         "tag": ["'.$_GET["tag"].'"],
                         "tipo":"MIDIA-SOCIAL-OU-BLOG",
                         "natureza": "'.$midiasocialwebsiteblog["dadosBasicosDaMidiaSocialWebsiteBlog"]["natureza"].'",
@@ -1140,4 +1150,6 @@ if (isset($cursor["docs"][0]["producaoTecnica"]["demaisTiposDeProducaoTecnica"][
     </body>
 </html>
 
-<?php sleep(5); echo '<script>window.location = \'http://bdpife2.sibi.usp.br/coletaprod/result_trabalhos.php?search[]=id_lattes.keyword:"'.$_GET["id_lattes"].'"\'</script>'; ?>
+<?php if (!isset($_GET["path_download"])) :?>
+    <?php sleep(5); echo '<script>window.location = \'http://bdpife2.sibi.usp.br/coletaprod/result_trabalhos.php?search[]=id_lattes.keyword:"'.$cursor["docs"][0]["numeroIdentificador"].'"\'</script>'; ?>
+<?php endif; ?>

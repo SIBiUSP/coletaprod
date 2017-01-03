@@ -868,6 +868,14 @@ function coleta_json_lattes($id_lattes) {
     
 }
 
+function coleta_json_download_lattes($id_lattes) {
+    
+    $result = file_get_contents($id_lattes);
+    $data = json_decode($result, TRUE);
+    return $data;
+    
+}
+
 function fonte_inicio($client) {
     $query = '{
         "aggs": {
