@@ -526,7 +526,7 @@ class facets {
         foreach ($response["aggregations"]["counts"]["buckets"] as $facets) {
             echo '<li class="uk-h6 uk-form-controls uk-form-controls-text">';
             echo '<p class="uk-form-controls-condensed">';
-            echo '<div class="uk-grid"><div class="uk-width-4-5">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</div> <div class="uk-width-1-5"> <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=+'.$field.'.keyword:&quot;'.$facets['key'].'&quot;" class="uk-icon-hover uk-icon-plus" data-uk-tooltip title="E"></a> <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=-'.$field.'.keyword:&quot;'.$facets['key'].'&quot;" class="uk-icon-hover uk-icon-minus" data-uk-tooltip title="NÃO"></a>  <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=OR '.$field.'.keyword:&quot;'.$facets['key'].'&quot;" class="uk-icon-hover uk-icon-check-circle-o" data-uk-tooltip title="OU"></a></div>';
+            echo '<div class="uk-grid"><div class="uk-width-4-5">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</div> <div class="uk-width-1-5"> <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=+'.$field.'.keyword:&quot;'.$facets['key'].'&quot;" class="uk-icon-hover uk-icon-asterisk" data-uk-tooltip title="E"></a> <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=-'.$field.'.keyword:&quot;'.$facets['key'].'&quot;" class="uk-icon-hover uk-icon-minus" data-uk-tooltip title="NÃO"></a>  <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=OR '.$field.'.keyword:&quot;'.$facets['key'].'&quot;" class="uk-icon-plus uk-icon-check-circle-o" data-uk-tooltip title="OU"></a></div>';
             echo '</p>';
             echo '</li>';
             //if ($count == 11)
@@ -926,6 +926,73 @@ function tipo_inicio($client) {
         echo '<li><a href="result_trabalhos.php?search[]=tipo.keyword:&quot;'.$facets['key'].'&quot;">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a></li>';
     }   
     
+}
+
+function query_doi($doi,$tag,$client) {
+    $url = "https://api.crossref.org/v1/works/http://dx.doi.org/$doi";
+    $json = file_get_contents($url);
+    $data = json_decode($json, TRUE);
+    
+    //print_r($data);
+    
+    $sha256 = hash('sha256', ''.$doi.''); 
+    
+    foreach ($data["message"]["subject"]  as $assunto) {	
+        $palavras_chave[] = $assunto;
+    }
+    
+    foreach ($data["message"]["author"]  as $autores) {		
+        $autores_base_array = [];
+        $autores_base_array[] = '"nome_completo_do_autor":"'.$autores["given"]." ".$autores["family"].'"';
+        $autores_base_array[] = '"nome_para_citacao":"'.$autores["family"].', '.$autores["given"].'"';
+
+        $autores_array[] = '{ 
+            '.implode(",",$autores_base_array).'
+        }';
+        unset($autores_base_array);
+    }    
+    
+    
+    $insert_doi = 
+        '{
+            "doc":{
+                "source":"Base DOI - CrossRef", 
+                "tag": ["'.$tag.'"],
+                "tipo":"'.$data["message"]["type"].'",
+                "titulo": "'.$data["message"]["title"][0].'",
+                "subtitulo": "'.$data["message"]["subtitle"][0].'",
+                "titulo_original": "'.$data["message"]["original-title"][0].'",
+                "ano": "'.$data["message"]["published-online"]["date-parts"][0][0].'",
+                "url": "'.$data["message"]["URL"].'",
+                "doi":"'.$data["message"]["DOI"].'",
+                "periodico":{
+                    "titulo_do_periodico":"'.$data["message"]["container-title"][0].'",
+                    "issn":"'.$data["message"]["ISSN"][0].'",
+                    "volume":"'.$data["message"]["volume"].'",
+                    "fasciculo":"'.$data["message"]["issue"].'",
+                    "pagina_inicial":"'.$data["message"]["page"].'",
+                    "nome_da_editora":"'.$data["message"]["publisher"].'"
+                },
+                "palavras_chave":["'.implode('","',$palavras_chave).'"],
+                "autores":['.implode(',',$autores_array).']
+
+            },
+            "doc_as_upsert" : true
+        }';     
+    
+    
+    //print_r($insert_doi);
+    
+    $params = [
+        'index' => 'lattes',
+        'type' => 'trabalhos',
+        'id' => "$sha256",
+        'body' => $insert_doi
+    ];
+    $response = $client->update($params);
+    echo '<br/>Resultado: '.($response["_id"]).', '.($response["result"]).', '.($response["_shards"]['successful']).'<br/>';       
+    
+
 }
 
 ?>
