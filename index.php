@@ -118,7 +118,7 @@
                         <i class="uk-icon-bar-chart uk-icon-large uk-text-primary"></i>
                     </div>
                     <div class="uk-width-5-6">
-                        <h2 class="uk-h3">Nossos números</h2>
+                        <h2 class="uk-h3">Alguns números</h2>
                         <ul class="uk-list uk-list-striped">
                             <li><?php echo number_format(contar_registros($client),0,',','.'); ?> registros</li> 
                             <li><?php echo number_format(contar_autores($client),0,',','.'); ?> currículos</li>
