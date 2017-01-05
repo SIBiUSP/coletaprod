@@ -222,7 +222,9 @@
                                             <?php endif; ?>                           
                                         </li>
                                         
-                                        <?php if (!empty($r["_source"]['ispartof'])) : ?><li class="uk-h6">In: <a href="result_trabalhos.php?search[]=ispartof.keyword:&quot;<?php echo $r["_source"]['ispartof'];?>&quot;"><?php echo $r["_source"]['ispartof'];?></a></li><?php endif; ?>
+                                        <?php if (!empty($r["_source"]['periodico'])) : ?>
+                                            <li class="uk-h6">In: <a href="result_trabalhos.php?search[]=periodico.titulo_do_periodico.keyword:&quot;<?php echo $r["_source"]['periodico']['titulo_do_periodico'];?>&quot;"><?php echo $r["_source"]['periodico']['titulo_do_periodico'];?></a></li>                                        
+                                        <?php endif; ?>
                                         
                                         <li class="uk-h6">
                                             Assuntos:
