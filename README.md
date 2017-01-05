@@ -12,8 +12,8 @@ Fontes possíveis:
 1. Elasticsearch 5 ou superior
 
 2. Dependências do PHP
-⋅⋅* php5-cgi
-⋅⋅* php5-curl
+⋅⋅1. php5-cgi
+⋅⋅2. php5-curl
 
 
 ## Instalação
