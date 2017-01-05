@@ -94,6 +94,8 @@
         $facets->facet("idioma",40,"Idioma",null);
         $facets->facet("meio_de_divulgacao",100,"Meio de divulgação",null);
         $facets->facet("palavras_chave",100,"Palavras-chave",null);
+        $facets->facet("agencia_de_fomento",100,"Agências de fomento",null);
+        $facets->facet("citacoes_recebidas",100,"Citações recebidas",null);
         
         $facets->facet("area_do_conhecimento.nome_grande_area_do_conhecimento",100,"Nome da Grande Área do Conhecimento",null);
         $facets->facet("area_do_conhecimento.nome_da_area_do_conhecimento",100,"Nome da Área do Conhecimento",null);
@@ -113,6 +115,8 @@
         $facets->facet("evento.nome_da_editora",100,"Editora dos anais",null);
         $facets->facet("evento.cidade_da_editora",100,"Cidade da editora",null);
         $facets->facet("evento.nome_do_evento_ingles",100,"Nome do evento em inglês",null);
+        
+        $facets->facet("periodico.titulo_do_periodico",100,"Título do periódico",null);
         
     ?>
     </ul>

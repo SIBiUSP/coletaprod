@@ -60,6 +60,7 @@
                         "ano": "'.$row[44].'",
                         "idioma": "'.$row[12].'",
                         "doi":"'.$row[54].'",
+                        "citacoes_recebidas": "'.$row[31].'",
                         "agencia_de_fomento":["'.implode('","',str_replace('"','',$agencia_de_fomento_array)).'"],
                         '.$container_title.'
                         "resumo":"'.str_replace('"','',$row[21]).'",
@@ -70,11 +71,11 @@
                     "doc_as_upsert" : true
                 }';
             
-            print_r($query_wos);
+            //print_r($query_wos);
             //echo '<br/><br/>';
             
-            $resultado_artigo = store_record($client,$sha256,$query_wos);
-            print_r($resultado_artigo);  
+            $resultado_wos = store_record($client,$sha256,$query_wos);
+            print_r($resultado_wos);  
             
             
             //Limpar variáveis

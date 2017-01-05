@@ -7,7 +7,12 @@ Fontes possíveis:
 
 #Dependencias
 
-Elasticsearch 5 ou superior
+⋅⋅* Elasticsearch 5 ou superior
+
+⋅⋅* Dependências do PHP
+    ⋅⋅* php5-cgi
+    ⋅⋅* php5-curl
+
 
 #Instalação
 
