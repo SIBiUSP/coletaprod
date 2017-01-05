@@ -10,9 +10,7 @@ Fontes possíveis:
 ## Dependencias
 
 1. Elasticsearch 5 ou superior
-* Dependências do PHP
-.* php5-cgi
-.* php5-curl
+* Dependências do PHP: php5-cgi | php5-curl
 
 
 ## Instalação
