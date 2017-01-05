@@ -7,16 +7,16 @@ Fontes possíveis:
 + Web of Science
 + CrossRef (DOI)
 
-#Dependencias
+## Dependencias
 
-+ Elasticsearch 5 ou superior
+1. Elasticsearch 5 ou superior
 
-+ Dependências do PHP
+2. Dependências do PHP
 ⋅⋅* php5-cgi
 ⋅⋅* php5-curl
 
 
-#Instalação
+## Instalação
 
 curl -s http://getcomposer.org/installer | php
 
@@ -29,9 +29,8 @@ php5-cgi -f jsontoelastic.php path_download=XXXXXXXX
 
 Autores:
 
-  Tiago Rodrigo Marçal Murakami
-  
-  Jan Leduc de Lara
++ Tiago Rodrigo Marçal Murakami
++ Jan Leduc de Lara
 
 
 
