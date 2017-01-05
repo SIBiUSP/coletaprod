@@ -3,15 +3,17 @@ Extração e navegação de registros para a Coleta de Produção Científica da
 
 Fontes possíveis: 
 
-    Base Lattes
++ Base Lattes
++ Web of Science
++ CrossRef (DOI)
 
 #Dependencias
 
-⋅⋅* Elasticsearch 5 ou superior
++ Elasticsearch 5 ou superior
 
-⋅⋅* Dependências do PHP
-    ⋅⋅* php5-cgi
-    ⋅⋅* php5-curl
++ Dependências do PHP
+⋅⋅* php5-cgi
+⋅⋅* php5-curl
 
 
 #Instalação
