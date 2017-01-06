@@ -225,6 +225,10 @@
                                             <li class="uk-h6">In: <a href="result_trabalhos.php?search[]=periodico.titulo_do_periodico.keyword:&quot;<?php echo $r["_source"]['periodico']['titulo_do_periodico'];?>&quot;"><?php echo $r["_source"]['periodico']['titulo_do_periodico'];?></a></li>                                        
                                         <?php endif; ?>
                                         
+                                        <?php if (!empty($r["_source"]['doi'])) : ?>
+                                            <li class="uk-h6">DOI: <a href="http://dx.doi.org/<?php echo $r["_source"]['doi'];?>"><?php echo $r["_source"]['doi'];?></a></li>                                        
+                                        <?php endif; ?>                                        
+                                        
                                         <li class="uk-h6">
                                             Assuntos:
                                             <?php if (!empty($r["_source"]['palavras_chave'])) : ?>
