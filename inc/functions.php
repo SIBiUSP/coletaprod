@@ -68,6 +68,25 @@ function contar_autores ($client) {
     print_r($response);
 }
 
+function contar_registros_match ($client) {
+    $query_all = '
+        {
+            "query": {
+                "exists" : { "field" : "ids_match" }
+            }
+        }          
+    ';
+    $params = [
+        'index' => 'lattes',
+        'type' => 'trabalhos',
+        'size'=> 0,
+        'body' => $query_all
+    ];
+    $response = $client->search($params);
+    return $response['hits']['total'];
+    print_r($response);
+}
+
 function store_record ($client,$sha256,$query){
     
     $params = [
@@ -632,8 +651,6 @@ class facets {
         echo '</form>';
         echo   '</ul></li>';    
     }
-    
-    
 }
 
 class facets_users {   

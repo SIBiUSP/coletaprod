@@ -142,7 +142,7 @@
                         <ul class="uk-list uk-list-striped">
                             <li><?php echo number_format(contar_registros($client),0,',','.'); ?> registros</li> 
                             <li><?php echo number_format(contar_autores($client),0,',','.'); ?> currículos</li>
-                            <!-- <li>< ?php echo number_format(contar_unicos("authorUSP",$client),0,',','.'); ?> autores vinculados à USP</li> -->                                
+                            <li><?php echo number_format(contar_registros_match($client),0,',','.'); ?> Registros similares identificados</li>                                 
                         </ul>
                     </div>
                 </div>

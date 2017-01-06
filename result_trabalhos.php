@@ -116,8 +116,7 @@
         $facets->facet("evento.cidade_da_editora",100,"Cidade da editora",null);
         $facets->facet("evento.nome_do_evento_ingles",100,"Nome do evento em inglês",null);
         
-        $facets->facet("periodico.titulo_do_periodico",100,"Título do periódico",null);
-        
+        $facets->facet("periodico.titulo_do_periodico",100,"Título do periódico",null);   
     ?>
     </ul>
         <?php if(!empty($_SESSION['oauthuserdata'])): ?>
