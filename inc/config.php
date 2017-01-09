@@ -8,7 +8,7 @@
 	/* Endereço do server, sem http:// */ 
 	$server = 'localhost'; 
 	$hosts = [
-		'200.144.183.86' 
+		'localhost' 
 	]; 
 
 	/* Load libraries for PHP composer */ 

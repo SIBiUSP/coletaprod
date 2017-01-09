@@ -12,11 +12,19 @@ Fontes possíveis:
 1. Elasticsearch 5 ou superior
 * Dependências do PHP: php5-cgi | php5-curl
 
+## Clonar repositórios
+
+git clone https://github.com/SIBiUSP/coletaprod.git
+
 ## Instalação
 
 curl -s http://getcomposer.org/installer | php
 
 php composer.phar install --no-dev
+
+## Configurar o arquivo inc/config.php
+
+Editar suas configurações em config.php
 
 ## Rodar via linha de comando
 
