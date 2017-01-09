@@ -26,6 +26,10 @@ php composer.phar install --no-dev
 
 Editar suas configurações em config.php
 
+## Rodar os comandos inc/mappings.elasticsearch
+
+Rodar os comandos de criação do índice e mapeamento dos tipos disponíveis no arquivo inc/mappings.elasticsearch
+
 ## Rodar via linha de comando
 
 php5-cgi -f jsontoelastic.php id_lattes=XXXXXXXX
