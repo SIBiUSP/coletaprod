@@ -301,6 +301,42 @@
                                             
                                         ?> 
                                         </li>
+                                        
+                                        
+                                        <p><a href="#" class="uk-margin-top" data-uk-toggle="{target:'#citacao<?php echo  $r['_id'];?>'}">Ver todos os dados deste registro</a></p>
+                                        <div id="citacao<?php echo  $r['_id'];?>" class="uk-hidden">                                        
+                                            <li class="uk-h6"> 
+                                                <table class="uk-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nome do campo</th>
+                                                            <th>Valor</th>
+                                                        </tr>
+                                                    </thead>    
+                                                    <tbody>
+                                                        <?php foreach ($r["_source"] as $key => $value) {
+                                                                echo '<tr><td>'.$key.'</td><td>';
+                                                                if (is_array($value)) {
+                                                                    foreach ($value as $valor) {
+                                                                        if (is_array($valor)) {
+                                                                                foreach ($valor as $valor1) {
+                                                                                    echo ''.$valor1.'';
+                                                                                }
+                                                                            } else {
+                                                                               echo ''.$valor.''; 
+                                                                            }
+                                                                        }
+
+                                                                } else {
+                                                                    echo ''.$value.'';
+                                                                }
+                                                                echo '</td>';
+                                                                echo '</tr>';
+                                                        };?>
+                                                    </tbody>
+                                                </table>
+                                            </li>
+                                        </div>    
                                             
                                     </ul>
                                 </div>

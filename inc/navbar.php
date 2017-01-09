@@ -25,32 +25,31 @@
                                         <li><a href="">Inglês</a></li>
                                     </ul>
                                 </div> 
-                            </li>
-                            -->
+                            </li>                            
                             <li>
                                 <a href="contato.php" style="color:white">Contato</a>
                             </li>
-                            <!--
                             <li>
                                 <a href="about.php" style="color:white">Sobre</a>
                             </li>
-                            -->
+                            
                             <li data-uk-dropdown="" aria-haspopup="true" aria-expanded="false">
                                 <a href="" style="color:white"><i class="uk-icon-home"></i> Usuário</a>
 
                                 <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-bottom" style="top: 40px; left: 0px;">
                                     <ul class="uk-nav uk-nav-navbar">
                                         <li class="uk-nav-header">Acesso</li>
-                                        <?php if(empty($_SESSION['oauthuserdata'])): ?>
+                                        < ?php if(empty($_SESSION['oauthuserdata'])): ?>
                                             <li><a href="aut/oauth.php">Login</a></li>
-                                        <?php else: ?>
-                                            <li><a href="#"><?php echo 'Bem vindo, '.$_SESSION['oauthuserdata']->{'nomeUsuario'}.'';?></a></li>
+                                        < ?php else: ?>
+                                            <li><a href="#">< ?php echo 'Bem vindo, '.$_SESSION['oauthuserdata']->{'nomeUsuario'}.'';?></a></li>
                                             <li><a href="aut/logout.php">Logout</a></li>
-                                        <?php endif; ?>
+                                        < ?php endif; ?>
                                     </ul>
                                 </div>
 
                             </li>
+                            -->
                             <a class="uk-navbar-brand uk-hidden-small" href="http://sibi.usp.br" style="color:white">SIBiUSP</a>
                         </ul>
                     </div>                
