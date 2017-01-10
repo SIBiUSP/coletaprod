@@ -1,5 +1,7 @@
 {
     "require": {
-        "elasticsearch/elasticsearch": "~5.0"
+        "elasticsearch/elasticsearch": "~5.0",
+        "caseyamcl/phpoaipmh": "~2.0",
+        "guzzlehttp/guzzle":   "~5.0"
     }
 }

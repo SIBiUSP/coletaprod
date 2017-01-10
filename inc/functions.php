@@ -905,7 +905,7 @@ function fonte_inicio($client) {
             "group_by_state": {
                 "terms": {
                     "field": "source.keyword",                    
-                    "size" : 5
+                    "size" : 100
                 }
             }
         }
