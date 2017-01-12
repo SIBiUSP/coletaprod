@@ -1,444 +1,361 @@
 <?php
 
-function query_one_elastic ($_id,$client) {
-    
-    $params = [
-        'index' => 'lattes',
-        'type' => 'trabalhos',
-        'id' => ''.$_id.''
-    ];
-    $response = $client->get($params);
-    return $response;    
-}
 
-function match_id ($_id,$nota,$client) {
-    
-    $params = [
-        'index' => 'lattes',
-        'type' => 'trabalhos',
-        '_source' => ['titulo','tipo','ano'],
-        'id' => ''.$_id.''
-    ];
-    $response = $client->get($params);
-    
-    echo '<div class="uk-alert uk-alert-danger">';
-    echo '<h3>Registros similares no Coleta Produção USP</h3>';
-        echo '<p><a href="http://bdpife2.sibi.usp.br/coletaprod/result_trabalhos.php?&search[]=+_id:&quot;'.$_id.'&quot;">'.$response["_source"]["tipo"].' - '.$response["_source"]["titulo"].' ('.$response["_source"]["ano"].') - Nota de proximidade: '.$nota.'</a></p>';
-    echo '</div>';
+class elasticsearch {
+
+    public static function elastic_get ($_id,$type,$fields) {
+        global $index;
+        global $client;
+        if (!defined('type_constant')) define('type_constant', ''.$type.'');
+        //define('fields', ''.$fields.'');
+        $params = [];
+        $params["index"] = $index;
+        $params["type"] = type_constant;
+        $params["id"] = $_id;
+        $params["_source"] = $fields;
         
+        $response = $client->get($params);        
+        return $response;    
+    }    
     
-    //return $response;    
+    public static function elastic_search ($type,$fields,$size,$body) {
+        global $index;
+        global $client;
+        $params = [];
+        $params["index"] = $index;
+        $params["type"] = $type;
+        $params["_source"] = $fields;
+        $params["size"] = $size;
+        $params["body"] = $body;
+        
+        $response = $client->search($params);        
+        return $response;
+    }
+    public static function elastic_update ($_id,$type,$body) {
+        global $index;
+        global $client;
+        $params = [];
+        $params["index"] = $index;
+        $params["type"] = $type;
+        $params["id"] = $_id;
+        $params["body"] = $body;
+        
+        $response = $client->update($params);        
+        return $response;
+    }     
+    
+    
 }
 
-function contar_registros ($client) {
-    $query_all = '
+class compararRegistros {
+    
+    public static function doi($doi) {
+        global $index;
+        global $client;        
+        $body = '
+            {
+                "query":{
+                    "match" : {
+                        "doi": "'.$doi.'"
+                    }
+                }
+            }
+        ';        
+        $type = "trabalhos";
+        $response = elasticsearch::elastic_search($type,NULL,$size,$body);
+        return $response; 
+    }    
+    
+    public static function lattesEventos ($ano,$titulo,$nome_do_evento,$tipo) {
+        global $index;
+        global $client;        
+        $body = '
+        {
+            "min_score": 30,
+            "query":{
+                "bool": {
+                    "should": [
+                        {
+                            "multi_match" : {
+                                "query":      "'.$tipo.'",
+                                "type":       "cross_fields",
+                                "fields":     [ "tipo" ],
+                                "minimum_should_match": "100%" 
+                             }
+                        },		
+                        {
+                            "multi_match" : {
+                                "query":      "'.$titulo.'",
+                                "type":       "cross_fields",
+                                "fields":     [ "titulo" ],
+                                "minimum_should_match": "90%" 
+                             }
+                        },
+                        {
+                            "multi_match" : {
+                                "query":      "'.$nome_do_evento.'",
+                                "type":       "cross_fields",
+                                "fields":     [ "evento.nome_do_evento" ],
+                                "minimum_should_match": "80%" 
+                             }
+                        },		    
+                        {
+                            "multi_match" : {
+                                "query":      "'.$ano.'",
+                                "type":       "best_fields",
+                                "fields":     [ "ano" ],
+                                "minimum_should_match": "75%" 
+                            }
+                        }
+                    ],
+                    "minimum_should_match" : 1               
+                }
+            }
+        }
+        ';
+        $type = "trabalhos";
+        $response = elasticsearch::elastic_search($type,NULL,$size,$body);
+        return $response;
+    }
+    
+    public static function lattesArtigos ($ano,$titulo,$titulo_do_periodico,$doi,$tipo) {
+        global $index;
+        global $client;        
+        $body = '
+            {
+                "min_score": 0,
+                "query":{
+                    "bool": {
+                        "should": [
+                            {
+                                "multi_match" : {
+                                    "query":      "'.$tipo.'",
+                                    "type":       "cross_fields",
+                                    "fields":     [ "tipo" ],
+                                    "minimum_should_match": "100%" 
+                                 }
+                            },
+                            {
+                                "multi_match" : {
+                                    "query":      "'.$doi.'",
+                                    "type":       "cross_fields",
+                                    "fields":     [ "doi" ],
+                                    "minimum_should_match": "100%" 
+                                 }
+                            },			    		
+                            {
+                                "multi_match" : {
+                                    "query":      "'.$titulo.'",
+                                    "type":       "cross_fields",
+                                    "fields":     [ "titulo" ],
+                                    "minimum_should_match": "90%" 
+                                 }
+                            },
+                            {
+                                "multi_match" : {
+                                    "query":      "'.$titulo_do_periodico.'",
+                                    "type":       "cross_fields",
+                                    "fields":     [ "periodico.titulo_do_periodico" ],
+                                    "minimum_should_match": "80%" 
+                                 }
+                            },		    
+                            {
+                                "multi_match" : {
+                                    "query":      "'.$ano.'",
+                                    "type":       "best_fields",
+                                    "fields":     [ "ano" ],
+                                    "minimum_should_match": "75%" 
+                                }
+                            }
+                        ],
+                        "minimum_should_match" : 2               
+                    }
+                }
+            }
+        ';   
+
+        $type = "trabalhos";
+        $response = elasticsearch::elastic_search($type,NULL,$size,$body);
+        return $response;
+    }
+
+    public static function lattesLivros ($titulo,$isbn,$tipo) {
+        global $index;
+        global $client;
+        $body = '
+        {
+            "min_score": 3,
+            "query":{
+                "bool": {
+                    "should": [
+                        {
+                            "multi_match" : {
+                                "query":      "'.$tipo.'",
+                                "type":       "cross_fields",
+                                "fields":     [ "tipo" ],
+                                "minimum_should_match": "100%" 
+                             }
+                        },
+                        {
+                            "multi_match" : {
+                                "query":      "'.$isbn.'",
+                                "type":       "cross_fields",
+                                "fields":     [ "isbn" ],
+                                "minimum_should_match": "100%" 
+                             }
+                        },			    		
+                        {
+                            "multi_match" : {
+                                "query":      "'.$titulo.'",
+                                "type":       "cross_fields",
+                                "fields":     [ "titulo" ],
+                                "minimum_should_match": "90%" 
+                             }
+                        }
+                    ],
+                    "minimum_should_match" : 2               
+                }
+            }
+        }
+        '; 
+        $type = "trabalhos";
+        $response = elasticsearch::elastic_search($type,NULL,$size,$body);
+        return $response;
+    }
+    
+    public static function lattesCapitulos ($titulo,$titulo_do_livro,$tipo) {
+        global $index;
+        global $client;
+        $body = '
+            {
+                "min_score": 2,
+                "query":{
+                    "bool": {
+                        "should": [
+                            {
+                                "multi_match" : {
+                                    "query":      "'.$tipo.'",
+                                    "type":       "cross_fields",
+                                    "fields":     [ "tipo" ],
+                                    "minimum_should_match": "100%" 
+                                 }
+                            },		    		
+                            {
+                                "multi_match" : {
+                                    "query":      "'.$titulo.'",
+                                    "type":       "cross_fields",
+                                    "fields":     [ "titulo" ],
+                                    "minimum_should_match": "90%" 
+                                 }
+                            },
+                            {
+                                "multi_match" : {
+                                    "query":      "'.$titulo_do_livro.'",
+                                    "type":       "cross_fields",
+                                    "fields":     [ "capitulo_do_livro.titulo_do_livro" ],
+                                    "minimum_should_match": "90%" 
+                                 }
+                            }                    
+                        ],
+                        "minimum_should_match" : 3               
+                    }
+                }
+            }
+        ';
+        $type = "trabalhos";
+        $response = elasticsearch::elastic_search($type,NULL,$size,$body);
+        return $response;
+    }
+    
+    public static function lattesMidiaSocial ($titulo,$url,$tipo) {
+        global $index;
+        global $client;
+        $body = '
+        {
+            "min_score": 3,
+            "query":{
+                "bool": {
+                    "should": [
+                        {
+                            "multi_match" : {
+                                "query":      "'.$tipo.'",
+                                "type":       "cross_fields",
+                                "fields":     [ "tipo" ],
+                                "minimum_should_match": "100%" 
+                             }
+                        },		    		
+                        {
+                            "multi_match" : {
+                                "query":      "'.$titulo.'",
+                                "type":       "cross_fields",
+                                "fields":     [ "titulo" ],
+                                "minimum_should_match": "90%" 
+                             }
+                        },
+                        {
+                            "multi_match" : {
+                                "query":      "'.$url.'",
+                                "type":       "cross_fields",
+                                "fields":     [ "url" ],
+                                "minimum_should_match": "100%" 
+                             }
+                        }                    
+                    ],
+                    "minimum_should_match" : 3               
+                }
+            }
+        }
+        ';
+        $type = "trabalhos";
+        $response = elasticsearch::elastic_search($type,NULL,$size,$body);
+        return $response;
+    }    
+
+    public static function match_id ($_id,$nota) {
+        $fields = ['titulo','tipo','ano'];
+        $response = elasticsearch::elastic_get($_id,"trabalhos",$fields);
+
+        echo '<div class="uk-alert uk-alert-danger">';
+        echo '<h3>Registros similares no Coleta Produção USP</h3>';
+            echo '<p><a href="result_trabalhos.php?&search[]=+_id:&quot;'.$_id.'&quot;">'.$response["_source"]["tipo"].' - '.$response["_source"]["titulo"].' ('.$response["_source"]["ano"].') - Nota de proximidade: '.$nota.'</a></p>';
+        echo '</div>';
+
+    }    
+    
+    
+}
+
+function contar_tipo_de_registro($type) {
+    $body = '
         {
             "query": {
                 "match_all": {}
             }
         }        
-    ';
-    $params = [
-        'index' => 'lattes',
-        'type' => 'trabalhos',
-        'size'=> 0,
-        'body' => $query_all
-    ];
-    $response = $client->search($params);
-    return $response['hits']['total'];
-    print_r($response);
+    ';    
+    $size = 0;
+    $response = elasticsearch::elastic_search($type,NULL,$size,$body);
+    return number_format($response['hits']['total'],0,',','.');
 }
 
-function contar_autores ($client) {
-    $query_all = '
-        {
-            "query": {
-                "match_all": {}
-            }
-        }        
-    ';
-    $params = [
-        'index' => 'lattes',
-        'type' => 'curriculo',
-        'size'=> 0,
-        'body' => $query_all
-    ];
-    $response = $client->search($params);
-    return $response['hits']['total'];
-    print_r($response);
-}
 
-function contar_registros_match ($client) {
-    $query_all = '
+function contar_registros_match ($type) {
+    $body = '
         {
             "query": {
                 "exists" : { "field" : "ids_match" }
             }
         }          
     ';
-    $params = [
-        'index' => 'lattes',
-        'type' => 'trabalhos',
-        'size'=> 0,
-        'body' => $query_all
-    ];
-    $response = $client->search($params);
-    return $response['hits']['total'];
-    print_r($response);
+    $size = 0;
+    $response = elasticsearch::elastic_search($type,NULL,$size,$body);
+    return number_format($response['hits']['total'],0,',','.');
 }
 
-function store_record ($client,$sha256,$query){
-    
-    $params = [
-        'index' => 'lattes',
-        'type' => 'trabalhos',
-        'id' => "$sha256",
-        'body' => $query
-    ];
-    $response = $client->update($params);
+function store_record ($_id,$type,$query){
+    $response = elasticsearch::elastic_update($_id,$type,$body);    
     echo '<br/>Resultado: '.($response["_id"]).', '.($response["result"]).', '.($response["_shards"]['successful']).'<br/>';   
  
-}
-
-function store_curriculo ($client,$id_lattes,$query){
-    
-    $params = [
-        'index' => 'lattes',
-        'type' => 'curriculo',
-        'id' => "$id_lattes",
-        'body' => $query
-    ];
-    $response = $client->update($params);
-    return $response;       
- 
-}
-
-function compararRegistrosLattes ($client,$query_year,$query_title,$query_nome_do_evento,$query_tipo) {
- 
-    $query = '
-    {
-        "min_score": 30,
-        "query":{
-            "bool": {
-                "should": [
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_tipo.'",
-                            "type":       "cross_fields",
-                            "fields":     [ "tipo" ],
-                            "minimum_should_match": "100%" 
-                         }
-                    },		
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_title.'",
-                            "type":       "cross_fields",
-                            "fields":     [ "titulo" ],
-                            "minimum_should_match": "90%" 
-                         }
-                    },
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_nome_do_evento.'",
-                            "type":       "cross_fields",
-                            "fields":     [ "evento.nome_do_evento" ],
-                            "minimum_should_match": "80%" 
-                         }
-                    },		    
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_year.'",
-                            "type":       "best_fields",
-                            "fields":     [ "ano" ],
-                            "minimum_should_match": "75%" 
-                        }
-                    }
-                ],
-                "minimum_should_match" : 1               
-            }
-        }
-    }
-    ';
-    
-    //print_r($query);
-    
-    $params = [
-        'index' => 'lattes',
-        'type' => 'trabalhos',   
-        'body' => $query
-    ];
-     
-    $response = $client->search($params);
-    
-    //print_r($response); 
-    
-    return $response;
-
-}
-
-function compararRegistrosLattesArtigos($client,$query_year,$query_title,$query_titulo_do_periodico,$query_doi,$query_tipo) {
- 
-    $query = '
-    {
-        "min_score": 0,
-        "query":{
-            "bool": {
-                "should": [
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_tipo.'",
-                            "type":       "cross_fields",
-                            "fields":     [ "tipo" ],
-                            "minimum_should_match": "100%" 
-                         }
-                    },
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_doi.'",
-                            "type":       "cross_fields",
-                            "fields":     [ "doi" ],
-                            "minimum_should_match": "100%" 
-                         }
-                    },			    		
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_title.'",
-                            "type":       "cross_fields",
-                            "fields":     [ "titulo" ],
-                            "minimum_should_match": "90%" 
-                         }
-                    },
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_titulo_do_periodico.'",
-                            "type":       "cross_fields",
-                            "fields":     [ "periodico.titulo_do_periodico" ],
-                            "minimum_should_match": "80%" 
-                         }
-                    },		    
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_year.'",
-                            "type":       "best_fields",
-                            "fields":     [ "ano" ],
-                            "minimum_should_match": "75%" 
-                        }
-                    }
-                ],
-                "minimum_should_match" : 2               
-            }
-        }
-    }
-    ';
-    
-    //print_r($query);
-    
-    $params = [
-        'index' => 'lattes',
-        'type' => 'trabalhos',   
-        'body' => $query
-    ];
-     
-    $response = $client->search($params);
-    
-    //print_r($response); 
-    
-    return $response;
-
-}
-
-function compararRegistrosLattesLivros($client,$query_title,$query_isbn,$query_tipo) {
- 
-    $query = '
-    {
-        "min_score": 3,
-        "query":{
-            "bool": {
-                "should": [
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_tipo.'",
-                            "type":       "cross_fields",
-                            "fields":     [ "tipo" ],
-                            "minimum_should_match": "100%" 
-                         }
-                    },
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_isbn.'",
-                            "type":       "cross_fields",
-                            "fields":     [ "isbn" ],
-                            "minimum_should_match": "100%" 
-                         }
-                    },			    		
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_title.'",
-                            "type":       "cross_fields",
-                            "fields":     [ "titulo" ],
-                            "minimum_should_match": "90%" 
-                         }
-                    }
-                ],
-                "minimum_should_match" : 2               
-            }
-        }
-    }
-    ';
-    
-    //print_r($query);
-    
-    $params = [
-        'index' => 'lattes',
-        'type' => 'trabalhos',   
-        'body' => $query
-    ];
-     
-    $response = $client->search($params);
-    
-    //print_r($response); 
-    
-    return $response;
-
-}
-
-function compararRegistrosLattesCapitulos($client,$query_title,$query_titulo_do_livro,$query_tipo) {
- 
-    $query = '
-    {
-        "min_score": 2,
-        "query":{
-            "bool": {
-                "should": [
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_tipo.'",
-                            "type":       "cross_fields",
-                            "fields":     [ "tipo" ],
-                            "minimum_should_match": "100%" 
-                         }
-                    },		    		
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_title.'",
-                            "type":       "cross_fields",
-                            "fields":     [ "titulo" ],
-                            "minimum_should_match": "90%" 
-                         }
-                    },
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_titulo_do_livro.'",
-                            "type":       "cross_fields",
-                            "fields":     [ "capitulo_do_livro.titulo_do_livro" ],
-                            "minimum_should_match": "90%" 
-                         }
-                    }                    
-                ],
-                "minimum_should_match" : 3               
-            }
-        }
-    }
-    ';
-    
-    //print_r($query);
-    
-    $params = [
-        'index' => 'lattes',
-        'type' => 'trabalhos',   
-        'body' => $query
-    ];
-     
-    $response = $client->search($params);
-    
-    //print_r($response); 
-    
-    return $response;
-
-}
-
-function compararRegistrosLattesMidiaSocial($client,$query_title,$query_url,$query_tipo) {
- 
-    $query = '
-    {
-        "min_score": 3,
-        "query":{
-            "bool": {
-                "should": [
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_tipo.'",
-                            "type":       "cross_fields",
-                            "fields":     [ "tipo" ],
-                            "minimum_should_match": "100%" 
-                         }
-                    },		    		
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_title.'",
-                            "type":       "cross_fields",
-                            "fields":     [ "titulo" ],
-                            "minimum_should_match": "90%" 
-                         }
-                    },
-                    {
-                        "multi_match" : {
-                            "query":      "'.$query_url.'",
-                            "type":       "cross_fields",
-                            "fields":     [ "url" ],
-                            "minimum_should_match": "100%" 
-                         }
-                    }                    
-                ],
-                "minimum_should_match" : 2               
-            }
-        }
-    }
-    ';
-    
-    //print_r($query);
-    
-    $params = [
-        'index' => 'lattes',
-        'type' => 'trabalhos',   
-        'body' => $query
-    ];
-     
-    $response = $client->search($params);
-    
-    //print_r($response); 
-    
-    return $response;
-
-}
-
-function compararDoi($client,$query_doi) {
- 
-    $query = '
-    {
-        "min_score": 0,
-        "query":{
-		"match" : {
-			"doi": "'.$query_doi.'"
-		}
-	}
-    }
-    ';
-    
-    //print_r($query);
-    
-    $params = [
-        'index' => 'lattes',
-        'type' => 'trabalhos',   
-        'body' => $query
-    ];
-     
-    $response = $client->search($params);
-    
-    //print_r($response); 
-    
-    return $response;
-
 }
 
 function analisa_get($get) {

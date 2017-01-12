@@ -362,7 +362,7 @@
 			}';
     
     //print_r($query_lattes);
-    $resultado_curriculo = store_curriculo ($client,$cursor["docs"][0]["numeroIdentificador"],$query_lattes);
+    $resultado_curriculo = store_record($cursor["docs"][0]["numeroIdentificador"],"curriculo",$query_lattes);
     print_r($resultado_curriculo);
 
 //Parser de Trabalhos-em-Eventos
@@ -488,10 +488,11 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
         }   
 // Checar - fim            
             
-		$sha256 = hash('sha256', ''.$trab_evento["dadosBasicosDoTrabalho"]["natureza"].$trab_evento["dadosBasicosDoTrabalho"]["tituloDoTrabalho"].$trab_evento["dadosBasicosDoTrabalho"]["anoDoTrabalho"].$trab_evento["dadosBasicosDoTrabalho"]["paisDoEvento"].$trab_evento["detalhamentoDoTrabalho"]["nomeDoEvento"].$trab_evento["detalhamentoDoTrabalho"]["paginaInicial"].$trab_evento["dadosBasicosDoTrabalho"]["homePageDoTrabalho"].$trab_evento["dadosBasicosDoTrabalho"]["doi"].'');
+
+            $sha256 = hash('sha256', ''.$trab_evento["dadosBasicosDoTrabalho"]["natureza"].$trab_evento["dadosBasicosDoTrabalho"]["tituloDoTrabalho"].$trab_evento["dadosBasicosDoTrabalho"]["anoDoTrabalho"].$trab_evento["dadosBasicosDoTrabalho"]["paisDoEvento"].$trab_evento["detalhamentoDoTrabalho"]["nomeDoEvento"].$trab_evento["detalhamentoDoTrabalho"]["paginaInicial"].$trab_evento["dadosBasicosDoTrabalho"]["homePageDoTrabalho"].$trab_evento["dadosBasicosDoTrabalho"]["doi"].'');
 		
-		$results =  compararRegistrosLattes($client,$trab_evento["dadosBasicosDoTrabalho"]["anoDoTrabalho"],str_replace('"','',$trab_evento["dadosBasicosDoTrabalho"]["tituloDoTrabalho"]),str_replace('"','',$trab_evento["detalhamentoDoTrabalho"]["nomeDoEvento"]),"TRABALHO-EM-EVENTOS");
-		
+            $results = compararRegistros::lattesEventos($trab_evento["dadosBasicosDoTrabalho"]["anoDoTrabalho"],str_replace('"','',$trab_evento["dadosBasicosDoTrabalho"]["tituloDoTrabalho"]),str_replace('"','',$trab_evento["detalhamentoDoTrabalho"]["nomeDoEvento"]),"TRABALHO-EM-EVENTOS");
+		    
 		foreach ($results["hits"]["hits"] as $result) {			
 			$id_match[] = '{"id_match":"'.$result["_id"].'","nota":"'.$result["_score"].'"}';
 		}            
@@ -542,7 +543,7 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
         
             
         //print_r($query_evento);    
-        $resultado_evento = store_record($client,$sha256,$query_evento);
+        $resultado_evento = store_record($sha256,"trabalhos",$query_evento);
         print_r($resultado_evento);     
 
         unset($autor);
@@ -565,6 +566,8 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
             
         if (isset($artigo_publicado["dadosBasicosDoArtigo"]["doi"])) {
             $doi = '"doi": "'.$artigo_publicado["dadosBasicosDoArtigo"]["doi"].'",';
+        } else {
+            $doi = "";
         }
             
 		foreach ($artigo_publicado["autores"]  as $autores) {		
@@ -668,7 +671,7 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
             
 		$sha256 = hash('sha256', ''.$artigo_publicado["dadosBasicosDoArtigo"]["natureza"].$artigo_publicado["dadosBasicosDoArtigo"]["tituloDoArtigo"].$artigo_publicado["dadosBasicosDoArtigo"]["anoDoTrabalho"].$artigo_publicado["detalhamentoDoArtigo"]["tituloDoPeriodicoOuRevista"].$artigo_publicado["detalhamentoDoArtigo"]["paginaInicial"].$artigo_publicado["dadosBasicosDoArtigo"]["homePageDoTrabalho"].$artigo_publicado["dadosBasicosDoArtigo"]["doi"].'');
 		
-		$results =  compararRegistrosLattes($client,$artigo_publicado["dadosBasicosDoArtigo"]["anoDoTrabalho"],str_replace('"','',$artigo_publicado["dadosBasicosDoArtigo"]["tituloDoArtigo"]),str_replace('"','',$artigo_publicado["detalhamentoDoArtigo"]["tituloDoPeriodicoOuRevista"]),"TRABALHO-EM-EVENTOS");
+		$results = compararRegistros::lattesArtigos($artigo_publicado["dadosBasicosDoArtigo"]["anoDoTrabalho"],str_replace('"','',$artigo_publicado["dadosBasicosDoArtigo"]["tituloDoArtigo"]),str_replace('"','',$artigo_publicado["detalhamentoDoArtigo"]["tituloDoPeriodicoOuRevista"]),$doi,"ARTIGO-PUBLICADO");
 		
 		foreach ($results["hits"]["hits"] as $result) {			
 			$id_match[] = '{"id_match":"'.$result["_id"].'","nota":"'.$result["_score"].'"}';
@@ -713,7 +716,7 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
 			}';            
         
         //print_r($query_artigo);    
-        $resultado_artigo = store_record($client,$sha256,$query_artigo);
+        $resultado_artigo = store_record($sha256,"trabalhos",$query_artigo);
         print_r($resultado_artigo);    
             
         unset($autor);
@@ -820,8 +823,9 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
         }           
 //Define variáveis - fim   
                 
-                $sha256 = hash('sha256', ''.$livro_publicado["dadosBasicosDoLivro"]["natureza"].$livro_publicado["dadosBasicosDoLivro"]["tituloDoLivro"].$livro_publicado["detalhamentoDoLivro"]["isbn"].'');              
-                $results =  compararRegistrosLattesLivros($client,str_replace('"','',$livro_publicado["dadosBasicosDoLivro"]["tituloDoLivro"]),str_replace('"','',$livro_publicado["detalhamentoDoLivro"]["isbn"]),"LIVRO-PUBLICADO");
+                $sha256 = hash('sha256', ''.$livro_publicado["dadosBasicosDoLivro"]["natureza"].$livro_publicado["dadosBasicosDoLivro"]["tituloDoLivro"].$livro_publicado["detalhamentoDoLivro"]["isbn"].'');
+                
+                $results = compararRegistros::lattesLivros(str_replace('"','',$livro_publicado["dadosBasicosDoLivro"]["tituloDoLivro"]),str_replace('"','',$livro_publicado["detalhamentoDoLivro"]["isbn"]),"LIVRO-PUBLICADO"); 
 		
                 foreach ($results["hits"]["hits"] as $result) {			
                     $id_match[] = '{"id_match":"'.$result["_id"].'","nota":"'.$result["_score"].'"}';
@@ -863,7 +867,7 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
                     }';
                 
                 //print_r($query_livro);
-                $resultado_livro = store_record($client,$sha256,$query_livro);
+                $resultado_livro = store_record($sha256,"trabalhos",$query_livro);
                 print_r($resultado_livro);    
             
                 unset($autor);
@@ -975,8 +979,7 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
             
 		        $sha256 = hash('sha256', ''.$capitulo_publicado["dadosBasicosDoCapitulo"]["natureza"].$capitulo_publicado["dadosBasicosDoCapitulo"]["tituloDoCapituloDoLivro"].$capitulo_publicado["detalhamentoDoCapitulo"]["isbn"].'');                
 		
-                $results =  compararRegistrosLattesCapitulos($client,str_replace('"','',$capitulo_publicado["dadosBasicosDoCapitulo"]["tituloDoCapituloDoLivro"]),str_replace('"','',$capitulo_publicado["detalhamentoDoCapitulo"]["tituloDoLivro"]),"CAPITULO-DE-LIVRO");
-		
+                $results = compararRegistros::lattesCapitulos(str_replace('"','',$capitulo_publicado["dadosBasicosDoCapitulo"]["tituloDoCapituloDoLivro"]),str_replace('"','',$capitulo_publicado["detalhamentoDoCapitulo"]["tituloDoLivro"]),"CAPITULO-DE-LIVRO");                 
                 foreach ($results["hits"]["hits"] as $result) {			
                     $id_match[] = '{"id_match":"'.$result["_id"].'","nota":"'.$result["_score"].'"}';
                 }            
@@ -1022,7 +1025,7 @@ if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
                 
  
                 //print_r($query_capitulo);
-                $resultado_capitulo = store_record($client,$sha256,$query_capitulo);
+                $resultado_capitulo = store_record($sha256,"trabalhos",$query_capitulo);
                 print_r($resultado_capitulo);    
             
                 unset($autor);
@@ -1087,9 +1090,9 @@ if (isset($cursor["docs"][0]["producaoTecnica"]["demaisTiposDeProducaoTecnica"][
                 $area_set = '"area_do_conhecimento":['.implode(",",$area_do_conhecimento_array).'],';
             }
 
-            $sha256 = hash('sha256', ''.$midiasocialwebsiteblog["dadosBasicosDaMidiaSocialWebsiteBlog"]["natureza"].$midiasocialwebsiteblog["dadosBasicosDaMidiaSocialWebsiteBlog"]["titulo"].$midiasocialwebsiteblog["dadosBasicosDaMidiaSocialWebsiteBlog"]["homePage"].'');                
-
-            $results =  compararRegistrosLattesMidiaSocial($client,str_replace('"','',$midiasocialwebsiteblog["dadosBasicosDaMidiaSocialWebsiteBlog"]["titulo"]),$midiasocialwebsiteblog["dadosBasicosDaMidiaSocialWebsiteBlog"]["homePage"],"MIDIA-SOCIAL-OU-BLOG");
+            $sha256 = hash('sha256', ''.$midiasocialwebsiteblog["dadosBasicosDaMidiaSocialWebsiteBlog"]["natureza"].$midiasocialwebsiteblog["dadosBasicosDaMidiaSocialWebsiteBlog"]["titulo"].$midiasocialwebsiteblog["dadosBasicosDaMidiaSocialWebsiteBlog"]["homePage"].'');
+        
+            $results = compararRegistros::lattesMidiaSocial(str_replace('"','',$midiasocialwebsiteblog["dadosBasicosDaMidiaSocialWebsiteBlog"]["titulo"]),$midiasocialwebsiteblog["dadosBasicosDaMidiaSocialWebsiteBlog"]["homePage"],"MIDIA-SOCIAL-OU-BLOG");           
 
             foreach ($results["hits"]["hits"] as $result) {			
                 $id_match[] = '{"id_match":"'.$result["_id"].'","nota":"'.$result["_score"].'"}';
@@ -1127,7 +1130,7 @@ if (isset($cursor["docs"][0]["producaoTecnica"]["demaisTiposDeProducaoTecnica"][
 
             //print_r($query_midiasocial);    
 
-            $resultado_midiasocial = store_record($client,$sha256,$query_midiasocial);
+            $resultado_midiasocial = store_record($sha256,"trabalhos",$query_midiasocial);
             print_r($resultado_midiasocial);    
 
             unset($autor);

@@ -157,9 +157,9 @@
                     <div class="uk-width-5-6">
                         <h2 class="uk-h3">Alguns números</h2>
                         <ul class="uk-list uk-list-striped">
-                            <li><?php echo number_format(contar_registros($client),0,',','.'); ?> registros</li> 
-                            <li><?php echo number_format(contar_autores($client),0,',','.'); ?> currículos</li>
-                            <li><?php echo number_format(contar_registros_match($client),0,',','.'); ?> Registros similares identificados</li>                                 
+                            <li><?php echo contar_tipo_de_registro("trabalhos"); ?> registros</li> 
+                            <li><?php echo contar_tipo_de_registro("curriculo"); ?> currículos</li>
+                            <li><?php echo contar_registros_match("trabalhos"); ?> Registros similares identificados</li>                                 
                         </ul>
                     </div>
                 </div>

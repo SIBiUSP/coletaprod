@@ -106,7 +106,7 @@ if ($_GET["metadata_format"] == "nlm") {
 
         //print_r($query_harvester);
 
-        $resultado = store_record($client,$sha256,$query_harvester);
+        $resultado = store_record($sha256,"trabalhos",$query_harvester);
         print_r($resultado);  
 
 

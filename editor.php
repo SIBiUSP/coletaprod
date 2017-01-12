@@ -12,8 +12,8 @@
         
             /* Define variables */
             define('authorUSP','authorUSP');
-        
-            $cursor = query_one_elastic($_GET["_id"],$client);
+            $elasticsearch = new elasticsearch();
+            $cursor = $elasticsearch->elastic_get($_GET["_id"],"trabalhos",NULL);
         ?> 
         <title>Editor - Coleta Produção USP</title>
         <!-- Facebook Tags - START -->

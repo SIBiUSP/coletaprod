@@ -240,7 +240,7 @@
                                         
                                         <?php if (!empty($r["_source"]['ids_match'])) : ?>  
                                         <?php foreach ($r["_source"]['ids_match'] as $id_match) : ?>
-                                            <?php match_id($id_match["id_match"],$id_match["nota"],$client);?>
+                                            <?php compararRegistros::match_id($id_match["id_match"],$id_match["nota"]);?>
                                         <?php endforeach;?>
                                         <?php endif; ?>
                                        

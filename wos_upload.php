@@ -74,7 +74,7 @@
             //print_r($query_wos);
             //echo '<br/><br/>';
             
-            $resultado_wos = store_record($client,$sha256,$query_wos);
+            $resultado_wos = store_record($sha256,"trabalhos",$query_wos);
             print_r($resultado_wos);  
             
             

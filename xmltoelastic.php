@@ -63,7 +63,7 @@
             //fclose($id_file);
 	
 	//print_r($query_lattes);
-	store_curriculo ($client,$id_lattes,$query_lattes);
+	store_record ($id_lattes,"curriculo",$query_lattes);
 	
 if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})){
 	foreach ($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'}->{'TRABALHO-EM-EVENTOS'} as $trab_evento) {
@@ -283,7 +283,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})){
 	$result = json_decode($query);
 
 	if (json_last_error() === JSON_ERROR_NONE) {
-	     store_record($client,$sha256,$query);
+	     store_record($sha256,"trabalhos",$query);
 	}
 	    
 	   			
@@ -437,7 +437,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'ARTIGOS-PUBLICADOS'})){
 		
 		
 		if ($doi != "") {
-			$results =  compararDoi($client,$doi);
+			$results =  compararRegistros::doi($doi);
 		} else {
 			$results =  compararRegistrosLattesArtigos($client,$ano,$titulo,$titulo_do_periodico,$doi,"ARTIGO-PUBLICADO");
 		}
@@ -497,7 +497,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'ARTIGOS-PUBLICADOS'})){
             //fclose($myfile);			
 
 	    //print_r($query);				
-	    store_record($client,$sha256_artigo,$query);
+	    store_record($sha256_artigo,"trabalhos",$query);
 		    
 
         // Unset

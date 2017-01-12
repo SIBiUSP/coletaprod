@@ -76,7 +76,7 @@
 //            print_r($query_scopus);
 //            echo '<br/><br/>';
 //            
-            $resultado = store_record($client,$sha256,$query_scopus);
+            $resultado = store_record($sha256,"trabalhos",$query_scopus);
             print_r($resultado);  
             
             
