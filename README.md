@@ -30,11 +30,11 @@ Editar suas configurações em config.php
 
 Rodar os comandos de criação do índice e mapeamento dos tipos disponíveis no arquivo inc/mappings.elasticsearch
 
-## Rodar via linha de comando
+## Comandos para rodar via linha de comando (Se necessário)
 
-php5-cgi -f jsontoelastic.php id_lattes=XXXXXXXX
+php5-cgi -f lattes_json_to_elastic.php id_lattes=XXXXXXXX
 
-php5-cgi -f jsontoelastic.php path_download=XXXXXXXX
+php5-cgi -f lattes_json_to_elastic.php path_download=XXXXXXXX
 
 ## Autores:
 

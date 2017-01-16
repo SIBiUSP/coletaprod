@@ -13,8 +13,8 @@
     $skip = $result_get['skip'];
 
     $params = [
-        'index' => 'lattes',
-        'type' => 'curriculo',
+        'index' => $index,
+        'type' => 'curriculos',
         'size'=> $limit,
         'from' => $skip,   
         'body' => $query_complete
@@ -85,30 +85,36 @@
         $facets_users->facet_user("nacionalidade",100,"Nacionalidade",null);
         $facets_users->facet_user("pais_de_nascimento",100,"País de nascimento",null);
                 
-        $facets_users->facet_user("endereco_profissional.nome_instituicao_empresa",100,"Nome da Instituição ou Empresa",null);
-        $facets_users->facet_user("endereco_profissional.nome_orgao",100,"Nome do orgão",null);
-        $facets_users->facet_user("endereco_profissional.nome_unidade",100,"Nome da unidade",null);
-        $facets_users->facet_user("endereco_profissional.pais",100,"País do endereço profissional",null);
-        $facets_users->facet_user("endereco_profissional.cidade",100,"Cidade do endereço profissional",null);
+        $facets_users->facet_user("endereco.endereco_profissional.nomeInstituicaoEmpresa",100,"Nome da Instituição ou Empresa",null);
+        $facets_users->facet_user("endereco.endereco_profissional.nomeOrgao",100,"Nome do orgão",null);
+        $facets_users->facet_user("endereco.endereco_profissional.nomeUnidade",100,"Nome da unidade",null);
+        $facets_users->facet_user("endereco.endereco_profissional.pais",100,"País do endereço profissional",null);
+        $facets_users->facet_user("endereco.endereco_profissional.cidade",100,"Cidade do endereço profissional",null);
         
-        $facets_users->facet_user("formacao_academica_titulacao_graduacao.nome_instituicao",100,"Instituição em que cursou graduação",null);
-        $facets_users->facet_user("formacao_academica_titulacao_graduacao.nome_curso",100,"Nome do curso na graduação",null);
-        $facets_users->facet_user("formacao_academica_titulacao_graduacao.status_do_curso",100,"Status do curso na graduação",null);
-        $facets_users->facet_user("formacao_academica_titulacao_mestrado.nome_instituicao",100,"Instituição em que cursou mestrado",null);
-        $facets_users->facet_user("formacao_academica_titulacao_mestrado.nome_curso",100,"Nome do curso no mestrado",null);
-        $facets_users->facet_user("formacao_academica_titulacao_mestrado.status_do_curso",100,"Status do curso no mestrado",null);        
-        $facets_users->facet_user("formacao_academica_titulacao_mestradoProfissionalizante.nome_instituicao",100,"Instituição em que cursou mestrado profissional",null);
-        $facets_users->facet_user("formacao_academica_titulacao_mestradoProfissionalizante.nome_curso",100,"Nome do curso no mestrado profissional",null);
-        $facets_users->facet_user("formacao_academica_titulacao_mestradoProfissionalizante.status_do_curso",100,"Status do curso no mestrado profissional",null); 
-        $facets_users->facet_user("formacao_academica_titulacao_doutorado.nome_instituicao",100,"Instituição em que cursou doutorado",null);
-        $facets_users->facet_user("formacao_academica_titulacao_doutorado.nome_curso",100,"Nome do curso no doutorado",null);
-        $facets_users->facet_user("formacao_academica_titulacao_doutorado.status_do_curso",100,"Status do curso no doutorado",null);   
-        $facets_users->facet_user("formacao_academica_titulacao_livreDocencia.nome_instituicao",100,"Instituição em que cursou livre docência",null);       
-        $facets_users->facet_user("atuacao_profissional.nome_instituicao",100,"Instituição em que atuou profissionalmente",null);
+        $facets_users->facet_user("formacao_academica_titulacao_graduacao.nomeInstituicao",100,"Instituição em que cursou graduação",null);
+        $facets_users->facet_user("formacao_academica_titulacao_graduacao.nomeCurso",100,"Nome do curso na graduação",null);
+        $facets_users->facet_user("formacao_academica_titulacao_graduacao.statusDoCurso",100,"Status do curso na graduação",null);
         
-        $facets_users->facet_user("citacoes.scielo.numero_citacoes",100,"Citações na Scielo",null);
-        $facets_users->facet_user("citacoes.scopus.numero_citacoes",100,"Citações na Scopus",null);
-        $facets_users->facet_user("citacoes.web_of_science.numero_citacoes",100,"Citações na Web of Science",null);
+        $facets_users->facet_user("formacao_academica_titulacao_mestrado.nomeInstituicao",100,"Instituição em que cursou mestrado",null);
+        $facets_users->facet_user("formacao_academica_titulacao_mestrado.nomeCurso",100,"Nome do curso no mestrado",null);
+        $facets_users->facet_user("formacao_academica_titulacao_mestrado.statusDoCurso",100,"Status do curso no mestrado",null);
+        
+        $facets_users->facet_user("formacao_academica_titulacao_mestradoProfissionalizante.nomeInstituicao",100,"Instituição em que cursou mestrado profissional",null);
+        $facets_users->facet_user("formacao_academica_titulacao_mestradoProfissionalizante.nomeCurso",100,"Nome do curso no mestrado profissional",null);
+        $facets_users->facet_user("formacao_academica_titulacao_mestradoProfissionalizante.statusDoCurso",100,"Status do curso no mestrado profissional",null);
+        
+        $facets_users->facet_user("formacao_academica_titulacao_doutorado.nomeInstituicao",100,"Instituição em que cursou doutorado",null);
+        $facets_users->facet_user("formacao_academica_titulacao_doutorado.nomeCurso",100,"Nome do curso no doutorado",null);
+        $facets_users->facet_user("formacao_academica_titulacao_doutorado.statusDoCurso",100,"Status do curso no doutorado",null);
+        
+        $facets_users->facet_user("formacao_academica_titulacao_livreDocencia.nomeInstituicao",100,"Instituição em que cursou livre docência",null);       
+        $facets_users->facet_user("atuacao_profissional.nomeInstituicao",100,"Instituição em que atuou profissionalmente",null);
+        $facets_users->facet_user("atuacao_profissional.vinculos.outroEnquadramentoFuncionalInformado",100,"Enquadramento funcional",null);
+        $facets_users->facet_user("atuacao_profissional.vinculos.outroVinculoInformado",100,"Vínculo",null);
+        
+        $facets_users->facet_user("citacoes.SciELO.numeroCitacoes",100,"Citações na Scielo",null);
+        $facets_users->facet_user("citacoes.SCOPUS.numeroCitacoes",100,"Citações na Scopus",null);
+        $facets_users->facet_user("citacoes.Web of Science.numeroCitacoes",100,"Citações na Web of Science",null);
         $facets_users->facet_user("citacoes.outras.numero_citacoes",100,"Citações em outras bases",null);        
         
         $facets_users->facet_user("data_atualizacao",100,"Data de atualização do currículo",null);

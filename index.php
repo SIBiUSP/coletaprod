@@ -69,7 +69,7 @@
                             </fieldset>
                         </form>
                         <br/>
-                        <form class="uk-form" action="jsontoelastic.php" method="get">
+                        <form class="uk-form" action="lattes_json_to_elastic.php" method="get">
                             <fieldset data-uk-margin>
                                 <legend>Inserir ID do Currículo Lattes que deseja incluir</legend>
                                 <input type="text" placeholder="Insira o ID do Curriculo" class="uk-form-width-medium" name="id_lattes" data-validation="required">
@@ -158,7 +158,7 @@
                         <h2 class="uk-h3">Alguns números</h2>
                         <ul class="uk-list uk-list-striped">
                             <li><?php echo contar_tipo_de_registro("trabalhos"); ?> registros</li> 
-                            <li><?php echo contar_tipo_de_registro("curriculo"); ?> currículos</li>
+                            <li><?php echo contar_tipo_de_registro("curriculos"); ?> currículos</li>
                             <li><?php echo contar_registros_match("trabalhos"); ?> Registros similares identificados</li>                                 
                         </ul>
                     </div>

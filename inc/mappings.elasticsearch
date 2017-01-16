@@ -585,9 +585,9 @@ PUT /lattes/trabalhos/_mapping
       }
 }
 
-PUT /lattes/curriculo/_mapping
+PUT /lattes/curriculos/_mapping
 {
-      "curriculo": {
+      "curriculos": {
         "properties": {
           "aggs": {
             "properties": {

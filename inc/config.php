@@ -10,7 +10,7 @@
 	$hosts = [
 		'localhost' 
 	];
-    $index = "lattes"; 
+    $index = "lattes_teste"; 
 
 	/* Load libraries for PHP composer */ 
     require (__DIR__.'/../vendor/autoload.php'); 

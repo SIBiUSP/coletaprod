@@ -13,7 +13,7 @@
     $skip = $result_get['skip'];
 
     $params = [
-        'index' => 'lattes',
+        'index' => $index,
         'type' => 'trabalhos',
         'size'=> $limit,
         'from' => $skip,   
@@ -84,39 +84,37 @@
         $facets->facet("tipo",10,"Tipo de material",null);
         $facets->facet("tag",10,"Tag",null);
         
-        $facets->facet("autores.nome_completo_do_autor",100,"Nome completo do autor",null);
-        $facets->facet("autores.nro_id_cnpq",100,"Número do lattes",null);
+        $facets->facet("autores.nomeCompletoDoAutor",100,"Nome completo do autor",null);
+        $facets->facet("autores.nroIdCnpq",100,"Número do lattes",null);
         $facets->facet("id_usp",100,"Número USP",null);
         
         
         $facets->facet("pais",200,"País de publicação",null);
         $facets->facet("ano",120,"Ano de publicação","desc");
         $facets->facet("idioma",40,"Idioma",null);
-        $facets->facet("meio_de_divulgacao",100,"Meio de divulgação",null);
+        $facets->facet("meioDeDivulgacao",100,"Meio de divulgação",null);
         $facets->facet("palavras_chave",100,"Palavras-chave",null);
         $facets->facet("agencia_de_fomento",100,"Agências de fomento",null);
         $facets->facet("citacoes_recebidas",100,"Citações recebidas",null);
         
-        $facets->facet("area_do_conhecimento.nome_grande_area_do_conhecimento",100,"Nome da Grande Área do Conhecimento",null);
-        $facets->facet("area_do_conhecimento.nome_da_area_do_conhecimento",100,"Nome da Área do Conhecimento",null);
-        $facets->facet("area_do_conhecimento.nome_da_sub_area_do_conhecimento",100,"Nome da Sub Área do Conhecimento",null);
-        $facets->facet("area_do_conhecimento.nome_da_especialidade",100,"Nome da Especialidade",null);
+        echo '<hr><li>Área do conhecimento</li>';
+        $facets->facet("area_do_conhecimento.nomeGrandeAreaDoConhecimento",100,"Nome da Grande Área do Conhecimento",null);
+        $facets->facet("area_do_conhecimento.nomeDaAreaDoConhecimento",100,"Nome da Área do Conhecimento",null);
+        $facets->facet("area_do_conhecimento.nomeDaSubAreaDoConhecimento",100,"Nome da Sub Área do Conhecimento",null);
+        $facets->facet("area_do_conhecimento.nomeDaEspecialidade",100,"Nome da Especialidade",null);
         
+        echo '<hr><li>Eventos</li>';
+        $facets->facet("trabalhoEmEventos.classificacaoDoEvento",100,"Classificação do evento",null); 
+        $facets->facet("trabalhoEmEventos.nomeDoEvento",100,"Nome do evento",null);
+        $facets->facet("trabalhoEmEventos.cidadeDoEvento",100,"Cidade do evento",null);
+        $facets->facet("trabalhoEmEventos.anoDeRealizacao",100,"Ano de realização do evento",null);
+        $facets->facet("trabalhoEmEventos.tituloDosAnaisOuProceedings",100,"Título dos anais",null);
+        $facets->facet("trabalhoEmEventos.isbn",100,"ISBN dos anais",null);
+        $facets->facet("trabalhoEmEventos.nomeDaEditora",100,"Editora dos anais",null);
+        $facets->facet("trabalhoEmEventos.cidadeDaEditora",100,"Cidade da editora",null);
         
-        $facets->facet("evento.classificacao_do_evento",100,"Classificação do evento",null); 
-        $facets->facet("evento.nome_do_evento",100,"Nome do evento",null);
-        $facets->facet("evento.cidade_do_evento",100,"Cidade do evento",null);
-        $facets->facet("evento.ano_de_realizacao_do_evento",100,"Ano de realização do evento",null);
-        $facets->facet("evento.titulo_dos_anais",100,"Título dos anais",null);
-        $facets->facet("evento.volume_dos_anais",100,"Volume dos anais",null);
-        $facets->facet("evento.fasciculo_dos_anais",100,"Fascículo dos anais",null);
-        $facets->facet("evento.serie_dos_anais",100,"Série dos anais",null);
-        $facets->facet("evento.isbn",100,"ISBN dos anais",null);
-        $facets->facet("evento.nome_da_editora",100,"Editora dos anais",null);
-        $facets->facet("evento.cidade_da_editora",100,"Cidade da editora",null);
-        $facets->facet("evento.nome_do_evento_ingles",100,"Nome do evento em inglês",null);
-        
-        $facets->facet("periodico.titulo_do_periodico",100,"Título do periódico",null);   
+        echo '<hr><li>Periódicos</li>';
+        $facets->facet("artigoPublicado.tituloDoPeriodicoOuRevista",100,"Título do periódico",null);   
     ?>
     </ul>
         <?php if(!empty($_SESSION['oauthuserdata'])): ?>
@@ -204,13 +202,13 @@
                                     
                                     <ul class="uk-list">
                                         <li class="uk-margin-top uk-h4">
-                                            <strong><?php echo $r["_source"]['titulo'];?> (<?php echo $r["_source"]['ano']; ?>)</strong>
+                                            <strong><?php echo ($r["_source"]['titulo']);?> (<?php echo $r["_source"]['ano']; ?>)</strong>
                                         </li>
                                         <li class="uk-h6">
                                             Autores:
                                             <?php if (!empty($r["_source"]['autores'])) : ?>
                                             <?php foreach ($r["_source"]['autores'] as $autores) {
-                                                $authors_array[]='<a href="result_trabalhos.php?search[]=autores.nome_completo_do_autor.keyword:&quot;'.$autores["nome_completo_do_autor"].'&quot;">'.$autores["nome_completo_do_autor"].'</a>';
+                                                $authors_array[]='<a href="result_trabalhos.php?search[]=autores.nome_completo_do_autor.keyword:&quot;'.$autores["nomeCompletoDoAutor"].'&quot;">'.$autores["nomeCompletoDoAutor"].'</a>';
                                             } 
                                            $array_aut = implode(", ",$authors_array);
                                             unset($authors_array);
@@ -265,12 +263,12 @@
                                             $record[] = '000000001 0410  L \$\$a';
                                             $record[] = '000000001 044   L \$\$a';
                                             if ($author_number > 1) {
-                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['autores'][0]["nome_completo_do_autor"].'';
+                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['autores'][0]["nomeCompletoDoAutor"].'';
                                                 for ($i = 1; $i < $author_number; $i++) {
-                                                    $record[] = '000000001 7001  L \$\$a'.$r["_source"]['autores'][$i]["nome_completo_do_autor"].'';
+                                                    $record[] = '000000001 7001  L \$\$a'.$r["_source"]['autores'][$i]["nomeCompletoDoAutor"].'';
                                                 }
                                             } else {
-                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['autores'][0]["nome_completo_do_autor"].'';
+                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['autores'][0]["nomeCompletoDoAutor"].'';
                                             }                                            
                                             $record[] = '000000001 24510 L \$\$a'.$r["_source"]["titulo"].'';                                            
                                             if (isset($r["_source"]['evento'])){  

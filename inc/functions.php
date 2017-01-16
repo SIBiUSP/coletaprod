@@ -42,9 +42,7 @@ class elasticsearch {
         
         $response = $client->update($params);        
         return $response;
-    }     
-    
-    
+    }
 }
 
 class compararRegistros {
@@ -114,7 +112,7 @@ class compararRegistros {
         }
         ';
         $type = "trabalhos";
-        $response = elasticsearch::elastic_search($type,NULL,$size,$body);
+        $response = elasticsearch::elastic_search($type,NULL,NULL,$body);
         return $response;
     }
     
@@ -175,7 +173,7 @@ class compararRegistros {
         ';   
 
         $type = "trabalhos";
-        $response = elasticsearch::elastic_search($type,NULL,$size,$body);
+        $response = elasticsearch::elastic_search($type,NULL,NULL,$body);
         return $response;
     }
 
@@ -219,7 +217,7 @@ class compararRegistros {
         }
         '; 
         $type = "trabalhos";
-        $response = elasticsearch::elastic_search($type,NULL,$size,$body);
+        $response = elasticsearch::elastic_search($type,NULL,NULL,$body);
         return $response;
     }
     
@@ -263,7 +261,7 @@ class compararRegistros {
             }
         ';
         $type = "trabalhos";
-        $response = elasticsearch::elastic_search($type,NULL,$size,$body);
+        $response = elasticsearch::elastic_search($type,NULL,NULL,$body);
         return $response;
     }
     
@@ -307,7 +305,7 @@ class compararRegistros {
         }
         ';
         $type = "trabalhos";
-        $response = elasticsearch::elastic_search($type,NULL,$size,$body);
+        $response = elasticsearch::elastic_search($type,NULL,NULL,$body);
         return $response;
     }    
 
@@ -352,7 +350,7 @@ function contar_registros_match ($type) {
     return number_format($response['hits']['total'],0,',','.');
 }
 
-function store_record ($_id,$type,$query){
+function store_record ($_id,$type,$body){
     $response = elasticsearch::elastic_update($_id,$type,$body);    
     echo '<br/>Resultado: '.($response["_id"]).', '.($response["result"]).', '.($response["_shards"]['successful']).'<br/>';   
  
@@ -413,7 +411,7 @@ function analisa_get($get) {
     $query_complete = '{
         "sort" : [
                 { "ano.keyword" : "desc" }
-        ],     
+        ], 
         "query": {
         '.$search_term.'
         }
@@ -431,6 +429,7 @@ class facets {
     
     public function facet($field,$tamanho,$field_name,$sort) {
         global $client;
+        global $index;
         $query_aggregate = $this->query_aggregate;
         $sort_query="";
         if (!empty($sort)){
@@ -449,7 +448,7 @@ class facets {
             }
         }';
         $params = [
-            'index' => 'lattes',
+            'index' => $index,
             'type' => 'trabalhos',
             'size'=> 0,          
             'body' => $query
@@ -480,6 +479,7 @@ class facets {
     
     public function rebuild_facet($field,$tamanho,$nome_do_campo) {
         global $client;
+        global $index;
         $query_aggregate = $this->query_aggregate;
         $query = '{
             '.$query_aggregate.'
@@ -494,7 +494,7 @@ class facets {
             }
         }';    
         $params = [
-            'index' => 'lattes',
+            'index' => $index,
             'type' => 'trabalhos',
             'size'=> 0, 
             'body' => $query
@@ -513,6 +513,7 @@ class facets {
     }
     public function facet_range($campo,$tamanho,$nome_do_campo) {
         global $client;
+        global $index;
         $query_aggregate = $this->query_aggregate;
         $query = '
         {
@@ -535,7 +536,7 @@ class facets {
          }
          ';
         $params = [
-            'index' => 'lattes',
+            'index' => $index,
             'type' => 'trabalhos',
             'size'=> 0,          
             'body' => $query
@@ -574,6 +575,7 @@ class facets_users {
     
     public function facet_user($field,$tamanho,$field_name,$sort) {
         global $client;
+        global $index;
         $query_aggregate = $this->query_aggregate;
         $sort_query="";
         if (!empty($sort)){
@@ -592,8 +594,8 @@ class facets_users {
             }
         }';
         $params = [
-            'index' => 'lattes',
-            'type' => 'curriculo',
+            'index' => $index,
+            'type' => 'curriculos',
             'size'=> 0,          
             'body' => $query
         ];
@@ -623,6 +625,7 @@ class facets_users {
     
     public function rebuild_facet_user($field,$tamanho,$nome_do_campo) {
         global $client;
+        global $index;
         $query_aggregate = $this->query_aggregate;
         $query = '{
             '.$query_aggregate.'
@@ -637,8 +640,8 @@ class facets_users {
             }
         }';    
         $params = [
-            'index' => 'lattes',
-            'type' => 'curriculo',
+            'index' => $index,
+            'type' => 'curriculos',
             'size'=> 0, 
             'body' => $query
         ];
@@ -656,6 +659,7 @@ class facets_users {
     }
     public function facet_range_curriculo($campo,$tamanho,$nome_do_campo) {
         global $client;
+        global $index;
         $query_aggregate = $this->query_aggregate;
         $query = '
         {
@@ -678,8 +682,8 @@ class facets_users {
          }
          ';
         $params = [
-            'index' => 'lattes',
-            'type' => 'curriculo',
+            'index' => $index,
+            'type' => 'curriculos',
             'size'=> 0,          
             'body' => $query
         ];
@@ -817,6 +821,7 @@ function coleta_json_download_lattes($id_lattes) {
 }
 
 function fonte_inicio($client) {
+    global $index;
     $query = '{
         "aggs": {
             "group_by_state": {
@@ -829,7 +834,7 @@ function fonte_inicio($client) {
     }';
     
     $params = [
-        'index' => 'lattes',
+        'index' => $index,
         'type' => 'trabalhos',
         'size'=> 0,
         'body' => $query
@@ -843,6 +848,7 @@ function fonte_inicio($client) {
 }
 
 function tipo_inicio($client) {
+    global $index;
     $query = '{
         "aggs": {
             "group_by_state": {
@@ -855,7 +861,7 @@ function tipo_inicio($client) {
     }';
     
     $params = [
-        'index' => 'lattes',
+        'index' => $index,
         'type' => 'trabalhos',
         'size'=> 0,
         'body' => $query
@@ -869,6 +875,7 @@ function tipo_inicio($client) {
 }
 
 function query_doi($doi,$tag,$client) {
+    global $index;
     $url = "https://api.crossref.org/v1/works/http://dx.doi.org/$doi";
     $json = file_get_contents($url);
     $data = json_decode($json, TRUE);
@@ -924,7 +931,7 @@ function query_doi($doi,$tag,$client) {
     //print_r($insert_doi);
     
     $params = [
-        'index' => 'lattes',
+        'index' => $index,
         'type' => 'trabalhos',
         'id' => "$sha256",
         'body' => $insert_doi
@@ -933,6 +940,201 @@ function query_doi($doi,$tag,$client) {
     echo '<br/>Resultado: '.($response["_id"]).', '.($response["result"]).', '.($response["_shards"]['successful']).'<br/>';       
     
 
+}
+
+function processaFormacaoAcaddemica($dados,$nivel,$campos) {  
+    $i = 0;
+    foreach ($dados as $curso) {
+        foreach ($campos as $nivel_campos) {
+            if (!empty($curso[$nivel_campos])) {
+                $doc_curriculo_array["doc"]["formacao_academica_titulacao_$nivel"][$i][$nivel_campos] = $curso[$nivel_campos];                   
+            }                    
+        }                      
+    $i++;
+    }
+    return $doc_curriculo_array;
+}
+
+function processaObra($obra,$tipo_de_obra,$tag) {
+    print_r($obra);
+    echo '<br/><br/>';
+    echo '<br/><br/>';
+    switch ($tipo_de_obra) {
+            
+        case "trabalhoEmEventos":
+            $tipo_de_obra_nome = "Trabalhos em eventos";
+            $campos_dadosBasicosDoTrabalho = ["natureza","tituloDoTrabalho","anoDoTrabalho","paisDoEvento","idioma","meioDeDivulgacao","homePageDoTrabalho","flagRelevancia","flagDivulgacaoCientifica"];
+            $campos_detalhamentoDoTrabalho = ["classificacaoDoEvento","nomeDoEvento","cidadeDoEvento","anoDeRealizacao","tituloDosAnaisOuProceedings","paginaInicial","paginaFinal","doi","isbn","nomeDaEditora","cidadeDaEditora","volumeDosAnais","fasciculoDosAnais","serieDosAnais"];
+            $resultado_comparador_local = compararRegistros::lattesEventos($obra["dadosBasicosDoTrabalho"]["anoDoTrabalho"],str_replace('"','',$obra["dadosBasicosDoTrabalho"]["tituloDoTrabalho"]),str_replace('"','',$obra["detalhamentoDoTrabalho"]["nomeDoEvento"]),"TRABALHO-EM-EVENTOS");
+            $dadosBasicosNomeCampo = "dadosBasicosDoTrabalho";
+            $detalhamentoNomeCampo = "detalhamentoDoTrabalho";
+            $campos_sha256 = ["natureza","tituloDoTrabalho","anoDoTrabalho","paisDoEvento","nomeDoEvento","paginaInicial","homePageDoTrabalho"];
+                
+            break;
+            
+        case "artigoPublicado":
+            $tipo_de_obra_nome = "Artigo publicado";
+            $campos_dadosBasicosDoTrabalho = ["natureza","tituloDoArtigo","anoDoArtigo","idioma","meioDeDivulgacao","homePageDoTrabalho","flagRelevancia","flagDivulgacaoCientifica"];
+            $campos_detalhamentoDoTrabalho = ["tituloDoPeriodicoOuRevista","issn","volume","serie","paginaInicial","paginaFinal","localDePublicacao"];            
+            $dadosBasicosNomeCampo = "dadosBasicosDoArtigo";
+            $detalhamentoNomeCampo = "detalhamentoDoArtigo";
+            if (isset($obra["dadosBasicosDoArtigo"]["doi"])){
+                $campos_sha256 = ["doi"];
+                $resultado_comparador_local = compararRegistros::lattesArtigos($obra["dadosBasicosDoArtigo"]["anoDoArtigo"],str_replace('"','',$obra["dadosBasicosDoArtigo"]["tituloDoArtigo"]),str_replace('"','',$obra["detalhamentoDoArtigo"]["tituloDoPeriodicoOuRevista"]),$obra["dadosBasicosDoArtigo"]["doi"],"ARTIGO-PUBLICADO");
+            } else {
+                $campos_sha256 = ["natureza","tituloDoArtigo","anoDoArtigo","tituloDoPeriodicoOuRevista","nomeDoEvento","paginaInicial","homePageDoTrabalho"];
+                $resultado_comparador_local = compararRegistros::lattesArtigos($obra["dadosBasicosDoArtigo"]["anoDoArtigo"],str_replace('"','',$obra["dadosBasicosDoArtigo"]["tituloDoArtigo"]),str_replace('"','',$obra["detalhamentoDoArtigo"]["tituloDoPeriodicoOuRevista"]),NULL,"ARTIGO-PUBLICADO");
+            }
+            break;
+            
+        case "livrosPublicadosOuOrganizado":       
+            $tipo_de_obra_nome = "Livros publicados ou organizados";
+            $campos_dadosBasicosDoTrabalho = ["tipo","natureza","tituloDoLivro","ano","paisDePublicacao","idioma","meioDeDivulgacao","homePageDoTrabalho","flagRelevancia","flagDivulgacaoCientifica"];
+            $campos_detalhamentoDoTrabalho = ["numeroDeVolumes","numeroDePaginas","isbn","numeroDaEdicaoRevisao","cidadeDaEditora","nomeDaEditora"];            
+            $dadosBasicosNomeCampo = "dadosBasicosDoLivro";
+            $detalhamentoNomeCampo = "detalhamentoDoLivro";
+            if (isset($obra["dadosBasicosDoLivro"]["isbn"])){
+                $campos_sha256 = ["isbn"];
+                $resultado_comparador_local = compararRegistros::lattesLivros(str_replace('"','',$obra["dadosBasicosDoLivro"]["tituloDoLivro"]),str_replace('"','',$obra["detalhamentoDoLivro"]["isbn"]),"LIVRO-PUBLICADO");
+            } else {
+                $campos_sha256 = ["natureza","tituloDoLivro"];
+                $resultado_comparador_local = compararRegistros::lattesLivros(str_replace('"','',$obra["dadosBasicosDoLivro"]["tituloDoLivro"]),NULL,"LIVRO-PUBLICADO");
+            }
+            break;
+            
+        case "capituloDeLivroPublicado":       
+            $tipo_de_obra_nome = "Capítulo de livro publicado";
+            $campos_dadosBasicosDoTrabalho = ["tipo","tituloDoCapituloDoLivro","ano","paisDePublicacao","idioma","meioDeDivulgacao","homePageDoTrabalho","flagRelevancia","tituloDoCapituloDoLivroIngles","flagDivulgacaoCientifica"];
+            $campos_detalhamentoDoTrabalho = ["tituloDoLivro","paginaInicial","paginaFinal","isbn","organizadores","numeroDaEdicaoRevisao","cidadeDaEditora","nomeDaEditora"];            
+            $dadosBasicosNomeCampo = "dadosBasicosDoCapitulo";
+            $detalhamentoNomeCampo = "detalhamentoDoCapitulo";
+            $campos_sha256 = ["natureza","tituloDoCapituloDoLivro","isbn"];
+            $resultado_comparador_local = compararRegistros::lattesCapitulos(str_replace('"','',$obra["dadosBasicosDoCapitulo"]["tituloDoCapituloDoLivro"]),str_replace('"','',$obra["detalhamentoDoCapitulo"]["tituloDoLivro"]),"CAPITULO-DE-LIVRO");
+            break;
+
+        case "midiaSocialWebsiteBlog":       
+            $tipo_de_obra_nome = "Mídia Social ou Website ou Blob";
+            $campos_dadosBasicosDoTrabalho = ["natureza","titulo","ano","pais","idioma","homePage","flagRelevancia","flagDivulgacaoCientifica"];
+            $campos_detalhamentoDoTrabalho = ["tema"];            
+            $dadosBasicosNomeCampo = "dadosBasicosDaMidiaSocialWebsiteBlog";
+            $detalhamentoNomeCampo = "detalhamentoDaMidiaSocialWebsiteBlog";
+            $campos_sha256 = ["natureza","titulo","homePage"];
+            $resultado_comparador_local = compararRegistros::lattesMidiaSocial(str_replace('"','',$obra["dadosBasicosDaMidiaSocialWebsiteBlog"]["titulo"]),$obra["dadosBasicosDaMidiaSocialWebsiteBlog"]["homePage"],"MIDIA-SOCIAL-OU-BLOG");
+            break;            
+            
+    }
+    
+    $doc_obra_array["doc"]["tipo"] = $tipo_de_obra_nome;
+    $doc_obra_array["doc"]["source"] = "Base Lattes";
+    $doc_obra_array["doc"]["tag"] = $tag;
+    
+    $titulos_array = ["tituloDoTrabalho","tituloDoArtigo","tituloDoLivro","tituloDoCapituloDoLivro"];
+    $ano_array = ["anoDoTrabalho","anoDoArtigo"];
+    foreach ($campos_dadosBasicosDoTrabalho as $dados_basicos) {
+        if (isset($obra[$dadosBasicosNomeCampo][$dados_basicos])) {
+            $doc_obra_array["doc"][$dados_basicos] = $obra[$dadosBasicosNomeCampo][$dados_basicos];
+        }
+        if (in_array($dados_basicos,$titulos_array)) {
+            $doc_obra_array["doc"]["titulo"] = $obra[$dadosBasicosNomeCampo][$dados_basicos];
+        }
+        if (in_array($dados_basicos,$ano_array)) {
+            $doc_obra_array["doc"]["ano"] = $obra[$dadosBasicosNomeCampo][$dados_basicos];
+        }        
+    }
+    
+    foreach ($campos_detalhamentoDoTrabalho as $detalhamento) {
+        if (isset($obra[$detalhamentoNomeCampo][$detalhamento])){
+            $doc_obra_array["doc"][$tipo_de_obra][$detalhamento] = $obra[$detalhamentoNomeCampo][$detalhamento];
+        }
+        
+    }
+    
+    $array_result = processaAutoresLattes ($obra["autores"]);    
+    $doc_obra_array = array_merge_recursive($doc_obra_array,$array_result);
+    
+    if (isset($obra["palavrasChave"])){
+        $array_result = processaPalavrasChaveLattes ($obra["palavrasChave"]);
+        $doc_obra_array = array_merge_recursive($doc_obra_array,$array_result);
+    }
+    
+    if (isset($obra["areasDoConhecimento"])){
+        $array_result = processaAreaDoConhecimentoLattes ($obra["areasDoConhecimento"]);
+        $doc_obra_array = array_merge_recursive($doc_obra_array,$array_result);
+    }
+    
+    // Comparador Local
+    $i = 0;
+    foreach ($resultado_comparador_local["hits"]["hits"] as $result1) {
+        if (!empty($result1["_id"])){
+            $doc_obra_array["doc"]["ids_match"][$i]["id_match"] = $result1["_id"];
+        }
+        if (isset($result1["_score"])){
+            $doc_obra_array["doc"]["ids_match"][$i]["nota"] = $result1["_score"];
+        }                
+        $i++;
+    }
+    
+    $doc_obra_array["doc_as_upsert"] = true;
+    
+    // Retorna resultado
+    
+    $body = json_encode($doc_obra_array, JSON_UNESCAPED_UNICODE);
+    
+    // Constroi sha256
+    $sha256 = constroi_sha256 ($obra,$campos_sha256,$dadosBasicosNomeCampo,$detalhamentoNomeCampo); 
+    
+    return compact ('body','sha256');
+}
+
+function processaAutoresLattes($autores_array) {
+    $i = 0;
+    foreach ($autores_array as $autor) {
+        $autor_campos = ["nomeCompletoDoAutor","nomeParaCitacao","ordemDeAutoria","nroIdCnpq"];
+        foreach ($autor_campos as $campos){
+            if (isset($autor[$campos])){
+                $array_result["doc"]["autores"][$i][$campos] = $autor[$campos];
+            }            
+        }        
+        $i++;
+    }
+    return $array_result;
+}
+
+function processaPalavrasChaveLattes($palavras_chave) {
+    foreach (range(1, 6) as $number) {
+        if (isset($palavras_chave["palavraChave$number"])){
+            $array_result["doc"]["palavras_chave"][] = $palavras_chave["palavraChave$number"];
+        }
+    }
+    return $array_result;
+}
+
+function processaAreaDoConhecimentoLattes($areas_do_conhecimento) {
+    $campos = ["nomeGrandeAreaDoConhecimento","nomeDaAreaDoConhecimento","nomeDaSubAreaDoConhecimento","nomeDaEspecialidade"];
+    $i = 0;
+    foreach ($areas_do_conhecimento as $ac) {
+        foreach ($campos as $c){
+            if (isset($ac[$c])){
+                $array_result["doc"]["area_do_conhecimento"][$i][$c] = $ac[$c];
+            }
+        } 
+        $i++;
+    }
+    return $array_result;     
+}
+
+function constroi_sha256 ($obra,$campos_sha256,$dadosBasicosNomeCampo,$detalhamentoNomeCampo) {
+    $sha_array = [];
+    
+    foreach ($campos_sha256 as $campos){
+        if (isset($obra[$dadosBasicosNomeCampo][$campos])){
+            $sha_array[] = $obra[$dadosBasicosNomeCampo][$campos];
+        } elseif (isset($obra[$detalhamentoNomeCampo][$campos])){
+            $sha_array[] = $obra[$detalhamentoNomeCampo][$campos];
+        }       
+    }
+    $sha256 = hash('sha256', ''.implode("",$sha_array).'');
+    return $sha256;               
 }
 
 ?>
