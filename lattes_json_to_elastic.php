@@ -171,7 +171,7 @@
 
     if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
         foreach ($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"]["trabalhoEmEventos"] as $obra) {
-            $resultadoProcessaObra = processaObra($obra,"trabalhoEmEventos",$_GET['tag']);            
+            $resultadoProcessaObra = processaObra($obra,"trabalhoEmEventos",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"]);            
             // Armazenar registro
             $resultado_evento = store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
             print_r($resultado_evento);
@@ -184,7 +184,7 @@
 
     if (isset($cursor["docs"][0]["producaoBibliografica"]["artigosPublicados"])) {
         foreach ($cursor["docs"][0]["producaoBibliografica"]["artigosPublicados"]["artigoPublicado"] as $obra) {
-            $resultadoProcessaObra = processaObra($obra,"artigoPublicado",$_GET['tag']);
+            $resultadoProcessaObra = processaObra($obra,"artigoPublicado",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"]);
             // Armazenar registro
             $resultado_artigo = store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
             print_r($resultado_artigo);
@@ -197,7 +197,7 @@
 
     if (isset($cursor["docs"][0]["producaoBibliografica"]["livrosECapitulos"]["livrosPublicadosOuOrganizados"])) {
         foreach ($cursor["docs"][0]["producaoBibliografica"]["livrosECapitulos"]["livrosPublicadosOuOrganizados"]["livroPublicadoOuOrganizado"] as $obra) {
-            $resultadoProcessaObra = processaObra($obra,"livrosPublicadosOuOrganizado",$_GET['tag']);
+            $resultadoProcessaObra = processaObra($obra,"livrosPublicadosOuOrganizado",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"]);
             // Armazenar registro
             $resultado_livro = store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
             print_r($resultado_livro);
@@ -210,7 +210,7 @@
 
     if (isset($cursor["docs"][0]["producaoBibliografica"]["livrosECapitulos"]["capitulosDeLivrosPublicados"])) {
         foreach ($cursor["docs"][0]["producaoBibliografica"]["livrosECapitulos"]["capitulosDeLivrosPublicados"]["capituloDeLivroPublicado"] as $obra) {
-            $resultadoProcessaObra = processaObra($obra,"capituloDeLivroPublicado",$_GET['tag']);
+            $resultadoProcessaObra = processaObra($obra,"capituloDeLivroPublicado",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"]);
             // Armazenar registro
             $resultado_livro = store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
             print_r($resultado_livro);
@@ -219,13 +219,11 @@
         }
     } 
 
-    print_r($cursor["docs"][0]["producaoTecnica"]["demaisTiposDeProducaoTecnica"]);            
-                
-    //Parser de Mídica Social Website Blog
+    //Parser de Mídia Social Website Blog
 
     if (isset($cursor["docs"][0]["producaoTecnica"]["demaisTiposDeProducaoTecnica"]["midiaSocialWebsiteBlog"])) {
         foreach ($cursor["docs"][0]["producaoTecnica"]["demaisTiposDeProducaoTecnica"]["midiaSocialWebsiteBlog"] as $obra) {
-            $resultadoProcessaObra = processaObra($obra,"midiaSocialWebsiteBlog",$_GET['tag']);
+            $resultadoProcessaObra = processaObra($obra,"midiaSocialWebsiteBlog",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"]);
             // Armazenar registro
             $resultado_livro = store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
             print_r($resultado_livro);

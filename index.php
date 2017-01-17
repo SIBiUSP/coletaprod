@@ -35,83 +35,93 @@
         
         <div class="uk-grid uk-margin-large-bottom" data-uk-grid-margin>
             <div class="uk-width-medium-1-1">
+                
                 <div class="uk-vertical-align uk-text-center uk-responsive-width" style="background: height: 850px;">
                     <div class="uk-vertical-align-middle uk-width-1-2">
-                        <br/>
                         <h1>Coleta Produção USP</h1>
                         <p>Coleta produção de diversas fontes para preenchimento do Cadastro de Produção Intelectual, para uso interno das Bibliotecas da Universidade de São Paulo</p>
-                        <form class="uk-form" action="result_trabalhos.php" method="get">
-                            <fieldset data-uk-margin>
-                                <legend>Pesquisa por trabalho - <a href="result_trabalhos.php">Ver todos</a></legend>
-                                <input type="text" placeholder="Pesquise por termo ou título" class="uk-form-width-large" name="search[]" data-validation="required">                                        
-                                <input type="hidden" name="fields[]" value="titulo">
-                                <input type="hidden" name="fields[]" value="autores">
-                                <button class="uk-button-primary">Buscar</button><br/>                                    
-                            </fieldset>
-                        </form>
                         <br/>
-                        <form class="uk-form" action="result_trabalhos.php" method="get">
-                            <fieldset data-uk-margin>
-                                <legend>Pesquisa por TAG</legend>
-                                <input type="text" placeholder="Pesquise por tag" class="uk-form-width-large" name="search[]" data-validation="required">                                        
-                                <input type="hidden" name="fields[]" value="tag">
-                                <button class="uk-button-primary">Buscar tag</button><br/>                                    
-                            </fieldset>
-                        </form>
-                        <br/>
-                        <form class="uk-form" action="result_autores.php" method="get">
-                            <fieldset data-uk-margin>
-                                <legend>Pesquisa por autor - <a href="result_autores.php">Ver todos</a></legend>
-                                <input type="text" placeholder="Pesquise por nome do autor ou número USP" class="uk-form-width-large" name="search[]" data-validation="required">
-                                <input type="hidden" name="fields[]" value="nome_completo">                                
-                                <input type="hidden" name="fields[]" value="nome_em_citacoes_bibliograficas">
-                                <button class="uk-button-primary">Buscar</button><br/>                                    
-                            </fieldset>
-                        </form>
-                        <br/>
-                        <form class="uk-form" action="lattes_json_to_elastic.php" method="get">
-                            <fieldset data-uk-margin>
-                                <legend>Inserir ID do Currículo Lattes que deseja incluir</legend>
-                                <input type="text" placeholder="Insira o ID do Curriculo" class="uk-form-width-medium" name="id_lattes" data-validation="required">
-                                <input type="text" placeholder="TAG para formar um grupo" class="uk-form-width-medium" name="tag">
-                                <button class="uk-button-primary">Incluir</button><br/>                                    
-                            </fieldset>
-                        </form>
-                        <br/>
-                        <form class="uk-form" action="doi_to_elastic.php" method="get">
-                            <fieldset data-uk-margin>
-                                <legend>Inserir um DOI de artigo que queira incluir (sem http://dx.doi.org/)</legend>
-                                <input type="text" placeholder="Insira um DOI" class="uk-form-width-medium" name="doi" data-validation="required">
-                                <input type="text" placeholder="TAG para formar um grupo" class="uk-form-width-medium" name="tag">
-                                <button class="uk-button-primary">Incluir</button><br/>                                    
-                            </fieldset>
-                        </form>
-                        <br/>
-                        <form class="uk-form" action="wos_upload.php" method="post" accept-charset="utf-8" enctype="multipart/form-data">
-                            <fieldset data-uk-margin>
-                                <legend>Enviar um arquivo da Web of Science (UTF-8, separado por tabulações)</legend>
-                                <input type="file" name="file">
-                                <input type="text" placeholder="Tag para formar um grupo" class="uk-form-width-medium" name="tag">
-                                <button class="uk-button-primary" name="btn_submit">Upload</button><br/>                                    
-                            </fieldset>
-                        </form>                         
-                        <br/>
-                        <form class="uk-form" action="scopus_upload.php" method="post" accept-charset="utf-8" enctype="multipart/form-data">
-                            <fieldset data-uk-margin>
-                                <legend>Enviar um arquivo do Scopus (CSV - All available information)</legend>
-                                <input type="file" name="file">
-                                <input type="text" placeholder="Tag para formar um grupo" class="uk-form-width-medium" name="tag">
-                                <button class="uk-button-primary" name="btn_submit">Upload</button><br/>                                    
-                            </fieldset>
-                        </form>
-                        <form class="uk-form" action="harvester_oai.php" method="get" accept-charset="utf-8" enctype="multipart/form-data">
-                            <fieldset data-uk-margin>
-                                <legend>Incluir um URL OAI-PMH</legend>
-                                <input type="text" placeholder="Insira um URL OAI válido" class="uk-form-width-medium" name="url" data-validation="required">
-                                <input type="text" placeholder="Tag para formar um grupo" class="uk-form-width-medium" name="tag">
-                                <button class="uk-button-primary" name="btn_submit">Incluir</button><br/>                                    
-                            </fieldset>
-                        </form>                         
+                        <ul class="uk-subnav uk-subnav-pill" data-uk-switcher="{connect:'#subnav-pill-content-1'}">
+                            <li class="" aria-expanded="false"><a href="#">Pesquisa</a></li>
+                            <li aria-expanded="false" class=""><a href="#">Inclusão</a></li>
+                        </ul>
+                        <ul id="subnav-pill-content-1" class="uk-switcher">
+                            <li class="" aria-hidden="true">
+                                <form class="uk-form" action="result_trabalhos.php" method="get">
+                                    <fieldset data-uk-margin>
+                                        <legend>Pesquisa por trabalho - <a href="result_trabalhos.php">Ver todos</a></legend>
+                                        <input type="text" placeholder="Pesquise por termo ou título" class="uk-form-width-large" name="search[]" data-validation="required">                                        
+                                        <input type="hidden" name="fields[]" value="titulo">
+                                        <input type="hidden" name="fields[]" value="autores">
+                                        <button class="uk-button-primary">Buscar</button><br/>                                    
+                                    </fieldset>
+                                </form>
+                                <br/>
+                                <form class="uk-form" action="result_trabalhos.php" method="get">
+                                    <fieldset data-uk-margin>
+                                        <legend>Pesquisa por TAG</legend>
+                                        <input type="text" placeholder="Pesquise por tag" class="uk-form-width-large" name="search[]" data-validation="required">                                        
+                                        <input type="hidden" name="fields[]" value="tag">
+                                        <button class="uk-button-primary">Buscar tag</button><br/>                                    
+                                    </fieldset>
+                                </form>
+                                <br/>
+                                <form class="uk-form" action="result_autores.php" method="get">
+                                    <fieldset data-uk-margin>
+                                        <legend>Pesquisa por autor - <a href="result_autores.php">Ver todos</a></legend>
+                                        <input type="text" placeholder="Pesquise por nome do autor ou número USP" class="uk-form-width-large" name="search[]" data-validation="required">
+                                        <input type="hidden" name="fields[]" value="nome_completo">                                
+                                        <input type="hidden" name="fields[]" value="nome_em_citacoes_bibliograficas">
+                                        <button class="uk-button-primary">Buscar</button><br/>                                    
+                                    </fieldset>
+                                </form> 
+                            </li>
+                            <li aria-hidden="true" class="">
+                                <form class="uk-form" action="lattes_json_to_elastic.php" method="get">
+                                    <fieldset data-uk-margin>
+                                        <legend>Inserir ID do Currículo Lattes que deseja incluir</legend>
+                                        <input type="text" placeholder="Insira o ID do Curriculo" class="uk-form-width-medium" name="id_lattes" data-validation="required">
+                                        <input type="text" placeholder="TAG para formar um grupo" class="uk-form-width-medium" name="tag">
+                                        <button class="uk-button-primary">Incluir</button><br/>                                    
+                                    </fieldset>
+                                </form>
+                                <br/>
+                                <form class="uk-form" action="doi_to_elastic.php" method="get">
+                                    <fieldset data-uk-margin>
+                                        <legend>Inserir um DOI de artigo que queira incluir (sem http://dx.doi.org/)</legend>
+                                        <input type="text" placeholder="Insira um DOI" class="uk-form-width-medium" name="doi" data-validation="required">
+                                        <input type="text" placeholder="TAG para formar um grupo" class="uk-form-width-medium" name="tag">
+                                        <button class="uk-button-primary">Incluir</button><br/>                                    
+                                    </fieldset>
+                                </form>
+                                <br/>
+                                <form class="uk-form" action="wos_upload.php" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+                                    <fieldset data-uk-margin>
+                                        <legend>Enviar um arquivo da Web of Science (UTF-8, separado por tabulações)</legend>
+                                        <input type="file" name="file">
+                                        <input type="text" placeholder="Tag para formar um grupo" class="uk-form-width-medium" name="tag">
+                                        <button class="uk-button-primary" name="btn_submit">Upload</button><br/>                                    
+                                    </fieldset>
+                                </form>                         
+                                <br/>
+                                <form class="uk-form" action="scopus_upload.php" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+                                    <fieldset data-uk-margin>
+                                        <legend>Enviar um arquivo do Scopus (CSV - All available information)</legend>
+                                        <input type="file" name="file">
+                                        <input type="text" placeholder="Tag para formar um grupo" class="uk-form-width-medium" name="tag">
+                                        <button class="uk-button-primary" name="btn_submit">Upload</button><br/>                                    
+                                    </fieldset>
+                                </form>
+                                <form class="uk-form" action="harvester_oai.php" method="get" accept-charset="utf-8" enctype="multipart/form-data">
+                                    <fieldset data-uk-margin>
+                                        <legend>Incluir um URL OAI-PMH</legend>
+                                        <input type="text" placeholder="Insira um URL OAI válido" class="uk-form-width-medium" name="url" data-validation="required">
+                                        <input type="text" placeholder="Tag para formar um grupo" class="uk-form-width-medium" name="tag">
+                                        <button class="uk-button-primary" name="btn_submit">Incluir</button><br/>                                    
+                                    </fieldset>
+                                </form>
+                            </li>
+                        </ul>                                           
                         <br/>                        
                     </div>
                 </div>

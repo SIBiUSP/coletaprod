@@ -85,7 +85,7 @@
         $facets->facet("tag",10,"Tag",null);
         
         $facets->facet("autores.nomeCompletoDoAutor",100,"Nome completo do autor",null);
-        $facets->facet("autores.nroIdCnpq",100,"Número do lattes",null);
+        $facets->facet("lattes_ids",100,"Número do lattes",null);
         $facets->facet("id_usp",100,"Número USP",null);
         
         

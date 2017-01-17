@@ -880,67 +880,66 @@ function query_doi($doi,$tag,$client) {
     $json = file_get_contents($url);
     $data = json_decode($json, TRUE);
     
-    //print_r($data);
+    $sha256 = hash('sha256', ''.$doi.'');
     
-    $sha256 = hash('sha256', ''.$doi.''); 
+    $doc_obra_array["doc"]["source"] = "Base DOI - CrossRef";
+    $doc_obra_array["doc"]["source_id"] = $doi;    
+    $doc_obra_array["doc"]["tag"][] = $tag;    
+    $doc_obra_array["doc"]["tipo"] = $data["message"]["type"];
+    $doc_obra_array["doc"]["titulo"] = $data["message"]["title"][0];
+    if(isset($data["message"]["subtitle"][0])){
+        $doc_obra_array["doc"]["subtitulo"] = $data["message"]["subtitle"][0];
+    }    
+    if(isset($data["message"]["published-online"]["date-parts"][0][0])){
+        $doc_obra_array["doc"]["ano"] = $data["message"]["published-online"]["date-parts"][0][0];
+    }     
+    if(isset($data["message"]["URL"])){
+        $doc_obra_array["doc"]["url"] = $data["message"]["URL"];
+    }
+    $doc_obra_array["doc"]["doi"] = $doi;
+
+    if(isset($data["message"]["container-title"][0])){
+        $doc_obra_array["doc"]["artigoPublicado"]["tituloDoPeriodicoOuRevista"] = $data["message"]["container-title"][0];
+    }
+    if(isset($data["message"]["ISSN"][0])){
+        $doc_obra_array["doc"]["artigoPublicado"]["issn"] = $data["message"]["ISSN"][0];
+    }      
+    if(isset($data["message"]["volume"])){
+        $doc_obra_array["doc"]["artigoPublicado"]["volume"] = $data["message"]["volume"];
+    }         
+    if(isset($data["message"]["issue"])){
+        $doc_obra_array["doc"]["artigoPublicado"]["fasciculo"] = $data["message"]["issue"];
+    }      
+    if(isset($data["message"]["page"])){
+        $doc_obra_array["doc"]["artigoPublicado"]["paginaInicial"] = $data["message"]["page"];
+    }      
+    if(isset($data["message"]["publisher"])){
+        $doc_obra_array["doc"]["artigoPublicado"]["nomeDaEditora"] = $data["message"]["publisher"];
+    }
+    if(isset($data["message"]["publisher"])){
+        $doc_obra_array["doc"]["citacoes_recebidas"] = $data["message"]["cited-count"];
+    }     
     
     foreach ($data["message"]["subject"]  as $assunto) {	
-        $palavras_chave[] = $assunto;
+       $doc_obra_array["doc"]["palavras_chave"][] = $assunto;
     }
     
-    foreach ($data["message"]["author"]  as $autores) {		
-        $autores_base_array = [];
-        $autores_base_array[] = '"nome_completo_do_autor":"'.$autores["given"]." ".$autores["family"].'"';
-        $autores_base_array[] = '"nome_para_citacao":"'.$autores["family"].', '.$autores["given"].'"';
-
-        $autores_array[] = '{ 
-            '.implode(",",$autores_base_array).'
-        }';
-        unset($autores_base_array);
-    }    
     
+    $i = 0;
+    foreach ($data["message"]["author"]  as $autores) {
+        $doc_obra_array["doc"]["autores"][$i]["nomeCompletoDoAutor"] = $autores["given"].", ".$autores["family"];
+        $doc_obra_array["doc"]["autores"][$i]["nomeParaCitacao"] = $autores["family"].", ".$autores["given"];
+        $i++;
+    } 
     
-    $insert_doi = 
-        '{
-            "doc":{
-                "source":"Base DOI - CrossRef",
-                "source_id":"'.$data["message"]["DOI"].'",
-                "tag": ["'.$tag.'"],
-                "tipo":"'.$data["message"]["type"].'",
-                "titulo": "'.$data["message"]["title"][0].'",
-                "subtitulo": "'.$data["message"]["subtitle"][0].'",
-                "titulo_original": "'.$data["message"]["original-title"][0].'",
-                "ano": "'.$data["message"]["published-online"]["date-parts"][0][0].'",
-                "url": "'.$data["message"]["URL"].'",
-                "doi":"'.$data["message"]["DOI"].'",
-                "artigoPublicado":{
-                    "tituloDoPeriodicoOuRevista":"'.$data["message"]["container-title"][0].'",
-                    "issn":"'.$data["message"]["ISSN"][0].'",
-                    "volume":"'.$data["message"]["volume"].'",
-                    "fasciculo":"'.$data["message"]["issue"].'",
-                    "paginaInicial":"'.$data["message"]["page"].'",
-                    "nomeDaEditora":"'.$data["message"]["publisher"].'"
-                },
-                "palavras_chave":["'.implode('","',$palavras_chave).'"],
-                "autores":['.implode(',',$autores_array).']
-
-            },
-            "doc_as_upsert" : true
-        }';     
+    $doc_obra_array["doc_as_upsert"] = true;
     
+    // Retorna resultado
     
-    //print_r($insert_doi);
+    $body = json_encode($doc_obra_array, JSON_UNESCAPED_UNICODE); 
     
-    $params = [
-        'index' => $index,
-        'type' => 'trabalhos',
-        'id' => "$sha256",
-        'body' => $insert_doi
-    ];
-    $response = $client->update($params);
-    echo '<br/>Resultado: '.($response["_id"]).', '.($response["result"]).', '.($response["_shards"]['successful']).'<br/>';       
-    
-
+    $resultado_crossref = store_record($sha256,"trabalhos",$body);
+    print_r($resultado_crossref);
 }
 
 function processaFormacaoAcaddemica($dados,$nivel,$campos) {  
@@ -956,7 +955,7 @@ function processaFormacaoAcaddemica($dados,$nivel,$campos) {
     return $doc_curriculo_array;
 }
 
-function processaObra($obra,$tipo_de_obra,$tag) {
+function processaObra($obra,$tipo_de_obra,$tag,$id_lattes) {
     switch ($tipo_de_obra) {
             
         case "trabalhoEmEventos":
@@ -1024,6 +1023,7 @@ function processaObra($obra,$tipo_de_obra,$tag) {
     
     $doc_obra_array["doc"]["tipo"] = $tipo_de_obra_nome;
     $doc_obra_array["doc"]["source"] = "Base Lattes";
+    $doc_obra_array["doc"]["lattes_ids"][] = $id_lattes;
     $doc_obra_array["doc"]["tag"] = $tag;
     
     $titulos_array = ["tituloDoTrabalho","tituloDoArtigo","tituloDoLivro","tituloDoCapituloDoLivro"];
@@ -1095,7 +1095,10 @@ function processaAutoresLattes($autores_array) {
         foreach ($autor_campos as $campos){
             if (isset($autor[$campos])){
                 $array_result["doc"]["autores"][$i][$campos] = $autor[$campos];
-            }            
+            }
+            if (isset($autor["nroIdCnpq"])){
+                $array_result["doc"]["lattes_ids"][] = $autor["nroIdCnpq"];
+            }              
         }        
         $i++;
     }
