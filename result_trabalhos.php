@@ -86,9 +86,10 @@
         
         $facets->facet("autores.nomeCompletoDoAutor",100,"Nome completo do autor",null);
         $facets->facet("lattes_ids",100,"Número do lattes",null);
-        $facets->facet("id_usp",100,"Número USP",null);
+        $facets->facet("codpes",100,"Número USP",null);
+        $facets->facet("unidadeUSP",100,"Unidade USP",null);
         
-        
+        echo '<hr><li>Informações da publicação</li>';
         $facets->facet("pais",200,"País de publicação",null);
         $facets->facet("ano",120,"Ano de publicação","desc");
         $facets->facet("idioma",40,"Idioma",null);

@@ -955,7 +955,7 @@ function processaFormacaoAcaddemica($dados,$nivel,$campos) {
     return $doc_curriculo_array;
 }
 
-function processaObra($obra,$tipo_de_obra,$tag,$id_lattes) {
+function processaObra($obra,$tipo_de_obra,$tag,$id_lattes,$unidadeUSP,$codpes) {
     switch ($tipo_de_obra) {
             
         case "trabalhoEmEventos":
@@ -1025,6 +1025,8 @@ function processaObra($obra,$tipo_de_obra,$tag,$id_lattes) {
     $doc_obra_array["doc"]["source"] = "Base Lattes";
     $doc_obra_array["doc"]["lattes_ids"][] = $id_lattes;
     $doc_obra_array["doc"]["tag"] = $tag;
+    $doc_obra_array["doc"]["unidadeUSP"][] = $unidadeUSP;
+    $doc_obra_array["doc"]["codpes"] = $codpes;       
     
     $titulos_array = ["tituloDoTrabalho","tituloDoArtigo","tituloDoLivro","tituloDoCapituloDoLivro"];
     $ano_array = ["anoDoTrabalho","anoDoArtigo"];
