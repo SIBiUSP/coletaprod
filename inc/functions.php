@@ -182,7 +182,7 @@ class compararRegistros {
         global $client;
         $body = '
         {
-            "min_score": 3,
+            "min_score": 10,
             "query":{
                 "bool": {
                     "should": [
@@ -211,7 +211,7 @@ class compararRegistros {
                              }
                         }
                     ],
-                    "minimum_should_match" : 2               
+                    "minimum_should_match" : 3               
                 }
             }
         }
@@ -957,9 +957,6 @@ function processaFormacaoAcaddemica($dados,$nivel,$campos) {
 }
 
 function processaObra($obra,$tipo_de_obra,$tag) {
-    print_r($obra);
-    echo '<br/><br/>';
-    echo '<br/><br/>';
     switch ($tipo_de_obra) {
             
         case "trabalhoEmEventos":
@@ -1063,15 +1060,21 @@ function processaObra($obra,$tipo_de_obra,$tag) {
         $doc_obra_array = array_merge_recursive($doc_obra_array,$array_result);
     }
     
+    // Constroi sha256
+    $sha256 = constroi_sha256 ($obra,$campos_sha256,$dadosBasicosNomeCampo,$detalhamentoNomeCampo);     
+    
     // Comparador Local
     $i = 0;
     foreach ($resultado_comparador_local["hits"]["hits"] as $result1) {
-        if (!empty($result1["_id"])){
-            $doc_obra_array["doc"]["ids_match"][$i]["id_match"] = $result1["_id"];
+        
+        if ($result1["_id"] != $sha256){
+            if (!empty($result1["_id"])){
+                $doc_obra_array["doc"]["ids_match"][$i]["id_match"] = $result1["_id"];
+            }
+            if (isset($result1["_score"])){
+                $doc_obra_array["doc"]["ids_match"][$i]["nota"] = $result1["_score"];
+            }
         }
-        if (isset($result1["_score"])){
-            $doc_obra_array["doc"]["ids_match"][$i]["nota"] = $result1["_score"];
-        }                
         $i++;
     }
     
@@ -1079,10 +1082,8 @@ function processaObra($obra,$tipo_de_obra,$tag) {
     
     // Retorna resultado
     
-    $body = json_encode($doc_obra_array, JSON_UNESCAPED_UNICODE);
-    
-    // Constroi sha256
-    $sha256 = constroi_sha256 ($obra,$campos_sha256,$dadosBasicosNomeCampo,$detalhamentoNomeCampo); 
+    $body = json_encode($doc_obra_array, JSON_UNESCAPED_UNICODE);  
+
     
     return compact ('body','sha256');
 }

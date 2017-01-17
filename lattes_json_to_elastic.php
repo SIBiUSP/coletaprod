@@ -159,14 +159,10 @@
             $i++;
         }
     }
-                
-    print_r($doc_curriculo_array);
-    echo '<br/><br/><br/>';            
-                    
+            
     $doc_curriculo_array["doc_as_upsert"] = true;
     $body =  json_encode($doc_curriculo_array, JSON_UNESCAPED_UNICODE);
-    print_r($body);
-    echo '<br/><br/><br/>';             
+                
     $resultado_curriculo = store_record($cursor["docs"][0]["numeroIdentificador"],"curriculos",$body);
     print_r($resultado_curriculo);
 

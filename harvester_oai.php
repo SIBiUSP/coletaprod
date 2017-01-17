@@ -46,13 +46,13 @@ if ($_GET["metadata_format"] == "nlm") {
 
 
         $container_title = '
-            "periodico":{
-                "titulo_do_periodico":"'.str_replace('"','',$rec->{'metadata'}->{'article'}->{'front'}->{'journal-meta'}->{'journal-title'}).'",
-                "nome_da_editora":"'.$rec->{'metadata'}->{'article'}->{'front'}->{'journal-meta'}->{'publisher'}->{'publisher-name'}.'",
+            "artigoPublicado":{
+                "tituloDoPeriodicoOuRevista":"'.str_replace('"','',$rec->{'metadata'}->{'article'}->{'front'}->{'journal-meta'}->{'journal-title'}).'",
+                "nomeDaEditora":"'.$rec->{'metadata'}->{'article'}->{'front'}->{'journal-meta'}->{'publisher'}->{'publisher-name'}.'",
                 "issn":"'.$rec->{'metadata'}->{'article'}->{'front'}->{'journal-meta'}->{'issn'}.'",
                 "volume":"'.$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'volume'}.'",
                 "fasciculo":"'.$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'issue'}.'",
-                "pagina_inicial":"'.$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'issue-id'}.'",
+                "paginaInicial":"'.$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'issue-id'}.'",
                 "serie":"'.$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'issue-title'}.'"
             },
         ';
@@ -66,14 +66,14 @@ if ($_GET["metadata_format"] == "nlm") {
 
                     $autores_base_array = [];
 
-                    $autores_base_array[] = '"nome_completo_do_autor":"'.$autores->{'name'}->{'given-names'}.' '.$autores->{'name'}->{'surname'}.'"';
-                    $autores_base_array[] = '"nome_para_citacao":"'.$autores->{'name'}->{'surname'}.', '.$autores->{'name'}->{'given-names'}.'"';
+                    $autores_base_array[] = '"nomeCompletoDoAutor":"'.$autores->{'name'}->{'given-names'}.' '.$autores->{'name'}->{'surname'}.'"';
+                    $autores_base_array[] = '"nomeParaCitacao":"'.$autores->{'name'}->{'surname'}.', '.$autores->{'name'}->{'given-names'}.'"';
 
                     if(isset($autores->{'aff'})) {
                         $autores_base_array[] = '"afiliacao":"'.$autores->{'aff'}.'"';
                     }              
                     if(isset($autores->{'uri'})) {
-                        $autores_base_array[] = '"nro_id_cnpq":"'.$autores->{'uri'}.'"';
+                        $autores_base_array[] = '"nroIdCnpq":"'.$autores->{'uri'}.'"';
                     }  
 
                     $autores_array[] = '{ 
