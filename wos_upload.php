@@ -21,7 +21,7 @@
             $autores_json_str = [];
             
             for($i=0;$i<count($autores_nome_array);$i++){
-                $autores_json_str[] = '{"nome_completo_do_autor":"'.$autores_nome_array[$i].'","nome_para_citacao":"'.$autores_citacao_array[$i].'"}';
+                $autores_json_str[] = '{"nomeCompletoDoAutor":"'.$autores_nome_array[$i].'","nomeParaCitacao":"'.$autores_citacao_array[$i].'"}';
             }
             
             // Agência de fomento
@@ -29,16 +29,16 @@
 
             if ($row[0] == "J") {
                 $container_title = '
-					"periodico":{
-						"titulo_do_periodico":"'.str_replace('"','',$row[9]).'",
-                        "nome_da_editora":"'.$row[35].'",
+					"artigoPublicado":{
+						"tituloDoPeriodicoOuRevista":"'.str_replace('"','',$row[9]).'",
+                        "nomeDaEditora":"'.$row[35].'",
 						"issn":"'.$row[38].'",
 						"volume":"'.$row[45].'",
 						"fasciculo":"'.$row[46].'",
 						"serie":"'.$row[47].'",
-						"pagina_inicial":"'.$row[51].'",
-						"pagina_final":"'.$row[52].'",
-						"local_de_publicacao":"'.$row[36].'"
+						"paginaInicial":"'.$row[51].'",
+						"paginaFinal":"'.$row[52].'",
+						"localDePublicacao":"'.$row[36].'"
 					},
                 ';
             }
@@ -53,7 +53,7 @@
                 '{
                     "doc":{
                         "source":"Base Web of Science",  
-                        "wos_id": "'.$row[60].'",
+                        "source_id": "'.$row[60].'",
                         "tag": ["'.$_POST["tag"].'"],
                         "tipo":"'.$row[0].'",
                         "titulo": "'.str_replace('"','',$row[8]).'",

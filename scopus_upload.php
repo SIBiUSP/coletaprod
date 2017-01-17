@@ -21,7 +21,7 @@
             $autores_json_str = [];
             
             for($i=0;$i<count($autores_nome_array);$i++){
-                $autores_json_str[] = '{"nome_completo_do_autor":"'.$autores_nome_array[$i].'","nome_e_afiliacao":"'.$autores_afiliacao_array[$i].'"}';
+                $autores_json_str[] = '{"nomeCompletoDoAutor":"'.$autores_nome_array[$i].'","nomeAfiliacao":"'.$autores_afiliacao_array[$i].'"}';
             }
             
             // Agência de fomento
@@ -32,14 +32,14 @@
 
             if ($row[38] == "Article") {
                 $container_title = '
-					"periodico":{
-						"titulo_do_periodico":"'.str_replace('"','',$row[3]).'",
-                        "nome_da_editora":"'.$row[25].'",
+					"artigoPublicado":{
+						"tituloDoPeriodicoOuRevista":"'.str_replace('"','',$row[3]).'",
+                        "nomeDaEditora":"'.$row[25].'",
 						"issn":"'.$row[32].'",
 						"volume":"'.$row[4].'",
 						"fasciculo":"'.$row[5].'",
-						"pagina_inicial":"'.$row[7].'",
-						"pagina_final":"'.$row[8].'"
+						"paginaInicial":"'.$row[7].'",
+						"paginaFinal":"'.$row[8].'"
 					},
                 ';
             }
@@ -54,7 +54,7 @@
                 '{
                     "doc":{
                         "source":"Base Scopus",  
-                        "scopus_id": "'.$row[40].'",
+                        "source_id": "'.$row[40].'",
                         "tag": ["'.$_POST["tag"].'"],
                         "tipo":"'.$row[38].'",
                         "titulo": "'.str_replace('"','',$row[1]).'",

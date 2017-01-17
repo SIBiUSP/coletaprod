@@ -121,7 +121,7 @@ class compararRegistros {
         global $client;        
         $body = '
             {
-                "min_score": 0,
+                "min_score": 10,
                 "query":{
                     "bool": {
                         "should": [
@@ -166,7 +166,7 @@ class compararRegistros {
                                 }
                             }
                         ],
-                        "minimum_should_match" : 2               
+                        "minimum_should_match" : 3               
                     }
                 }
             }
@@ -903,7 +903,8 @@ function query_doi($doi,$tag,$client) {
     $insert_doi = 
         '{
             "doc":{
-                "source":"Base DOI - CrossRef", 
+                "source":"Base DOI - CrossRef",
+                "source_id":"'.$data["message"]["DOI"].'",
                 "tag": ["'.$tag.'"],
                 "tipo":"'.$data["message"]["type"].'",
                 "titulo": "'.$data["message"]["title"][0].'",
@@ -912,13 +913,13 @@ function query_doi($doi,$tag,$client) {
                 "ano": "'.$data["message"]["published-online"]["date-parts"][0][0].'",
                 "url": "'.$data["message"]["URL"].'",
                 "doi":"'.$data["message"]["DOI"].'",
-                "periodico":{
-                    "titulo_do_periodico":"'.$data["message"]["container-title"][0].'",
+                "artigoPublicado":{
+                    "tituloDoPeriodicoOuRevista":"'.$data["message"]["container-title"][0].'",
                     "issn":"'.$data["message"]["ISSN"][0].'",
                     "volume":"'.$data["message"]["volume"].'",
                     "fasciculo":"'.$data["message"]["issue"].'",
-                    "pagina_inicial":"'.$data["message"]["page"].'",
-                    "nome_da_editora":"'.$data["message"]["publisher"].'"
+                    "paginaInicial":"'.$data["message"]["page"].'",
+                    "nomeDaEditora":"'.$data["message"]["publisher"].'"
                 },
                 "palavras_chave":["'.implode('","',$palavras_chave).'"],
                 "autores":['.implode(',',$autores_array).']
