@@ -38,7 +38,7 @@
                 
                 <div class="uk-vertical-align uk-text-center uk-responsive-width" style="background: height: 850px;">
                     <div class="uk-vertical-align-middle uk-width-1-2">
-                        <h1>Coleta Produção USP</h1>
+                        <h1 class="uk-margin-top">Coleta Produção USP</h1>
                         <p>Coleta produção de diversas fontes para preenchimento do Cadastro de Produção Intelectual, para uso interno das Bibliotecas da Universidade de São Paulo</p>
                         <br/>
                         <ul class="uk-subnav uk-subnav-pill" data-uk-switcher="{connect:'#subnav-pill-content-1'}">
