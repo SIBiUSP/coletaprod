@@ -114,6 +114,7 @@
                                         <button class="uk-button-primary" name="btn_submit">Upload</button><br/>                                    
                                     </fieldset>
                                 </form>
+                                <br/>
                                 <form class="uk-form" action="harvester_oai.php" method="get" accept-charset="utf-8" enctype="multipart/form-data">
                                     <fieldset data-uk-margin>
                                         <legend>Incluir um URL OAI-PMH</legend>
@@ -122,6 +123,14 @@
                                         <button class="uk-button-primary" name="btn_submit">Incluir</button><br/>                                    
                                     </fieldset>
                                 </form>
+                                <br/>
+                                <form class="uk-form" action="z3950.php" method="get" accept-charset="utf-8">
+                                    <fieldset data-uk-margin>
+                                        <legend>Incluir um ISBN</legend>
+                                        <input type="text" placeholder="Insira um ISBN válido" class="uk-form-width-medium" name="isbn" size="13" data-validation="required">
+                                        <button class="uk-button-primary" name="btn_submit">Pesquisa Z39.50</button><br/>                                    
+                                    </fieldset>
+                                </form>                                
                             </li>
                         </ul>                                           
                         <br/>                        
@@ -143,7 +152,7 @@
                     <div class="uk-width-5-6">
                         <h2 class="uk-h3">Tipo de material</h2>
                         <ul class="uk-list uk-list-striped">
-                            <?php tipo_inicio($client); ?>
+                            <?php paginaInicial::tipo_inicio(); ?>
                         </ul>                            
                     </div>
                 </div>
@@ -156,7 +165,7 @@
                     <div class="uk-width-5-6">
                         <h2 class="uk-h3">Fonte</h2>
                         <ul class="uk-list uk-list-striped">
-                            <?php fonte_inicio($client); ?> 
+                            <?php paginaInicial::fonte_inicio(); ?> 
                         </ul>
                     </div>
                 </div>
@@ -169,9 +178,9 @@
                     <div class="uk-width-5-6">
                         <h2 class="uk-h3">Alguns números</h2>
                         <ul class="uk-list uk-list-striped">
-                            <li><?php echo contar_tipo_de_registro("trabalhos"); ?> registros</li> 
-                            <li><?php echo contar_tipo_de_registro("curriculos"); ?> currículos</li>
-                            <li><?php echo contar_registros_match("trabalhos"); ?> Registros similares identificados</li>                                 
+                            <li><?php echo paginaInicial::contar_tipo_de_registro("trabalhos"); ?> registros</li> 
+                            <li><?php echo paginaInicial::contar_tipo_de_registro("curriculos"); ?> currículos</li>
+                            <li><?php echo paginaInicial::contar_registros_match("trabalhos"); ?> Registros similares identificados</li>                                 
                         </ul>
                     </div>
                 </div>

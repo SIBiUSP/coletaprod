@@ -33,9 +33,9 @@
     }
                 
     if (isset($_GET["id_lattes"])) {
-        $cursor = coleta_json_lattes($_GET["id_lattes"]);
+        $cursor = dadosExternos::coleta_json_lattes($_GET["id_lattes"]);
     } elseif (isset($_GET["path_download"])) {
-        $cursor = coleta_json_download_lattes($_GET["path_download"]);
+        $cursor = dadosExternos::coleta_json_download_lattes($_GET["path_download"]);
     } else {
         echo '<p>Não foi informado nenhum ID</p>';
     }            
@@ -106,42 +106,42 @@
         // Graduação
         if (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["graduacao"])){
             $graduacao_campos = ["sequencia_formacao","nivel","tituloDoTrabalhoDeConclusaoDeCurso","nomeDoOrientador","codigo_instituicao","nomeInstituicao","codigoCurso","nomeCurso","codigoAreaCurso","statusDoCurso","anoDeInicio","anoDeConclusao","flagBolsa"];
-            $array_result = processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["graduacao"],"graduacao",$graduacao_campos);
+            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["graduacao"],"graduacao",$graduacao_campos);
             $doc_curriculo_array = array_merge_recursive($doc_curriculo_array,$array_result);
         }
         
         // Mestrado
         if (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["mestrado"])){
             $mestrado_campos = ["sequenciaFormacao","nivel","codigoInstituicao","nomeInstituicao","codigoCurso","nomeCurso","codigoAreaCurso","statusDoCurso","anoDeInicio","anoDeConclusao","anoDeObtencaoDoTitulo","tituloDaDissertacaoTese","nomeCompletoDoOrientador","tipoMestrado","numeroIdOrientador","codigoCursoCapes","nomeCursoIngles","conceitoCapes","codigoAgenciaFinanciadora","nomeAgencia","flagBolsa"];
-            $array_result = processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["mestrado"],"mestrado",$mestrado_campos);
+            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["mestrado"],"mestrado",$mestrado_campos);
             $doc_curriculo_array = array_merge_recursive($doc_curriculo_array,$array_result);
         } 
         
         // Mestrado Profissional
         if (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["mestradoProfissionalizante"])){
             $mestradoProfissionalizante_campos = ["sequenciaFormacao","nivel","codigoInstituicao","nomeInstituicao","codigoCurso","nomeCurso","codigoAreaCurso","statusDoCurso","anoDeInicio","anoDeConclusao","anoDeObtencaoDoTitulo","nomeCompletoDoOrientador","tituloDaDissertacaoTese","numeroIdOrientador","codigoCursoCapes","nomeCursoIngles","conceitoCapes","codigoAgenciaFinanciadora","nomeAgencia","flagBolsa"];
-            $array_result = processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["mestradoProfissionalizante"],"mestradoProfissionalizante",$mestradoProfissionalizante_campos);
+            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["mestradoProfissionalizante"],"mestradoProfissionalizante",$mestradoProfissionalizante_campos);
             $doc_curriculo_array = array_merge_recursive($doc_curriculo_array,$array_result);
         }
         
         // Doutorado
         if (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["doutorado"])){
             $doutorado_campos = ["sequenciaFormacao","nivel","codigoInstituicao","nomeInstituicao","codigoCurso","nomeCurso","codigoAreaCurso","statusDoCurso","anoDeInicio","anoDeConclusao","anoDeObtencaoDoTitulo","nomeCompletoDoOrientador","tituloDaDissertacaoTese","tipoDoutorado","numeroIdOrientador","codigoCursoCapes","nomeCursoIngles","conceitoCapes","codigoAgenciaFinanciadora","nomeAgencia","flagBolsa"];
-            $array_result = processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["doutorado"],"doutorado",$doutorado_campos);
+            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["doutorado"],"doutorado",$doutorado_campos);
             $doc_curriculo_array = array_merge_recursive($doc_curriculo_array,$array_result);
         }
 
         // Pós Doutorado
         if (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["posDoutorado"])){
             $posDoutorado_campos = ["sequenciaFormacao","nivel","codigoInstituicao","nomeInstituicao","codigoCurso","nomeCurso","codigoAreaCurso","statusDoCurso","anoDeInicio","anoDeConclusao","anoDeObtencaoDoTitulo","nomeCompletoDoOrientador","tituloDaDissertacaoTese","tipoDoutorado","numeroIdOrientador","codigoCursoCapes","nomeCursoIngles","conceitoCapes","codigoAgenciaFinanciadora","nomeAgencia","flagBolsa"];
-            $array_result = processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["posDoutorado"],"posDoutorado",$posDoutorado_campos);
+            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["posDoutorado"],"posDoutorado",$posDoutorado_campos);
             $doc_curriculo_array = array_merge_recursive($doc_curriculo_array,$array_result);
         }        
         
         // Livre docência
         if (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["livreDocencia"])){
             $livreDocencia_campos = ["sequenciaFormacao","nivel","codigoInstituicao","nomeInstituicao","codigoCurso","nomeCurso","codigoAreaCurso","statusDoCurso","anoDeInicio","anoDeConclusao","anoDeObtencaoDoTitulo","tituloDoTrabalho","nomeCompletoDoOrientador","tipolivreDocencia","numeroIdOrientador","codigoCursoCapes","nomeCursoIngles","conceitoCapes","codigoAgenciaFinanciadora","nomeAgencia","flagBolsa"];
-            $array_result = processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["livreDocencia"],"livreDocencia",$livreDocencia_campos);
+            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["livreDocencia"],"livreDocencia",$livreDocencia_campos);
             $doc_curriculo_array = array_merge_recursive($doc_curriculo_array,$array_result);
         }          
 
@@ -171,7 +171,7 @@
     $doc_curriculo_array["doc_as_upsert"] = true;
     $body =  json_encode($doc_curriculo_array, JSON_UNESCAPED_UNICODE);
                 
-    $resultado_curriculo = store_record($cursor["docs"][0]["numeroIdentificador"],"curriculos",$body);
+    $resultado_curriculo = elasticsearch::store_record($cursor["docs"][0]["numeroIdentificador"],"curriculos",$body);
     print_r($resultado_curriculo);
 
                 
@@ -179,9 +179,9 @@
 
     if (isset($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"])) {
         foreach ($cursor["docs"][0]["producaoBibliografica"]["trabalhosEmEventos"]["trabalhoEmEventos"] as $obra) {
-            $resultadoProcessaObra = processaObra($obra,"trabalhoEmEventos",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"],$_GET['unidadeUSP'],$_GET['codpes']);            
+            $resultadoProcessaObra = processaLattes::processaObra($obra,"trabalhoEmEventos",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"],$_GET['unidadeUSP'],$_GET['codpes']);            
             // Armazenar registro
-            $resultado_evento = store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
+            $resultado_evento = elasticsearch::store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
             print_r($resultado_evento);
             
             flush();
@@ -192,9 +192,9 @@
 
     if (isset($cursor["docs"][0]["producaoBibliografica"]["artigosPublicados"])) {
         foreach ($cursor["docs"][0]["producaoBibliografica"]["artigosPublicados"]["artigoPublicado"] as $obra) {
-            $resultadoProcessaObra = processaObra($obra,"artigoPublicado",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"],$_GET['unidadeUSP'],$_GET['codpes']);
+            $resultadoProcessaObra = processaLattes::processaObra($obra,"artigoPublicado",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"],$_GET['unidadeUSP'],$_GET['codpes']);
             // Armazenar registro
-            $resultado_artigo = store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
+            $resultado_artigo = elasticsearch::store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
             print_r($resultado_artigo);
             
             flush();
@@ -205,9 +205,9 @@
 
     if (isset($cursor["docs"][0]["producaoBibliografica"]["livrosECapitulos"]["livrosPublicadosOuOrganizados"])) {
         foreach ($cursor["docs"][0]["producaoBibliografica"]["livrosECapitulos"]["livrosPublicadosOuOrganizados"]["livroPublicadoOuOrganizado"] as $obra) {
-            $resultadoProcessaObra = processaObra($obra,"livrosPublicadosOuOrganizado",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"],$_GET['unidadeUSP'],$_GET['codpes']);
+            $resultadoProcessaObra = processaLattes::processaObra($obra,"livrosPublicadosOuOrganizado",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"],$_GET['unidadeUSP'],$_GET['codpes']);
             // Armazenar registro
-            $resultado_livro = store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
+            $resultado_livro = elasticsearch::store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
             print_r($resultado_livro);
             
             flush();
@@ -218,7 +218,7 @@
 
     if (isset($cursor["docs"][0]["producaoBibliografica"]["livrosECapitulos"]["capitulosDeLivrosPublicados"])) {
         foreach ($cursor["docs"][0]["producaoBibliografica"]["livrosECapitulos"]["capitulosDeLivrosPublicados"]["capituloDeLivroPublicado"] as $obra) {
-            $resultadoProcessaObra = processaObra($obra,"capituloDeLivroPublicado",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"],$_GET['unidadeUSP'],$_GET['codpes']);
+            $resultadoProcessaObra = processaLattes::processaObra($obra,"capituloDeLivroPublicado",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"],$_GET['unidadeUSP'],$_GET['codpes']);
             // Armazenar registro
             $resultado_livro = store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
             print_r($resultado_livro);
@@ -231,9 +231,9 @@
 
     if (isset($cursor["docs"][0]["producaoTecnica"]["demaisTiposDeProducaoTecnica"]["midiaSocialWebsiteBlog"])) {
         foreach ($cursor["docs"][0]["producaoTecnica"]["demaisTiposDeProducaoTecnica"]["midiaSocialWebsiteBlog"] as $obra) {
-            $resultadoProcessaObra = processaObra($obra,"midiaSocialWebsiteBlog",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"],$_GET['unidadeUSP'],$_GET['codpes']);
+            $resultadoProcessaObra = processaLattes::processaObra($obra,"midiaSocialWebsiteBlog",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"],$_GET['unidadeUSP'],$_GET['codpes']);
             // Armazenar registro
-            $resultado_livro = store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
+            $resultado_livro = elasticsearch::store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
             print_r($resultado_livro);
             
             flush();

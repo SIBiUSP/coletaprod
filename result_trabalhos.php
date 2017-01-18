@@ -243,7 +243,7 @@
                                         <?php endforeach;?>
                                         <?php endif; ?>
                                        
-                                        <?php query_bdpi($r["_source"]['titulo'],$r["_source"]['ano']); ?>
+                                        <?php dadosExternos::query_bdpi($r["_source"]['titulo'],$r["_source"]['ano']); ?>
                                         
                                         <li class="uk-h6">
                                         <?php
