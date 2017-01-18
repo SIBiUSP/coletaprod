@@ -207,7 +207,7 @@
                                     
                                     <ul class="uk-list">
                                         <li class="uk-margin-top uk-h4">
-                                            <strong><?php echo '<a href="result_trabalhos.php?search[]=id_lattes.keyword:&quot;'.$r["_id"].'&quot;">'.$r["_source"]['nome_completo'].'</a>';?></strong>
+                                            <strong><?php echo '<a href="result_trabalhos.php?search[]=lattes_ids.keyword:&quot;'.$r["_id"].'&quot;">'.$r["_source"]['nome_completo'].'</a>';?></strong>
                                         </li>
                                         <?php if (isset($r["_source"]['resumo_cv'])): ?>
                                         <li>                                            

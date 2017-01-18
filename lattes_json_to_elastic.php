@@ -251,8 +251,7 @@
         
     </body>
 </html>
-<!--
-< ?php if (!isset($_GET["path_download"])) :?>
-    < ?php sleep(5); echo '<script>window.location = \'http://bdpife2.sibi.usp.br/coletaprod/result_trabalhos.php?search[]=id_lattes.keyword:"'.$cursor["docs"][0]["numeroIdentificador"].'"\'</script>'; ?>
-< ?php endif; ?>
--->
+<?php if (!isset($_GET["path_download"])) :?>
+    <?php sleep(5); echo '<script>window.location = \'http://bdpife2.sibi.usp.br/coletaprod/result_trabalhos.php?search[]=lattes_ids.keyword:"'.$cursor["docs"][0]["numeroIdentificador"].'"\'</script>'; ?>
+<?php endif; ?>
+
