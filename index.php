@@ -82,6 +82,8 @@
                                         <legend>Inserir ID do Currículo Lattes que deseja incluir</legend>
                                         <input type="text" placeholder="Insira o ID do Curriculo" class="uk-form-width-medium" name="id_lattes" data-validation="required">
                                         <input type="text" placeholder="TAG para formar um grupo" class="uk-form-width-medium" name="tag">
+                                        <input type="text" placeholder="Número USP" class="uk-form-width-medium" name="codpes">
+                                        <input type="text" placeholder="Unidade USP" class="uk-form-width-medium" name="unidadeUSP">
                                         <button class="uk-button-primary">Incluir</button><br/>                                    
                                     </fieldset>
                                 </form>
