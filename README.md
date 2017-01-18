@@ -40,7 +40,7 @@ php5-cgi -f lattes_json_to_elastic.php id_lattes=XXXXX tag[]=XXXX unidadeUSP[]=X
 
 ## Rodar documentação
 
-trmurakami@bdpife2:/var/www/html/dev_coletaprod/vendor/phpdocumentor/phpdocumentor/bin$ ./phpdoc -d /var/www/html/dev_coletaprod/inc/ -t /var/www/html/docs_teste
+trmurakami@bdpife2:/var/www/html/dev_coletaprod/vendor/phpdocumentor/phpdocumentor/bin$ ./phpdoc -d /var/www/html/dev_coletaprod/inc/ -t /var/www/html/dev_coletaprod/docs --ignore "*/vendor/*,vendor/*"
 
 ## Autores:
 
