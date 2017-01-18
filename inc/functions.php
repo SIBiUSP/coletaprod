@@ -1010,7 +1010,7 @@ function processaObra($obra,$tipo_de_obra,$tag,$id_lattes,$unidadeUSP,$codpes) {
             break;
 
         case "midiaSocialWebsiteBlog":       
-            $tipo_de_obra_nome = "Mídia Social ou Website ou Blob";
+            $tipo_de_obra_nome = "Mídia Social ou Website ou Blog";
             $campos_dadosBasicosDoTrabalho = ["natureza","titulo","ano","pais","idioma","homePage","flagRelevancia","flagDivulgacaoCientifica"];
             $campos_detalhamentoDoTrabalho = ["tema"];            
             $dadosBasicosNomeCampo = "dadosBasicosDaMidiaSocialWebsiteBlog";
