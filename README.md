@@ -38,6 +38,10 @@ php5-cgi -f lattes_json_to_elastic.php path_download=XXXXXXXX
 
 php5-cgi -f lattes_json_to_elastic.php id_lattes=XXXXX tag[]=XXXX unidadeUSP[]=XXX codpes=XXXXXX
 
+## Rodar documentação
+
+trmurakami@bdpife2:/var/www/html/dev_coletaprod/vendor/phpdocumentor/phpdocumentor/bin$ ./phpdoc -d /var/www/html/dev_coletaprod/inc/ -t /var/www/html/docs_teste
+
 ## Autores:
 
 + Tiago Rodrigo Marçal Murakami
