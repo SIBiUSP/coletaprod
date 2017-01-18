@@ -225,7 +225,7 @@
                                         <?php endif; ?>
                                         
                                         <?php if (!empty($r["_source"]['doi'])) : ?>
-                                            <li class="uk-h6">DOI: <a href="http://dx.doi.org/<?php echo $r["_source"]['doi'];?>"><?php echo $r["_source"]['doi'];?></a></li>                                        
+                                            <li class="uk-h6">DOI: <a href="https://dx.doi.org/<?php echo $r["_source"]['doi'];?>"><?php echo $r["_source"]['doi'];?></a></li>                                        
                                         <?php endif; ?>                                        
                                         
                                         <li class="uk-h6">
@@ -285,7 +285,7 @@
                                             
                                             
                                             if (isset($r["_source"]['doi'])){                                            
-                                                $record[] = '000000001 8564  L \$\$zClicar sobre o botão para acesso ao texto completo\$\$uhttp://dx.doi.org/'.$r["_source"]["doi"].'\$\$3DOI';           
+                                                $record[] = '000000001 8564  L \$\$zClicar sobre o botão para acesso ao texto completo\$\$uhttps://dx.doi.org/'.$r["_source"]["doi"].'\$\$3DOI';           
                                             }                           
                                             
                                             $record[] = '000000001 945   L \$\$a\$\$b\$\$c\$\$j'.$r["_source"]["ano"].'\$\$l';
