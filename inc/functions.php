@@ -1226,7 +1226,7 @@ class processaLattes {
  * Classe que processa dados obtidos por meio de servidores z39.50
  */
 class z3950 {
-
+    
     static function parse_usmarc_string($record){
         $ret = array();
         // there was a case where angle brackets interfered
@@ -1277,7 +1277,75 @@ class z3950 {
     // wrapper function for trim to pass it to array_walk
     static function custom_trim(& $value, & $key){
         $value = trim($value);
-    }    
+    }
+    
+    static function query_z3950($isbn,$host,$host_name) {
+        $isbn_query='@attr 1=7 '.$isbn.'';    
+        $id = yaz_connect($host);
+        yaz_syntax($id, "usmarc");
+        yaz_range($id, 1, 10);
+        yaz_search($id, "rpn", $isbn_query);    
+        yaz_wait();
+        $error = yaz_error($id);
+
+        if (!empty($error)) {
+            echo "$host_name error: $error";
+        } else {
+            $hits = yaz_hits($id);
+
+            if ($hits >= 1){
+
+                echo '<table class="uk-table">    
+                    <thead>
+                        <tr>
+                            <th>Fonte</th>    
+                            <th>ISBN</th>
+                            <th>Título</th>
+                            <th>Autor</th>
+                            <th>Editora</th>
+                            <th>Local</th>
+                            <th>Ano</th>
+                            <th>Edição</th>
+                            <th>Descrição física</th>
+                            <th>Download</th>
+                        </tr>
+                    </thead>
+                    <tbody>       
+                ';      
+
+                for ($p = 1; $p <= $hits; $p++) {
+                    $rec = yaz_record($id, $p, "string");
+                    //print_r($rec);
+                    $result_record = z3950::parse_usmarc_string($rec);
+                    //print_r($result_record);
+                    $rec_download = yaz_record($id, $p, "raw");
+                    $rec_download = str_replace('"','',$rec_download);            
+                    echo '<tr>';
+                    echo '<th>'.$host_name.'</th>';
+                    echo '<td>'.$result_record["isbn"].'</td>';
+                    echo '<td>'.$result_record["title"].'</td>';
+                    echo '<td>'.$result_record["author"].'</td>';
+                    echo '<td>'.$result_record["publisher"].'</td>';
+                    echo '<td>'.$result_record["pub_place"].'</td>';
+                    echo '<td>'.$result_record["pub_date"].'</td>';
+                    if (isset($result_record["edition"])){
+                        echo '<td>'.$result_record["edition"].'</td>';
+                    } else {
+                        echo '<td></td>';
+                    }
+
+                    echo '<td>'.$result_record["extent"].'</td>';
+                    echo '<td><button onclick="SaveAsFile(\''.addslashes($rec_download).'\',\'record.mrc\',\'text/plain;charset=utf-8\')">Baixar MARC</button></td>';
+                    echo '</tr>';
+                }        
+
+                echo '</tbody>
+                </table>';  
+
+            }
+        }
+
+    }      
     
 }
 
