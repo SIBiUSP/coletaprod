@@ -99,6 +99,12 @@ class elasticsearch {
  */
 class compararRegistros {
     
+    /**
+    * Consulta registros por DOI
+    * 
+    * @param string $doi DOI
+    * 
+    */      
     public static function doi($doi) {
         global $index;
         global $client;        
@@ -116,6 +122,15 @@ class compararRegistros {
         return $response; 
     }    
     
+    /**
+     * Consulta trabalhos em eventos já existentes
+     * 
+     * @param string $ano Ano
+     * @param string $titulo Título do trabalho de evento
+     * @param string $nome_do_evento Nome do evento
+     * @param string $tipo Tipo do registro                                      
+     * 
+     */     
     public static function lattesEventos ($ano,$titulo,$nome_do_evento,$tipo) {
         global $index;
         global $client;        
@@ -1038,7 +1053,7 @@ class processaLattes {
                 $tipo_de_obra_nome = "Trabalhos em eventos";
                 $campos_dadosBasicosDoTrabalho = ["natureza","tituloDoTrabalho","anoDoTrabalho","paisDoEvento","idioma","meioDeDivulgacao","homePageDoTrabalho","flagRelevancia","flagDivulgacaoCientifica"];
                 $campos_detalhamentoDoTrabalho = ["classificacaoDoEvento","nomeDoEvento","cidadeDoEvento","anoDeRealizacao","tituloDosAnaisOuProceedings","paginaInicial","paginaFinal","doi","isbn","nomeDaEditora","cidadeDaEditora","volumeDosAnais","fasciculoDosAnais","serieDosAnais"];
-                $resultado_comparador_local = compararRegistros::lattesEventos($obra["dadosBasicosDoTrabalho"]["anoDoTrabalho"],str_replace('"','',$obra["dadosBasicosDoTrabalho"]["tituloDoTrabalho"]),str_replace('"','',$obra["detalhamentoDoTrabalho"]["nomeDoEvento"]),"TRABALHO-EM-EVENTOS");
+                $resultado_comparador_local = compararRegistros::lattesEventos($obra["dadosBasicosDoTrabalho"]["anoDoTrabalho"],str_replace('"','',$obra["dadosBasicosDoTrabalho"]["tituloDoTrabalho"]),str_replace('"','',$obra["detalhamentoDoTrabalho"]["nomeDoEvento"]),"Trabalhos em eventos");
                 $dadosBasicosNomeCampo = "dadosBasicosDoTrabalho";
                 $detalhamentoNomeCampo = "detalhamentoDoTrabalho";
                 $campos_sha256 = ["natureza","tituloDoTrabalho","anoDoTrabalho","paisDoEvento","nomeDoEvento","paginaInicial","homePageDoTrabalho"];
@@ -1056,13 +1071,13 @@ class processaLattes {
                     $resultado_comparador_local = compararRegistros::lattesArtigos($obra["dadosBasicosDoArtigo"]["anoDoArtigo"],str_replace('"','',$obra["dadosBasicosDoArtigo"]["tituloDoArtigo"]),str_replace('"','',$obra["detalhamentoDoArtigo"]["tituloDoPeriodicoOuRevista"]),$obra["dadosBasicosDoArtigo"]["doi"],"ARTIGO-PUBLICADO");
                 } else {
                     $campos_sha256 = ["natureza","tituloDoArtigo","anoDoArtigo","tituloDoPeriodicoOuRevista","nomeDoEvento","paginaInicial","homePageDoTrabalho"];
-                    $resultado_comparador_local = compararRegistros::lattesArtigos($obra["dadosBasicosDoArtigo"]["anoDoArtigo"],str_replace('"','',$obra["dadosBasicosDoArtigo"]["tituloDoArtigo"]),str_replace('"','',$obra["detalhamentoDoArtigo"]["tituloDoPeriodicoOuRevista"]),NULL,"ARTIGO-PUBLICADO");
+                    $resultado_comparador_local = compararRegistros::lattesArtigos($obra["dadosBasicosDoArtigo"]["anoDoArtigo"],str_replace('"','',$obra["dadosBasicosDoArtigo"]["tituloDoArtigo"]),str_replace('"','',$obra["detalhamentoDoArtigo"]["tituloDoPeriodicoOuRevista"]),NULL,"Artigo publicado");
                 }
                 break;
 
             case "livrosPublicadosOuOrganizado":       
                 $tipo_de_obra_nome = "Livros publicados ou organizados";
-                $campos_dadosBasicosDoTrabalho = ["tipo","natureza","tituloDoLivro","ano","paisDePublicacao","idioma","meioDeDivulgacao","homePageDoTrabalho","flagRelevancia","flagDivulgacaoCientifica"];
+                $campos_dadosBasicosDoTrabalho = ["natureza","tituloDoLivro","ano","paisDePublicacao","idioma","meioDeDivulgacao","homePageDoTrabalho","flagRelevancia","flagDivulgacaoCientifica"];
                 $campos_detalhamentoDoTrabalho = ["numeroDeVolumes","numeroDePaginas","isbn","numeroDaEdicaoRevisao","cidadeDaEditora","nomeDaEditora"];            
                 $dadosBasicosNomeCampo = "dadosBasicosDoLivro";
                 $detalhamentoNomeCampo = "detalhamentoDoLivro";
@@ -1071,18 +1086,18 @@ class processaLattes {
                     $resultado_comparador_local = compararRegistros::lattesLivros(str_replace('"','',$obra["dadosBasicosDoLivro"]["tituloDoLivro"]),str_replace('"','',$obra["detalhamentoDoLivro"]["isbn"]),"LIVRO-PUBLICADO");
                 } else {
                     $campos_sha256 = ["natureza","tituloDoLivro"];
-                    $resultado_comparador_local = compararRegistros::lattesLivros(str_replace('"','',$obra["dadosBasicosDoLivro"]["tituloDoLivro"]),NULL,"LIVRO-PUBLICADO");
+                    $resultado_comparador_local = compararRegistros::lattesLivros(str_replace('"','',$obra["dadosBasicosDoLivro"]["tituloDoLivro"]),NULL,"Livros publicados ou organizados");
                 }
                 break;
 
             case "capituloDeLivroPublicado":       
                 $tipo_de_obra_nome = "Capítulo de livro publicado";
-                $campos_dadosBasicosDoTrabalho = ["tipo","tituloDoCapituloDoLivro","ano","paisDePublicacao","idioma","meioDeDivulgacao","homePageDoTrabalho","flagRelevancia","tituloDoCapituloDoLivroIngles","flagDivulgacaoCientifica"];
+                $campos_dadosBasicosDoTrabalho = ["tituloDoCapituloDoLivro","ano","paisDePublicacao","idioma","meioDeDivulgacao","homePageDoTrabalho","flagRelevancia","tituloDoCapituloDoLivroIngles","flagDivulgacaoCientifica"];
                 $campos_detalhamentoDoTrabalho = ["tituloDoLivro","paginaInicial","paginaFinal","isbn","organizadores","numeroDaEdicaoRevisao","cidadeDaEditora","nomeDaEditora"];            
                 $dadosBasicosNomeCampo = "dadosBasicosDoCapitulo";
                 $detalhamentoNomeCampo = "detalhamentoDoCapitulo";
                 $campos_sha256 = ["natureza","tituloDoCapituloDoLivro","isbn"];
-                $resultado_comparador_local = compararRegistros::lattesCapitulos(str_replace('"','',$obra["dadosBasicosDoCapitulo"]["tituloDoCapituloDoLivro"]),str_replace('"','',$obra["detalhamentoDoCapitulo"]["tituloDoLivro"]),"CAPITULO-DE-LIVRO");
+                $resultado_comparador_local = compararRegistros::lattesCapitulos(str_replace('"','',$obra["dadosBasicosDoCapitulo"]["tituloDoCapituloDoLivro"]),str_replace('"','',$obra["detalhamentoDoCapitulo"]["tituloDoLivro"]),"Capítulo de livro publicado");
                 break;
 
             case "midiaSocialWebsiteBlog":       
@@ -1092,8 +1107,31 @@ class processaLattes {
                 $dadosBasicosNomeCampo = "dadosBasicosDaMidiaSocialWebsiteBlog";
                 $detalhamentoNomeCampo = "detalhamentoDaMidiaSocialWebsiteBlog";
                 $campos_sha256 = ["natureza","titulo","homePage"];
-                $resultado_comparador_local = compararRegistros::lattesMidiaSocial(str_replace('"','',$obra["dadosBasicosDaMidiaSocialWebsiteBlog"]["titulo"]),$obra["dadosBasicosDaMidiaSocialWebsiteBlog"]["homePage"],"MIDIA-SOCIAL-OU-BLOG");
-                break;            
+                $resultado_comparador_local = compararRegistros::lattesMidiaSocial(str_replace('"','',$obra["dadosBasicosDaMidiaSocialWebsiteBlog"]["titulo"]),$obra["dadosBasicosDaMidiaSocialWebsiteBlog"]["homePage"],"Mídia Social ou Website ou Blog");
+                break; 
+                
+            case "outraProducaoArtisticaCultural":       
+                $tipo_de_obra_nome = "Outra produção Artística Cultural";
+                $campos_dadosBasicosDoTrabalho = ["natureza","titulo","ano","pais","idioma","meioDeDivulgacao","homePage","flagRelevancia","flagDivulgacaoCientifica"];
+                $campos_detalhamentoDoTrabalho = ["instituicaoPromotoraDoEvento","localDoEvento","cidade"];            
+                $dadosBasicosNomeCampo = "dadosBasicosDeOutraProducaoArtisticaCultural";
+                $detalhamentoNomeCampo = "detalhamentoDeOutraProducaoArtisticaCultural";
+                $campos_sha256 = ["natureza","titulo","homePage"];
+                $resultado_comparador_local = compararRegistros::lattesMidiaSocial(str_replace('"','',$obra["dadosBasicosDeOutraProducaoArtisticaCultural"]["titulo"]),$obra["dadosBasicosDeOutraProducaoArtisticaCultural"]["homePage"],"Outra produção Artística Cultural");
+                $doc_obra_array["doc"]["informacoesAdicionais"]["descricaoInformacoesAdicionais"] = str_replace('"','',$obra["informacoesAdicionais"]["descricaoInformacoesAdicionais"]);
+                break;
+                
+            case "artesVisuais":       
+                $tipo_de_obra_nome = "Artes visuais";
+                $campos_dadosBasicosDoTrabalho = ["natureza","titulo","ano","pais","idioma","meioDeDivulgacao","homePage","flagRelevancia","flagDivulgacaoCientifica"];
+                $campos_detalhamentoDoTrabalho = ["instituicaoPromotoraDoEvento","localDoEvento","cidade"];            
+                $dadosBasicosNomeCampo = "dadosBasicosDeArtesVisuais";
+                $detalhamentoNomeCampo = "detalhamentoDeArtesVisuais";
+                $campos_sha256 = ["natureza","titulo","homePage"];
+                print_r(stripslashes($obra["dadosBasicosDeArtesVisuais"]["titulo"]));
+                $resultado_comparador_local = compararRegistros::lattesMidiaSocial(stripslashes(str_replace('"','',$obra["dadosBasicosDeArtesVisuais"]["titulo"])),$obra["dadosBasicosDeArtesVisuais"]["homePage"],"Artes visuais");
+                $doc_obra_array["doc"]["informacoesAdicionais"]["descricaoInformacoesAdicionais"] = str_replace('"','',$obra["informacoesAdicionais"]["descricaoInformacoesAdicionais"]);
+                break;                     
 
         }
 
@@ -1124,9 +1162,12 @@ class processaLattes {
             }
 
         }
+        
+        if (isset($obra["autores"])){
+            $array_result = self::processaAutoresLattes ($obra["autores"]);    
+            $doc_obra_array = array_merge_recursive($doc_obra_array,$array_result);            
+        }
 
-        $array_result = self::processaAutoresLattes ($obra["autores"]);    
-        $doc_obra_array = array_merge_recursive($doc_obra_array,$array_result);
 
         if (isset($obra["palavrasChave"])){
             $array_result = self::processaPalavrasChaveLattes ($obra["palavrasChave"]);
@@ -1161,7 +1202,7 @@ class processaLattes {
         // Retorna resultado
 
         $body = json_encode($doc_obra_array, JSON_UNESCAPED_UNICODE);  
-
+        print_r($body);
 
         return compact ('body','sha256');
     }    

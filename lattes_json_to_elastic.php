@@ -38,7 +38,10 @@
         $cursor = dadosExternos::coleta_json_download_lattes($_GET["path_download"]);
     } else {
         echo '<p>Não foi informado nenhum ID</p>';
-    }            
+    }  
+                
+            
+    //print_r($cursor);            
     
 // Armazenar currículo Lattes            
                 
@@ -220,7 +223,7 @@
         foreach ($cursor["docs"][0]["producaoBibliografica"]["livrosECapitulos"]["capitulosDeLivrosPublicados"]["capituloDeLivroPublicado"] as $obra) {
             $resultadoProcessaObra = processaLattes::processaObra($obra,"capituloDeLivroPublicado",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"],$_GET['unidadeUSP'],$_GET['codpes']);
             // Armazenar registro
-            $resultado_livro = store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
+            $resultado_livro = elasticsearch::store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
             print_r($resultado_livro);
             
             flush();
@@ -233,12 +236,35 @@
         foreach ($cursor["docs"][0]["producaoTecnica"]["demaisTiposDeProducaoTecnica"]["midiaSocialWebsiteBlog"] as $obra) {
             $resultadoProcessaObra = processaLattes::processaObra($obra,"midiaSocialWebsiteBlog",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"],$_GET['unidadeUSP'],$_GET['codpes']);
             // Armazenar registro
-            $resultado_livro = elasticsearch::store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
-            print_r($resultado_livro);
+            $resultado_blog = elasticsearch::store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
+            print_r($resultado_blog);
             
             flush();
         }
-    }   
+    } 
+                
+    //Parser de Produção Artistica e Cultural
+
+    if (isset($cursor["docs"][0]["outraProducao"]["producaoArtisticaCultural"])) {
+        foreach ($cursor["docs"][0]["outraProducao"]["producaoArtisticaCultural"]["outraProducaoArtisticaCultural"] as $obra) {
+            $resultadoProcessaObra = processaLattes::processaObra($obra,"outraProducaoArtisticaCultural",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"],$_GET['unidadeUSP'],$_GET['codpes']);
+            // Armazenar registro
+            $resultado_outraprodart = elasticsearch::store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
+            print_r($resultado_outraprodart);
+            
+            flush();
+        }
+        
+        foreach ($cursor["docs"][0]["outraProducao"]["producaoArtisticaCultural"]["artesVisuais"] as $obra) {
+            $resultadoProcessaObra = processaLattes::processaObra($obra,"artesVisuais",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"],$_GET['unidadeUSP'],$_GET['codpes']);
+            // Armazenar registro
+            $resultado_artesvisuais = elasticsearch::store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
+            print_r($resultado_artesvisuais);
+            
+            flush();
+        }
+        
+    }                  
                 
 ?>
             </div>
@@ -254,4 +280,3 @@
 <?php if (!isset($_GET["path_download"])) :?>
     <?php sleep(5); echo '<script>window.location = \'result_trabalhos.php?search[]=lattes_ids.keyword:"'.$cursor["docs"][0]["numeroIdentificador"].'"\'</script>'; ?>
 <?php endif; ?>
-
