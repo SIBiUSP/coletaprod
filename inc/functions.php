@@ -893,18 +893,16 @@ class dadosExternos {
 
         //print_r($query);
         //172.31.0.90
+        
+        global $index_bdpi;
+        global $client_bdpi;
+        $params = [];
+        $params["index"] = "sibi";
+        $params["type"] = "producao";
+        $params["body"] = $query;
+        
+        $data = $client_bdpi->search($params);
 
-        $ch = curl_init();
-        $method = "POST";
-        $url = "http://172.31.0.90/sibi/producao/_search";
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_PORT, 9200);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
-        $result = curl_exec($ch);
-        curl_close($ch);
-        $data = json_decode($result, TRUE);
 
         if ($data["hits"]["total"] > 0){
             echo '<div class="uk-alert">';
