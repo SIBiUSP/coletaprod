@@ -10,12 +10,19 @@
 	$hosts = [
 		'localhost' 
 	];
-    $index = "lattes"; 
+	$host_bdpi = [
+		'localhost' 
+	];
+    $index = "lattes";
 
 	/* Load libraries for PHP composer */ 
     require (__DIR__.'/../vendor/autoload.php'); 
 
 	/* Load Elasticsearch Client */ 
 	$client = \Elasticsearch\ClientBuilder::create()->setHosts($hosts)->build(); 
+
+    /* Load Elasticsearch Client for BDPI */ 
+	$client_bdpi = \Elasticsearch\ClientBuilder::create()->setHosts($host_bdpi)->build(); 
+
 
 ?>
