@@ -243,7 +243,8 @@
                                         <?php endforeach;?>
                                         <?php endif; ?>
                                        
-                                        <?php dadosExternos::query_bdpi($r["_source"]['titulo'],$r["_source"]['ano']); ?>
+                                        <?php dadosExternos::query_bdpi($r["_source"]['titulo'],$r["_source"]['ano']); ?>                                       
+
                                         
                                         <li class="uk-h6">
                                         <?php
@@ -272,23 +273,45 @@
                                                 $record[] = '000000001 1001  L \$\$a'.$r["_source"]['autores'][0]["nomeCompletoDoAutor"].'';
                                             }                                            
                                             $record[] = '000000001 24510 L \$\$a'.$r["_source"]["titulo"].'';                                            
-                                            if (isset($r["_source"]['evento'])){  
-                                                $record[] = '000000001 260   L \$\$a'.$r["_source"]["evento"]["cidade_da_editora"].'\$\$b'.$r["_source"]["evento"]["nome_da_editora"].'\$\$c'.$r["_source"]["ano"].'';
+                                            if (isset($r["_source"]["trabalhoEmEventos"])){  
+                                                $record[] = '000000001 260   L \$\$a'.$r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"].'\$\$b'.$r["_source"]["trabalhoEmEventos"]["nomeDaEditora"].'\$\$c'.$r["_source"]["ano"].'';
                                             }
+                                            if (isset($r["_source"]["trabalhoEmEventos"])){
+                                                $record[] = '000000001 300   L \$\$ap. -, res.';
+                                            }                                            
+                                            if (isset($r["_source"]["artigoPublicado"])){
+                                                $record[] = '000000001 300   L \$\$ap. -';
+                                            }
+                                            if (isset($r["_source"]["artigoPublicado"])){
+                                                $record[] = '000000001 5101  L \$\$aIndexado no:';
+                                            }                                               
+                                            
+                                            $record[] = '000000001 650 7 L \$\$a';
+                                            $record[] = '000000001 650 7 L \$\$a';
+                                            $record[] = '000000001 650 7 L \$\$a';
                                             $record[] = '000000001 650 7 L \$\$a';
                                             
-                                            if (isset($r["_source"]['evento'])){
-                                                $record[] = '000000001 7112  L \$\$a'.$r["_source"]["evento"]["nome_do_evento"].'\$\$d('.$r["_source"]["evento"]["ano_de_realizacao_do_evento"].'\$\$c'.$r["_source"]["evento"]["cidade_do_evento"].')';
+                                            if (isset($r["_source"]["trabalhoEmEventos"])){
+                                                $record[] = '000000001 7112  L \$\$a'.$r["_source"]["trabalhoEmEventos"]["nomeDoEvento"].'\$\$d('.$r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"].'\$\$c'.$r["_source"]["trabalhoEmEventos"]["cidadeDoEvento"].')';
                                                 
-                                                $record[] = '000000001 7730  L \$\$t'.$r["_source"]["evento"]["titulo_dos_anais"].'\$\$x'.$r["_source"]["evento"]["isbn"].'\$\$hv.'.$r["_source"]["evento"]["volume_dos_anais"].', n.'.$r["_source"]["evento"]["fasciculo_dos_anais"].', p.'.$r["_source"]["evento"]["pagina_inicial"].'-'.$r["_source"]["evento"]["pagina_final"].', '.$r["_source"]["evento"]["ano_de_realizacao_do_evento"].'';
+                                                $record[] = '000000001 7730  L \$\$t'.$r["_source"]["trabalhoEmEventos"]["tituloDosAnaisOuProceedings"].'\$\$x'.$r["_source"]["trabalhoEmEventos"]["isbn"].'\$\$hv. , n. , p.'.$r["_source"]["trabalhoEmEventos"]["paginaInicial"].'-'.$r["_source"]["trabalhoEmEventos"]["paginaFinal"].', '.$r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"].'';
                                             }
+                                            
+                                            if (isset($r["_source"]["artigoPublicado"])){
+                                                $record[] = '000000001 7730  L \$\$t'.$r["_source"]["artigoPublicado"]["tituloDoPeriodicoOuRevista"].'\$\$x'.$r["_source"]["artigoPublicado"]["issn"].'\$\$hv.'.$r["_source"]["artigoPublicado"]["volume"].', n. '.$r["_source"]["artigoPublicado"]["serie"].', p.'.$r["_source"]["artigoPublicado"]["paginaInicial"].'-'.$r["_source"]["artigoPublicado"]["paginaFinal"].', '.$r["_source"]["ano"].'';
+                                            }                                            
                                             
                                             
                                             if (isset($r["_source"]['doi'])){                                            
                                                 $record[] = '000000001 8564  L \$\$zClicar sobre o botão para acesso ao texto completo\$\$uhttps://dx.doi.org/'.$r["_source"]["doi"].'\$\$3DOI';           
                                             }                           
                                             
-                                            $record[] = '000000001 945   L \$\$a\$\$b\$\$c\$\$j'.$r["_source"]["ano"].'\$\$l';
+                                            if (isset($r["_source"]["trabalhoEmEventos"])){
+                                                $record[] = '000000001 945   L \$\$aP\$\$bTRABALHO DE EVENTO\$\$c10\$\$j'.$r["_source"]["ano"].'\$\$l';
+                                            }
+                                            if (isset($r["_source"]["artigoPublicado"])){
+                                                $record[] = '000000001 945   L \$\$aP\$\$bARTIGO DE PERIODICO\$\$c01\$\$j'.$r["_source"]["ano"].'\$\$l';
+                                            }                                            
                                             $record[] = '000000001 946   L \$\$a';
                                             
                                             $record_blob = implode("\\n", $record);
