@@ -243,7 +243,10 @@
                                         <?php endforeach;?>
                                         <?php endif; ?>
                                        
-                                        <?php dadosExternos::query_bdpi($r["_source"]['titulo'],$r["_source"]['ano']); ?>                                       
+                                        <?php if ($instituicao == "USP") {
+                                                dadosExternos::query_bdpi($r["_source"]['titulo'],$r["_source"]['ano']);
+                                              }
+                                        ?>                                       
 
                                         
                                         <li class="uk-h6">
