@@ -108,43 +108,43 @@
         
         // Graduação
         if (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["graduacao"])){
-            $graduacao_campos = ["sequencia_formacao","nivel","tituloDoTrabalhoDeConclusaoDeCurso","nomeDoOrientador","codigo_instituicao","nomeInstituicao","codigoCurso","nomeCurso","codigoAreaCurso","statusDoCurso","anoDeInicio","anoDeConclusao","flagBolsa"];
-            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["graduacao"],"graduacao",$graduacao_campos);
+            $graduacao_campos = ["sequenciaFormacao","nivel","tituloDoTrabalhoDeConclusaoDeCurso","nomeDoOrientador","codigoInstituicao","nomeInstituicao","codigoCurso","nomeCurso","codigoAreaCurso","statusDoCurso","anoDeInicio","anoDeConclusao","flagBolsa"];
+            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["graduacao"],"graduacao",$graduacao_campos,$cursor["docs"][0]["dadosGerais"]["nomeCompleto"],$cursor["docs"][0]["numeroIdentificador"]);
             $doc_curriculo_array = array_merge_recursive($doc_curriculo_array,$array_result);
         }
         
         // Mestrado
         if (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["mestrado"])){
             $mestrado_campos = ["sequenciaFormacao","nivel","codigoInstituicao","nomeInstituicao","codigoCurso","nomeCurso","codigoAreaCurso","statusDoCurso","anoDeInicio","anoDeConclusao","anoDeObtencaoDoTitulo","tituloDaDissertacaoTese","nomeCompletoDoOrientador","tipoMestrado","numeroIdOrientador","codigoCursoCapes","nomeCursoIngles","conceitoCapes","codigoAgenciaFinanciadora","nomeAgencia","flagBolsa"];
-            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["mestrado"],"mestrado",$mestrado_campos);
+            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["mestrado"],"mestrado",$mestrado_campos,$cursor["docs"][0]["dadosGerais"]["nomeCompleto"],$cursor["docs"][0]["numeroIdentificador"]);
             $doc_curriculo_array = array_merge_recursive($doc_curriculo_array,$array_result);
         } 
         
         // Mestrado Profissional
         if (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["mestradoProfissionalizante"])){
             $mestradoProfissionalizante_campos = ["sequenciaFormacao","nivel","codigoInstituicao","nomeInstituicao","codigoCurso","nomeCurso","codigoAreaCurso","statusDoCurso","anoDeInicio","anoDeConclusao","anoDeObtencaoDoTitulo","nomeCompletoDoOrientador","tituloDaDissertacaoTese","numeroIdOrientador","codigoCursoCapes","nomeCursoIngles","conceitoCapes","codigoAgenciaFinanciadora","nomeAgencia","flagBolsa"];
-            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["mestradoProfissionalizante"],"mestradoProfissionalizante",$mestradoProfissionalizante_campos);
+            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["mestradoProfissionalizante"],"mestradoProfissionalizante",$mestradoProfissionalizante_campos,$cursor["docs"][0]["dadosGerais"]["nomeCompleto"],$cursor["docs"][0]["numeroIdentificador"]);
             $doc_curriculo_array = array_merge_recursive($doc_curriculo_array,$array_result);
         }
         
         // Doutorado
         if (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["doutorado"])){
             $doutorado_campos = ["sequenciaFormacao","nivel","codigoInstituicao","nomeInstituicao","codigoCurso","nomeCurso","codigoAreaCurso","statusDoCurso","anoDeInicio","anoDeConclusao","anoDeObtencaoDoTitulo","nomeCompletoDoOrientador","tituloDaDissertacaoTese","tipoDoutorado","numeroIdOrientador","codigoCursoCapes","nomeCursoIngles","conceitoCapes","codigoAgenciaFinanciadora","nomeAgencia","flagBolsa"];
-            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["doutorado"],"doutorado",$doutorado_campos);
+            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["doutorado"],"doutorado",$doutorado_campos,$cursor["docs"][0]["dadosGerais"]["nomeCompleto"],$cursor["docs"][0]["numeroIdentificador"]);
             $doc_curriculo_array = array_merge_recursive($doc_curriculo_array,$array_result);
         }
 
         // Pós Doutorado
         if (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["posDoutorado"])){
             $posDoutorado_campos = ["sequenciaFormacao","nivel","codigoInstituicao","nomeInstituicao","codigoCurso","nomeCurso","codigoAreaCurso","statusDoCurso","anoDeInicio","anoDeConclusao","anoDeObtencaoDoTitulo","nomeCompletoDoOrientador","tituloDaDissertacaoTese","tipoDoutorado","numeroIdOrientador","codigoCursoCapes","nomeCursoIngles","conceitoCapes","codigoAgenciaFinanciadora","nomeAgencia","flagBolsa"];
-            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["posDoutorado"],"posDoutorado",$posDoutorado_campos);
+            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["posDoutorado"],"posDoutorado",$posDoutorado_campos,$cursor["docs"][0]["dadosGerais"]["nomeCompleto"],$cursor["docs"][0]["numeroIdentificador"]);
             $doc_curriculo_array = array_merge_recursive($doc_curriculo_array,$array_result);
         }        
         
         // Livre docência
         if (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["livreDocencia"])){
             $livreDocencia_campos = ["sequenciaFormacao","nivel","codigoInstituicao","nomeInstituicao","codigoCurso","nomeCurso","codigoAreaCurso","statusDoCurso","anoDeInicio","anoDeConclusao","anoDeObtencaoDoTitulo","tituloDoTrabalho","nomeCompletoDoOrientador","tipolivreDocencia","numeroIdOrientador","codigoCursoCapes","nomeCursoIngles","conceitoCapes","codigoAgenciaFinanciadora","nomeAgencia","flagBolsa"];
-            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["livreDocencia"],"livreDocencia",$livreDocencia_campos);
+            $array_result = processaLattes::processaFormacaoAcaddemica($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["livreDocencia"],"livreDocencia",$livreDocencia_campos,$cursor["docs"][0]["dadosGerais"]["nomeCompleto"],$cursor["docs"][0]["numeroIdentificador"]);
             $doc_curriculo_array = array_merge_recursive($doc_curriculo_array,$array_result);
         }          
 

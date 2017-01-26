@@ -856,6 +856,64 @@ class facets_users {
 }
 
 /**
+ * Classe que gera facetas na página de resultados de autores
+ */
+class facets_teses {   
+    
+    public function facet_tese($field,$tamanho,$field_name,$sort) {
+        global $client;
+        global $index;
+        $query_aggregate = $this->query_aggregate;
+        $sort_query="";
+        if (!empty($sort)){
+             $sort_query = '"order" : { "_term" : "'.$sort.'" },';  
+        }     
+        $query = '{
+            '.$query_aggregate.'
+            "aggs": {
+                "counts": {
+                    "terms": {
+                        "field": "'.$field.'.keyword",
+                        '.$sort_query.'
+                        "size" : '.$tamanho.'
+                    }
+                }
+            }
+        }';
+        $params = [
+            'index' => $index,
+            'type' => 'teses',
+            'size'=> 0,          
+            'body' => $query
+        ];
+        $response = $client->search($params);
+        echo '<li class="uk-parent">';    
+        echo '<a href="#">'.$field_name.'</a>';
+        echo ' <ul class="uk-nav-sub">';
+        //$count = 1;
+        foreach ($response["aggregations"]["counts"]["buckets"] as $facets) {
+            echo '<li class="uk-h6 uk-form-controls uk-form-controls-text">';
+            echo '<p class="uk-form-controls-condensed">';
+            echo '<div class="uk-grid"><div class="uk-width-4-5">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</div> <div class="uk-width-1-5"> <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=+'.$field.'.keyword:&quot;'.$facets['key'].'&quot;" class="uk-icon-hover uk-icon-asterisk" data-uk-tooltip title="E"></a> <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=-'.$field.'.keyword:&quot;'.$facets['key'].'&quot;" class="uk-icon-hover uk-icon-minus" data-uk-tooltip title="NÃO"></a>  <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=OR '.$field.'.keyword:&quot;'.$facets['key'].'&quot;" class="uk-icon-hover uk-icon-plus" data-uk-tooltip title="OU"></a></div>';
+            echo '</p>';
+            echo '</li>';
+            //if ($count == 11)
+            //    {  
+            //         echo '<div id="'.$campo.'" class="uk-hidden">';
+            //    }
+            //$count++;
+        };
+        //if ($count > 12) {
+            //echo '</div>';
+            //echo '<button class="uk-button" data-uk-toggle="{target:\'#'.$campo.'\'}">Ver mais</button>';
+        //}
+        echo   '</ul></li>';
+    }
+    
+}
+
+
+/**
  * Classe que obtem dados de fontes externas
  */
 class dadosExternos {
@@ -1031,7 +1089,7 @@ class dadosExternos {
  */
 class processaLattes {
     
-    static function processaFormacaoAcaddemica($dados,$nivel,$campos) {  
+    static function processaFormacaoAcaddemica($dados,$nivel,$campos,$autor,$id_lattes) {  
         $i = 0;
         foreach ($dados as $curso) {
             foreach ($campos as $nivel_campos) {
@@ -1040,7 +1098,25 @@ class processaLattes {
                 }                    
             }                      
         $i++;
+        }        
+        foreach ($dados as $curso) {
+            if ($curso["statusDoCurso"] == "CONCLUIDO"){
+                foreach ($campos as $nivel_campos) {
+                    if (!empty($curso[$nivel_campos])) {
+                        $doc_tese["doc"]["tese"][$nivel_campos] = $curso[$nivel_campos];                   
+                    }                    
+                }
+                $doc_tese["doc"]["tese"]["nivel"] = $nivel;
+                $doc_tese["doc"]["tese"]["autor"] = $autor;
+                $doc_tese["doc"]["tese"]["id_lattes"] = $id_lattes;
+                $doc_tese["doc_as_upsert"] = true;
+                $sha256_tese = hash('sha256', ''.$id_lattes.$curso["sequenciaFormacao"].'');
+                $doc_tese_json = json_encode($doc_tese, JSON_UNESCAPED_UNICODE);
+                elasticsearch::elastic_update($sha256_tese,"teses",$doc_tese_json);                
+            }
         }
+
+        
         return $doc_curriculo_array;
     }    
 
