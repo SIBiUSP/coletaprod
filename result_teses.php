@@ -84,8 +84,10 @@
         $facets_teses->facet_tese("tese.nomeInstituicao",10,"Instituição",null);
         $facets_teses->facet_tese("tese.nomeCurso",10,"Nome do Curso",null);
         $facets_teses->facet_tese("tese.anoDeConclusao",10,"Ano de conclusão",null);
+        $facets_teses->facet_tese("tese.nomeDoOrientador",10,"Nome do orientador",null);
         $facets_teses->facet_tese("tese.flagBolsa",10,"Teve bolsa?",null);
-        
+        $facets_teses->facet_tese("tese.nomeAgencia",10,"Agência de fomento",null);  
+        $facets_teses->facet_tese("tese.conceitoCapes",10,"Conceito CAPES",null);
 
     ?>
     </ul>
@@ -193,8 +195,16 @@
                                         <?php endif; ?>
                                         <?php if (!empty($r["_source"]["tese"]["nomeCurso"])) : ?>
                                             <li class="uk-h6">Nome do curso: <a href="#"><?php echo $r["_source"]["tese"]["nomeCurso"];?></a></li>
-                                        <?php endif; ?>                                          
-                                        
+                                        <?php endif; ?>
+                                        <?php if (!empty($r["_source"]["tese"]["nomeDoOrientador"])) : ?>
+                                            <li class="uk-h6">Nome do orientador: <a href="#"><?php echo $r["_source"]["tese"]["nomeDoOrientador"];?></a></li>
+                                        <?php endif; ?>                                         
+                                        <?php if (!empty($r["_source"]["tese"]["nomeAgencia"])) : ?>
+                                            <li class="uk-h6">Agência de fomento: <a href="#"><?php echo $r["_source"]["tese"]["nomeAgencia"];?></a></li>
+                                        <?php endif; ?>
+                                        <?php if (!empty($r["_source"]["tese"]["conceitoCapes"])) : ?>
+                                            <li class="uk-h6">Conceito CAPES: <a href="#"><?php echo $r["_source"]["tese"]["conceitoCapes"];?></a></li>
+                                        <?php endif; ?>                                             
                          
                                     
                                         
