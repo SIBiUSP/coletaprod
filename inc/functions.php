@@ -537,9 +537,6 @@ function analisa_get($get) {
     ';    
     
     $query_complete = '{
-        "sort" : [
-                { "ano.keyword" : "desc" }
-        ], 
         "query": {
         '.$search_term.'
         }
