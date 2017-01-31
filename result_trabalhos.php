@@ -277,7 +277,7 @@
                                             }                                            
                                             $record[] = '000000001 24510 L \$\$a'.$r["_source"]["titulo"].'';                                            
                                             if (isset($r["_source"]["trabalhoEmEventos"])){  
-                                                $record[] = '000000001 260   L \$\$a'.$r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"].'\$\$b'.$r["_source"]["trabalhoEmEventos"]["nomeDaEditora"].'\$\$c'.$r["_source"]["ano"].'';
+                                                $record[] = '000000001 260   L \$\$a'.((isset($r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"]) && $r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"])? $r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"] : '').'\$\$b'.((isset($r["_source"]["trabalhoEmEventos"]["nomeDaEditora"]) && $r["_source"]["trabalhoEmEventos"]["nomeDaEditora"])? $r["_source"]["trabalhoEmEventos"]["nomeDaEditora"] : '').'\$\$c'.$r["_source"]["ano"].'';
                                             }
                                             if (isset($r["_source"]["trabalhoEmEventos"])){
                                                 $record[] = '000000001 300   L \$\$ap. -, res.';
@@ -295,9 +295,9 @@
                                             $record[] = '000000001 650 7 L \$\$a';
                                             
                                             if (isset($r["_source"]["trabalhoEmEventos"])){
-                                                $record[] = '000000001 7112  L \$\$a'.$r["_source"]["trabalhoEmEventos"]["nomeDoEvento"].'\$\$d('.$r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"].'\$\$c'.$r["_source"]["trabalhoEmEventos"]["cidadeDoEvento"].')';
+                                                $record[] = '000000001 7112  L \$\$a'.$r["_source"]["trabalhoEmEventos"]["nomeDoEvento"].'\$\$d('.((isset($r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"]) && $r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"])? $r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"] : '').'\$\$c'.$r["_source"]["trabalhoEmEventos"]["cidadeDoEvento"].')';
                                                 
-                                                $record[] = '000000001 7730  L \$\$t'.$r["_source"]["trabalhoEmEventos"]["tituloDosAnaisOuProceedings"].'\$\$x'.$r["_source"]["trabalhoEmEventos"]["isbn"].'\$\$hv. , n. , p.'.$r["_source"]["trabalhoEmEventos"]["paginaInicial"].'-'.$r["_source"]["trabalhoEmEventos"]["paginaFinal"].', '.$r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"].'';
+                                                $record[] = '000000001 7730  L \$\$t'.$r["_source"]["trabalhoEmEventos"]["tituloDosAnaisOuProceedings"].'\$\$x'.((isset($r["_source"]["trabalhoEmEventos"]["isbn"]) && $r["_source"]["trabalhoEmEventos"]["isbn"])? $r["_source"]["trabalhoEmEventos"]["isbn"] : '').'\$\$hv. , n. , p.'.((isset($r["_source"]["trabalhoEmEventos"]["paginaInicial"]) && $r["_source"]["trabalhoEmEventos"]["paginaInicial"])? $r["_source"]["trabalhoEmEventos"]["paginaInicial"] : '').'-'.((isset($r["_source"]["trabalhoEmEventos"]["paginaFinal"]) && $r["_source"]["trabalhoEmEventos"]["paginaFinal"])? $r["_source"]["trabalhoEmEventos"]["paginaFinal"] : '').', '.((isset($r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"]) && $r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"])? $r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"] : '').'';
                                             }
                                             
                                             if (isset($r["_source"]["artigoPublicado"])){
