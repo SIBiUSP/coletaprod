@@ -985,22 +985,24 @@ class dadosExternos {
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
-        $result = curl_exec($ch);
-        $info = curl_getinfo($ch);
-        if ($info["http_code"] == 200) {
-            var_dump($info);    
-            curl_close($ch);
-            $data = json_decode($result, TRUE);
-            return $data;        
-        } else {
-            echo '<br/><br/><br/><h2>Erro '.$info["http_code"].' ao obter o arquivo da Base do Lattes, favor tentar novamente. <a href="index.php">Clique aqui para voltar a página inicial</a></h2>';
-            //var_dump($info);    
-            curl_close($ch);
-            exit();
+        $tentativas = 0;
+        while($tentativas < 3){        
+            $result = curl_exec($ch);
+            $info = curl_getinfo($ch);
+            if ($info["http_code"] == 200) {
+                var_dump($info);
+                $data = json_decode($result, TRUE);
+                curl_close($ch);
+                return $data;
+            } else {
+                $tentativas++;
+            }
         }
 
 
-
+        echo '<br/><br/><br/><h2>Erro '.$info["http_code"].' ao obter o arquivo da Base do Lattes, favor tentar novamente. <a href="index.php">Clique aqui para voltar a página inicial</a></h2>';
+        //var_dump($info);
+        curl_close($ch);
     }
 
     static function coleta_json_download_lattes($id_lattes) {
