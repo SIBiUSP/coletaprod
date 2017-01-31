@@ -1075,7 +1075,7 @@ class dadosExternos {
 
         $body = json_encode($doc_obra_array, JSON_UNESCAPED_UNICODE); 
 
-        $resultado_crossref = store_record($sha256,"trabalhos",$body);
+        $resultado_crossref = elasticsearch::store_record($sha256,"trabalhos",$body);
         print_r($resultado_crossref);
     }    
     
