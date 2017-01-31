@@ -79,7 +79,7 @@
             
             //print_r($body);
 
-            $resultado_scopus = store_record($sha256,"trabalhos",$body);
+            $resultado_scopus = elasticsearch::store_record($sha256,"trabalhos",$body);
             print_r($resultado_scopus);            
             
             

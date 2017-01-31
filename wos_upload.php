@@ -74,7 +74,7 @@
             
             //print_r($body);
 
-            $resultado_wos = store_record($sha256,"trabalhos",$body);
+            $resultado_wos = elasticsearch::store_record($sha256,"trabalhos",$body);
             print_r($resultado_wos);            
             
             //Limpar variáveis
