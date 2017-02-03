@@ -6,10 +6,6 @@
             include('inc/meta-header.php');
             include('inc/functions.php');
             
-            if(!empty($_SESSION['oauthuserdata'])) { 
-                store_user($_SESSION['oauthuserdata'],$client);
-            }
-        
             /* Define variables */
             define('authorUSP','authorUSP');
         ?> 

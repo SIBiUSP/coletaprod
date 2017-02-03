@@ -190,7 +190,7 @@
                     <div class="uk-width-1-1 uk-margin-top uk-description-list-line">
                     <ul class="uk-list uk-list-line">   
                     <?php foreach ($cursor["hits"]["hits"] as $r) : ?>
-                    
+                        
                         <li>                        
                             <div class="uk-grid uk-flex-middle" data-uk-grid-   margin="">
                                 <div class="uk-width-medium-2-10 uk-row-first">
@@ -301,7 +301,7 @@
                                             }
                                             
                                             if (isset($r["_source"]["artigoPublicado"])){
-                                                $record[] = '000000001 7730  L \$\$t'.$r["_source"]["artigoPublicado"]["tituloDoPeriodicoOuRevista"].'\$\$x'.$r["_source"]["artigoPublicado"]["issn"].'\$\$hv.'.$r["_source"]["artigoPublicado"]["volume"].', n. '.((isset($r["_source"]["artigoPublicado"]["serie"]) && $r["_source"]["artigoPublicado"]["serie"])? $r["_source"]["artigoPublicado"]["serie"] : '').', p.'.$r["_source"]["artigoPublicado"]["paginaInicial"].'-'.((isset($r["_source"]["artigoPublicado"]["paginaFinal"]) && $r["_source"]["artigoPublicado"]["paginaFinal"])? $r["_source"]["artigoPublicado"]["paginaFinal"] : '').', '.$r["_source"]["ano"].'';
+                                                $record[] = '000000001 7730  L \$\$t'.$r["_source"]["artigoPublicado"]["tituloDoPeriodicoOuRevista"].'\$\$x'.$r["_source"]["artigoPublicado"]["issn"].'\$\$hv.'.((isset($r["_source"]["artigoPublicado"]["volume"]) && $r["_source"]["artigoPublicado"]["volume"])? $r["_source"]["artigoPublicado"]["volume"] : '').', n. '.((isset($r["_source"]["artigoPublicado"]["serie"]) && $r["_source"]["artigoPublicado"]["serie"])? $r["_source"]["artigoPublicado"]["serie"] : '').', p.'.((isset($r["_source"]["artigoPublicado"]["paginaInicial"]) && $r["_source"]["artigoPublicado"]["paginaInicial"])? $r["_source"]["artigoPublicado"]["paginaInicial"] : '').'-'.((isset($r["_source"]["artigoPublicado"]["paginaFinal"]) && $r["_source"]["artigoPublicado"]["paginaFinal"])? $r["_source"]["artigoPublicado"]["paginaFinal"] : '').', '.$r["_source"]["ano"].'';
                                             }                                            
                                             
                                             

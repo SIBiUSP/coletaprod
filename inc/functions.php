@@ -90,7 +90,7 @@ class elasticsearch {
         $response = elasticsearch::elastic_update($_id,$type,$body);    
         echo '<br/>Resultado: '.($response["_id"]).', '.($response["result"]).', '.($response["_shards"]['successful']).'<br/>';   
 
-    }    
+    }
     
 }
 
@@ -915,8 +915,7 @@ class facets_teses {
  */
 class dadosExternos {
     
-    static function query_bdpi($query_title,$query_year) {
-
+    static function query_bdpi($query_title,$query_year) {        
         $query = '
         {
             "min_score": 5,
@@ -925,7 +924,7 @@ class dadosExternos {
                     "should": [	
                         {
                             "multi_match" : {
-                                "query":      "'.$query_title.'",
+                                "query":      "'.str_replace('"','',$query_title).'",
                                 "type":       "cross_fields",
                                 "fields":     [ "title" ],
                                 "minimum_should_match": "80%" 
@@ -1025,7 +1024,7 @@ class dadosExternos {
         $doc_obra_array["doc"]["source_id"] = $doi;    
         $doc_obra_array["doc"]["tag"][] = $tag;    
         $doc_obra_array["doc"]["tipo"] = $data["message"]["type"];
-        $doc_obra_array["doc"]["titulo"] = $data["message"]["title"][0];
+        $doc_obra_array["doc"]["titulo"] = str_replace('"','',$data["message"]["title"][0]);
         if(isset($data["message"]["subtitle"][0])){
             $doc_obra_array["doc"]["subtitulo"] = $data["message"]["subtitle"][0];
         }    
@@ -1461,6 +1460,13 @@ class z3950 {
 
     }      
     
+}
+
+class testadores {
+    public static function existe($variavel){
+        $resultado_teste = ((isset($variavel) && $variavel)? $variavel : '');
+        return $resultado_teste;
+    }
 }
 
 ?>
