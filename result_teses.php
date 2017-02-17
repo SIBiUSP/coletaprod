@@ -3,7 +3,7 @@
     include('inc/config.php'); 
     include('inc/functions.php');
 
-    $result_get = analisa_get($_GET);
+    $result_get = get::analisa_get($_GET);
     $query_complete = $result_get['query_complete'];
     $query_aggregate = $result_get['query_aggregate'];
     //$escaped_url = $result_get['escaped_url'];
