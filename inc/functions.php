@@ -4,95 +4,8 @@
  */
 
 
+include('functions_core.php');
 
-/**
- * Classe de interação com o Elasticsearch
- */
-class elasticsearch {
-
-    /**
-     * Executa o commando get no Elasticsearch
-     * 
-     * @param string $_id ID do documento
-     * @param string $type Tipo de documento no índice do Elasticsearch                         
-     * @param string[] $fields Informa quais campos o sistema precisa retornar. Se nulo, o sistema retornará tudo.
-     * 
-     */
-    public static function elastic_get ($_id,$type,$fields) {
-        global $index;
-        global $client;
-        if (!defined('type_constant')) define('type_constant', ''.$type.'');
-        //define('fields', ''.$fields.'');
-        $params = [];
-        $params["index"] = $index;
-        $params["type"] = type_constant;
-        $params["id"] = $_id;
-        $params["_source"] = $fields;
-        
-        $response = $client->get($params);        
-        return $response;    
-    }    
-
-    /**
-     * Executa o commando search no Elasticsearch
-     * 
-     * @param string $type Tipo de documento no índice do Elasticsearch                         
-     * @param string[] $fields Informa quais campos o sistema precisa retornar. Se nulo, o sistema retornará tudo.
-     * @param int $size Quantidade de registros nas respostas
-     * @param resource $body Arquivo JSON com os parâmetros das consultas no Elasticsearch
-     * 
-     */    
-    public static function elastic_search ($type,$fields,$size,$body) {
-        global $index;
-        global $client;
-        $params = [];
-        $params["index"] = $index;
-        $params["type"] = $type;
-        $params["_source"] = $fields;
-        $params["size"] = $size;
-        $params["body"] = $body;
-        
-        $response = $client->search($params);        
-        return $response;
-    }
-    
-    /**
-     * Executa o commando update no Elasticsearch
-     * 
-     * @param string $_id ID do documento
-     * @param string $type Tipo de documento no índice do Elasticsearch
-     * @param resource $body Arquivo JSON com os parâmetros das consultas no Elasticsearch  
-     * 
-     */     
-    public static function elastic_update ($_id,$type,$body) {
-        global $index;
-        global $client;
-        $params = [];
-        $params["index"] = $index;
-        $params["type"] = $type;
-        $params["id"] = $_id;
-        $params["body"] = $body;
-        
-        $response = $client->update($params);        
-        return $response;
-    }
-
-    
-    /**
-     * Executa o commando update no Elasticsearch e retorna uma resposta em html
-     * 
-     * @param string $_id ID do documento
-     * @param string $type Tipo de documento no índice do Elasticsearch
-     * @param resource $body Arquivo JSON com os parâmetros das consultas no Elasticsearch  
-     * 
-     */     
-    static function store_record ($_id,$type,$body){
-        $response = elasticsearch::elastic_update($_id,$type,$body);    
-        echo '<br/>Resultado: '.($response["_id"]).', '.($response["result"]).', '.($response["_shards"]['successful']).'<br/>';   
-
-    }
-    
-}
 
 /**
  * Compara registros que estão entrando com os já existentes na base
@@ -484,71 +397,6 @@ class paginaInicial {
  * 
  * @param array $get Dados recebidos na variável $_GET
  */
-function analisa_get($get) {
-    
-    $search_fields = "";
-    if (!empty($get['fields'])) {
-        $search_fields = implode('","',$get['fields']);  
-    } else {            
-        $search_fields = "_all";
-    }    
-    
-    if (!empty($get['search'])){
-        $get['search'] = str_replace('"','\"',$get['search']);
-    }
-    
-    /* Pagination */
-    if (isset($get['page'])) {
-        $page = $get['page'];
-        unset($get['page']);
-    } else {
-        $page = 1;
-    }
-    
-    /* Pagination variables */
-    $limit = 20;
-    $skip = ($page - 1) * $limit;
-    $next = ($page + 1);
-    $prev = ($page - 1);
-    $sort = array('year' => -1);       
-    
-    if (!empty($get['codpes'])){        
-        $get['search'][] = 'codpes:'.$get['codpes'].'';
-    }
-    
-    if (!empty($get['assunto'])){        
-        $get['search'][] = 'subject:\"'.$get['assunto'].'\"';
-    }    
-    
-    if (!empty($get['search'])){
-        $query = implode(" ", $get['search']); 
-    } else {
-        $query = "*";
-    }
-    
-    $search_term = '
-        "query_string" : {
-            "fields" : ["'.$search_fields.'"],
-            "query" : "'.$query.'",
-            "default_operator": "AND",
-            "analyzer":"portuguese",
-            "phrase_slop":10
-        }                
-    ';    
-    
-    $query_complete = '{
-        "query": {
-        '.$search_term.'
-        }
-    }';
-    $query_aggregate = '
-        "query": {
-            '.$search_term.'
-        },
-    ';
- 
-    return compact('page','get','new_get','query_complete','query_aggregate','url','escaped_url','limit','termo_consulta','data_inicio','data_fim','skip');
-}
 
 /**
  * Classe que gera facetas na página de resultados de trabalhos
@@ -948,15 +796,19 @@ class dadosExternos {
         //print_r($query);
         //172.31.0.90
         
-        global $index_bdpi;
-        global $client_bdpi;
-        $params = [];
-        $params["index"] = "sibi";
-        $params["type"] = "producao";
-        $params["body"] = $query;
-        
-        $data = $client_bdpi->search($params);
 
+        $ch = curl_init();
+        $method = "POST";
+        $url = "http://172.31.1.187/sibi/producao/_search";
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_PORT, 9200);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
+        $result = curl_exec($ch);
+        curl_close($ch);
+        //print_r($result);
+        $data = json_decode($result, true);
 
         if ($data["hits"]["total"] > 0){
             echo '<div class="uk-alert">';

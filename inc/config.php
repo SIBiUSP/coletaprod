@@ -14,9 +14,9 @@
 		'localhost' 
 	];
 	$host_bdpi = [
-		'localhost' 
+		'172.31.1.187'
 	];
-    $index = "lattes";
+    $index = "lattes_teste";
 
 	/* Load libraries for PHP composer */ 
     require (__DIR__.'/../vendor/autoload.php'); 
