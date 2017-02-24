@@ -3,9 +3,7 @@
  * Arquivo de classes e funções do ColetaProd
  */
 
-
 include('functions_core.php');
-
 
 /**
  * Compara registros que estão entrando com os já existentes na base
@@ -403,33 +401,17 @@ class paginaInicial {
  */
 class facets_users {   
     
-    public function facet_user($field,$tamanho,$field_name,$sort) {
-        global $client;
-        global $index;
-        $query_aggregate = $this->query_aggregate;
-        $sort_query="";
-        if (!empty($sort)){
-             $sort_query = '"order" : { "_term" : "'.$sort.'" },';  
-        }     
-        $query = '{
-            '.$query_aggregate.'
-            "aggs": {
-                "counts": {
-                    "terms": {
-                        "field": "'.$field.'.keyword",
-                        '.$sort_query.'
-                        "size" : '.$tamanho.'
-                    }
-                }
-            }
-        }';
-        $params = [
-            'index' => $index,
-            'type' => 'curriculos',
-            'size'=> 0,          
-            'body' => $query
-        ];
-        $response = $client->search($params);    
+    public function facet_user($field,$size,$field_name,$sort) {
+        $type = "curriculos";
+        $query = $this->query;
+        $query["aggs"]["counts"]["terms"]["field"] = "$field.keyword";
+        if (isset($sort)) {
+            $query["aggs"]["counts"]["terms"]["order"]["_term"] = $sort;
+        }
+        $query["aggs"]["counts"]["terms"]["size"] = $size;
+        
+        $response = elasticsearch::elastic_search($type,null,0,$query);        
+        
         echo '<li class="uk-parent">';    
         echo '<a href="#">'.$field_name.'</a>';
         echo ' <ul class="uk-nav-sub">';
@@ -440,114 +422,9 @@ class facets_users {
             echo '<div class="uk-grid"><div class="uk-width-4-5">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</div> <div class="uk-width-1-5"> <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=+'.$field.'.keyword:&quot;'.$facets['key'].'&quot;" class="uk-icon-hover uk-icon-asterisk" data-uk-tooltip title="E"></a> <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=-'.$field.'.keyword:&quot;'.$facets['key'].'&quot;" class="uk-icon-hover uk-icon-minus" data-uk-tooltip title="NÃO"></a>  <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=OR '.$field.'.keyword:&quot;'.$facets['key'].'&quot;" class="uk-icon-hover uk-icon-plus" data-uk-tooltip title="OU"></a></div>';
             echo '</p>';
             echo '</li>';
-            //if ($count == 11)
-            //    {  
-            //         echo '<div id="'.$campo.'" class="uk-hidden">';
-            //    }
-            //$count++;
         };
-        //if ($count > 12) {
-            //echo '</div>';
-            //echo '<button class="uk-button" data-uk-toggle="{target:\'#'.$campo.'\'}">Ver mais</button>';
-        //}
         echo   '</ul></li>';
     }
-    
-    public function rebuild_facet_user($field,$tamanho,$nome_do_campo) {
-        global $client;
-        global $index;
-        $query_aggregate = $this->query_aggregate;
-        $query = '{
-            '.$query_aggregate.'
-            "aggs": {
-                "counts": {
-                    "terms": {
-                        "field": "'.$field.'.keyword",
-                        "order" : { "_count" : "desc" },
-                        "size" : '.$tamanho.'
-                    }
-                }
-            }
-        }';    
-        $params = [
-            'index' => $index,
-            'type' => 'curriculos',
-            'size'=> 0, 
-            'body' => $query
-        ];
-        $response = $client->search($params);
-        echo '<li class="uk-parent">';
-        echo '<a href="#">'.$nome_do_campo.'</a>';
-        echo ' <ul class="uk-nav-sub">';
-        foreach ($response["aggregations"]["counts"]["buckets"] as $facets) {
-            echo '<li class="uk-h6">';        
-            echo '<a href="autoridades.php?term='.$facets['key'].'">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a>';
-            echo '</li>';
-        };
-        echo   '</ul>
-          </li>';
-    }
-    public function facet_range_curriculo($campo,$tamanho,$nome_do_campo) {
-        global $client;
-        global $index;
-        $query_aggregate = $this->query_aggregate;
-        $query = '
-        {
-            '.$query_aggregate.'
-            "aggs" : {
-                "ranges" : {
-                    "range" : {
-                        "field" : "'.$campo.'",
-                        "ranges" : [
-                            { "to" : 1 },
-                            { "from" : 1, "to" : 2 },
-                            { "from" : 2, "to" : 5 },
-                            { "from" : 5, "to" : 10 },
-                            { "from" : 10, "to" : 100 },
-                            { "from" : 100 }
-                        ]
-                    }
-                }
-            }
-         }
-         ';
-        $params = [
-            'index' => $index,
-            'type' => 'curriculos',
-            'size'=> 0,          
-            'body' => $query
-        ];
-        //print_r($query);
-        
-        $response = $client->search($params); 
-        //print_r($response);
-        echo '<li class="uk-parent">';    
-        echo '<a href="#">'.$nome_do_campo.'</a>';
-        echo ' <ul class="uk-nav-sub">';
-        echo '<form>';
-        //$count = 1;
-        foreach ($response["aggregations"]["ranges"]["buckets"] as $facets) {
-            echo '<li class="uk-h6 uk-form-controls uk-form-controls-text">';
-            echo '<p class="uk-form-controls-condensed">';
-            echo '<input type="checkbox" name="'.$campo.'[]" value="'.$facets['key'].'"><a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=+metrics.'.$campo.':&quot;'.$facets['key'].'&quot;">Intervalo '.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a>';
-            echo '</p>';
-            echo '</li>';
-            //if ($count == 11)
-            //    {  
-            //         echo '<div id="'.$campo.'" class="uk-hidden">';
-            //    }
-            //$count++;
-        };
-        //if ($count > 12) {
-            //echo '</div>';
-            //echo '<button class="uk-button" data-uk-toggle="{target:\'#'.$campo.'\'}">Ver mais</button>';
-        //}
-        echo '<input type="hidden" checked="checked" name="operator" value="AND">';
-        echo '<button type="submit" class="uk-button-primary">Limitar facetas</button>';
-        echo '</form>';
-        echo   '</ul></li>';    
-    }
-    
     
 }
 

@@ -4,12 +4,9 @@
     include('inc/functions.php');
 
     $result_get = get::analisa_get($_GET);
-    $query_complete = $result_get['query_complete'];
-    $query_aggregate = $result_get['query_aggregate'];
-    //$escaped_url = $result_get['escaped_url'];
+    $query = $result_get['query'];
     $limit = $result_get['limit'];
     $page = $result_get['page'];
-    //$new_get = $result_get['new_get'];
     $skip = $result_get['skip'];
 
     $params = [
@@ -17,7 +14,7 @@
         'type' => 'curriculos',
         'size'=> $limit,
         'from' => $skip,   
-        'body' => $query_complete
+        'body' => $query
     ];  
     
     $cursor = $client->search($params);    
@@ -78,7 +75,7 @@
         <hr>
     <?php
         $facets_users = new facets_users();
-        $facets_users->query_aggregate = $query_aggregate;
+        $facets_users->query = $query;
                 
         $facets_users->facet_user("id_usp",100,"Número USP",null);
         $facets_users->facet_user("tag",100,"Tag",null);
