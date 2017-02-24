@@ -4,24 +4,20 @@
     include('inc/functions.php');
 
     $result_get = get::analisa_get($_GET);
-    $query_complete = $result_get['query_complete'];
-    $query_aggregate = $result_get['query_aggregate'];
-    //$escaped_url = $result_get['escaped_url'];
+    $query = $result_get['query'];
     $limit = $result_get['limit'];
     $page = $result_get['page'];
-    //$new_get = $result_get['new_get'];
     $skip = $result_get['skip'];
 
     $params = [
         'index' => $index,
-        'type' => 'trabalhos',
+        'type' => $type,
         'size'=> $limit,
         'from' => $skip,   
-        'body' => $query_complete
+        'body' => $query
     ];  
     
-    $cursor = $client->search($params);    
-
+    $cursor = $client->search($params);
     $total = $cursor["hits"]["total"];
 
 ?>
@@ -78,7 +74,7 @@
         <hr>
     <?php
         $facets = new facets();
-        $facets->query_aggregate = $query_aggregate;
+        $facets->query = $query;
         
         $facets->facet("natureza",10,"Natureza",null);
         $facets->facet("tipo",10,"Tipo de material",null);

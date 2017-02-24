@@ -17,6 +17,7 @@
 		'172.31.1.187'
 	];
     $index = "lattes_teste";
+    $type = "trabalhos";
 
 	/* Load libraries for PHP composer */ 
     require (__DIR__.'/../vendor/autoload.php'); 
