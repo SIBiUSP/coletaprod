@@ -293,9 +293,39 @@ class facets {
 
 class citation {
     
+    /* Pegar o tipo de material */
+    static function get_type($material_type){
+        switch ($material_type) {
+            case "ARTIGO DE JORNAL":
+                return "article-newspaper";
+            break;
+            case "ARTIGO DE PERIODICO":
+                return "article-journal";
+            break;
+            case "PARTE DE MONOGRAFIA/LIVRO":
+                return "chapter";
+            break;
+            case "APRESENTACAO SONORA/CENICA/ENTREVISTA":
+                return "interview";
+            break;
+            case "TRABALHO DE EVENTO-RESUMO":
+                return "paper-conference";
+            break;
+            case "TRABALHO DE EVENTO":
+                return "paper-conference";
+            break;     
+            case "TESE":
+                return "thesis";
+            break;          
+            case "TEXTO NA WEB":
+                return "post-weblog";
+            break;
+        }
+    }    
+    
     static function citation_query($citacao) {        
         $array_citation = [];
-        $array_citation["type"] = get_type($citacao["type"]);
+        $array_citation["type"] = citation::get_type($citacao["type"]);
         $array_citation["title"] = $citacao["title"];
         
         if (!empty($citacao["authors"])) {
