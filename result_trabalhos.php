@@ -76,42 +76,42 @@
         $facets = new facets();
         $facets->query = $query;
         
-        $facets->facet("natureza",10,"Natureza",null);
-        $facets->facet("tipo",10,"Tipo de material",null);
-        $facets->facet("tag",10,"Tag",null);
+        $facets->facet("natureza",10,"Natureza",null,"trabalhos");
+        $facets->facet("tipo",10,"Tipo de material",null,"trabalhos");
+        $facets->facet("tag",10,"Tag",null,"trabalhos");
         
-        $facets->facet("autores.nomeCompletoDoAutor",100,"Nome completo do autor",null);
-        $facets->facet("lattes_ids",100,"Número do lattes",null);
-        $facets->facet("codpes",100,"Número USP",null);
-        $facets->facet("unidadeUSP",100,"Unidade USP",null);
+        $facets->facet("autores.nomeCompletoDoAutor",100,"Nome completo do autor",null,"trabalhos");
+        $facets->facet("lattes_ids",100,"Número do lattes",null,"trabalhos");
+        $facets->facet("codpes",100,"Número USP",null,"trabalhos");
+        $facets->facet("unidadeUSP",100,"Unidade USP",null,"trabalhos");
         
         echo '<hr><li>Informações da publicação</li>';
-        $facets->facet("pais",200,"País de publicação",null);
-        $facets->facet("ano",120,"Ano de publicação","desc");
-        $facets->facet("idioma",40,"Idioma",null);
-        $facets->facet("meioDeDivulgacao",100,"Meio de divulgação",null);
-        $facets->facet("palavras_chave",100,"Palavras-chave",null);
-        $facets->facet("agencia_de_fomento",100,"Agências de fomento",null);
-        $facets->facet("citacoes_recebidas",100,"Citações recebidas",null);
+        $facets->facet("pais",200,"País de publicação",null,"trabalhos");
+        $facets->facet("ano",120,"Ano de publicação","desc","trabalhos");
+        $facets->facet("idioma",40,"Idioma",null,"trabalhos");
+        $facets->facet("meioDeDivulgacao",100,"Meio de divulgação",null,"trabalhos");
+        $facets->facet("palavras_chave",100,"Palavras-chave",null,"trabalhos");
+        $facets->facet("agencia_de_fomento",100,"Agências de fomento",null,"trabalhos");
+        $facets->facet("citacoes_recebidas",100,"Citações recebidas",null,"trabalhos");
         
         echo '<hr><li>Área do conhecimento</li>';
-        $facets->facet("area_do_conhecimento.nomeGrandeAreaDoConhecimento",100,"Nome da Grande Área do Conhecimento",null);
-        $facets->facet("area_do_conhecimento.nomeDaAreaDoConhecimento",100,"Nome da Área do Conhecimento",null);
-        $facets->facet("area_do_conhecimento.nomeDaSubAreaDoConhecimento",100,"Nome da Sub Área do Conhecimento",null);
-        $facets->facet("area_do_conhecimento.nomeDaEspecialidade",100,"Nome da Especialidade",null);
+        $facets->facet("area_do_conhecimento.nomeGrandeAreaDoConhecimento",100,"Nome da Grande Área do Conhecimento",null,"trabalhos");
+        $facets->facet("area_do_conhecimento.nomeDaAreaDoConhecimento",100,"Nome da Área do Conhecimento",null,"trabalhos");
+        $facets->facet("area_do_conhecimento.nomeDaSubAreaDoConhecimento",100,"Nome da Sub Área do Conhecimento",null,"trabalhos");
+        $facets->facet("area_do_conhecimento.nomeDaEspecialidade",100,"Nome da Especialidade",null,"trabalhos");
         
         echo '<hr><li>Eventos</li>';
-        $facets->facet("trabalhoEmEventos.classificacaoDoEvento",100,"Classificação do evento",null); 
-        $facets->facet("trabalhoEmEventos.nomeDoEvento",100,"Nome do evento",null);
-        $facets->facet("trabalhoEmEventos.cidadeDoEvento",100,"Cidade do evento",null);
-        $facets->facet("trabalhoEmEventos.anoDeRealizacao",100,"Ano de realização do evento",null);
-        $facets->facet("trabalhoEmEventos.tituloDosAnaisOuProceedings",100,"Título dos anais",null);
-        $facets->facet("trabalhoEmEventos.isbn",100,"ISBN dos anais",null);
-        $facets->facet("trabalhoEmEventos.nomeDaEditora",100,"Editora dos anais",null);
-        $facets->facet("trabalhoEmEventos.cidadeDaEditora",100,"Cidade da editora",null);
+        $facets->facet("trabalhoEmEventos.classificacaoDoEvento",100,"Classificação do evento",null,"trabalhos"); 
+        $facets->facet("trabalhoEmEventos.nomeDoEvento",100,"Nome do evento",null,"trabalhos");
+        $facets->facet("trabalhoEmEventos.cidadeDoEvento",100,"Cidade do evento",null,"trabalhos");
+        $facets->facet("trabalhoEmEventos.anoDeRealizacao",100,"Ano de realização do evento",null,"trabalhos");
+        $facets->facet("trabalhoEmEventos.tituloDosAnaisOuProceedings",100,"Título dos anais",null,"trabalhos");
+        $facets->facet("trabalhoEmEventos.isbn",100,"ISBN dos anais",null,"trabalhos");
+        $facets->facet("trabalhoEmEventos.nomeDaEditora",100,"Editora dos anais",null,"trabalhos");
+        $facets->facet("trabalhoEmEventos.cidadeDaEditora",100,"Cidade da editora",null,"trabalhos");
         
         echo '<hr><li>Periódicos</li>';
-        $facets->facet("artigoPublicado.tituloDoPeriodicoOuRevista",100,"Título do periódico",null);   
+        $facets->facet("artigoPublicado.tituloDoPeriodicoOuRevista",100,"Título do periódico",null,"trabalhos");   
     ?>
     </ul>
         <?php if(!empty($_SESSION['oauthuserdata'])): ?>

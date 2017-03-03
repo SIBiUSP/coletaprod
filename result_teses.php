@@ -4,12 +4,9 @@
     include('inc/functions.php');
 
     $result_get = get::analisa_get($_GET);
-    $query_complete = $result_get['query_complete'];
-    $query_aggregate = $result_get['query_aggregate'];
-    //$escaped_url = $result_get['escaped_url'];
+    $query = $result_get['query'];
     $limit = $result_get['limit'];
     $page = $result_get['page'];
-    //$new_get = $result_get['new_get'];
     $skip = $result_get['skip'];
 
     $params = [
@@ -17,7 +14,7 @@
         'type' => 'teses',
         'size'=> $limit,
         'from' => $skip,   
-        'body' => $query_complete
+        'body' => $query
     ];  
     
     $cursor = $client->search($params);    
@@ -77,17 +74,17 @@
     <ul class="uk-nav uk-nav-side uk-nav-parent-icon uk-margin-top" data-uk-nav="{multiple:true}">
         <hr>
     <?php
-        $facets_teses = new facets_teses();
-        $facets_teses->query_aggregate = $query_aggregate;
-        
-        $facets_teses->facet_tese("tese.nivel",10,"Nível",null);
-        $facets_teses->facet_tese("tese.nomeInstituicao",10,"Instituição",null);
-        $facets_teses->facet_tese("tese.nomeCurso",10,"Nome do Curso",null);
-        $facets_teses->facet_tese("tese.anoDeConclusao",10,"Ano de conclusão",null);
-        $facets_teses->facet_tese("tese.nomeDoOrientador",10,"Nome do orientador",null);
-        $facets_teses->facet_tese("tese.flagBolsa",10,"Teve bolsa?",null);
-        $facets_teses->facet_tese("tese.nomeAgencia",10,"Agência de fomento",null);  
-        $facets_teses->facet_tese("tese.conceitoCapes",10,"Conceito CAPES",null);
+        $facets = new facets();
+        $facets->query = $query;
+                
+        $facets->facet("tese.nivel",10,"Nível",null,"teses");
+        $facets->facet("tese.nomeInstituicao",10,"Instituição",null,"teses");
+        $facets->facet("tese.nomeCurso",10,"Nome do Curso",null,"teses");
+        $facets->facet("tese.anoDeConclusao",10,"Ano de conclusão",null,"teses");
+        $facets->facet("tese.nomeDoOrientador",10,"Nome do orientador",null,"teses");
+        $facets->facet("tese.flagBolsa",10,"Teve bolsa?",null,"teses");
+        $facets->facet("tese.nomeAgencia",10,"Agência de fomento",null,"teses");  
+        $facets->facet("tese.conceitoCapes",10,"Conceito CAPES",null,"teses");
 
     ?>
     </ul>
