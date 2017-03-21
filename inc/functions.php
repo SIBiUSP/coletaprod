@@ -932,7 +932,7 @@ class z3950 {
                     }
 
                     echo '<td>'.$result_record["extent"].'</td>';
-                    echo '<td><button onclick="SaveAsFile(\''.addslashes($rec_download).'\',\'record.mrc\',\'text/plain;charset=utf-8\')">Baixar MARC</button></td>';
+                    echo '<td><button onclick="SaveAsFile(\''.addslashes($rec_download).'\',\'record.mrc\',\'text/plain;charset=CP1252\')">Baixar MARC</button></td>';
                     echo '</tr>';
                 }        
 
