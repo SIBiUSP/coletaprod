@@ -924,10 +924,31 @@ class z3950 {
                     echo '<th>'.$host_name.'</th>';
                     echo '<td>'.$result_record["isbn"].'</td>';
                     echo '<td>'.$result_record["title"].'</td>';
-                    echo '<td>'.$result_record["author"].'</td>';
-                    echo '<td>'.$result_record["publisher"].'</td>';
-                    echo '<td>'.$result_record["pub_place"].'</td>';
-                    echo '<td>'.$result_record["pub_date"].'</td>';
+                    
+                    if (!empty($result_record["author"])) {
+                        echo '<td>'.$result_record["author"].'</td>';
+                    } else {
+                        echo '<td>Sem autor cadastrado</td>';
+                    }
+                    
+                    if (!empty($result_record["publisher"])) {
+                        echo '<td>'.$result_record["publisher"].'</td>';
+                    } else {
+                        echo '<td>Sem editora cadastrada</td>';
+                    }
+                    
+                    if (!empty($result_record["pub_place"])) {
+                        echo '<td>'.$result_record["pub_place"].'</td>';
+                    } else {
+                        echo '<td>Sem local</td>';
+                    }                    
+
+                    if (!empty($result_record["pub_date"])) {
+                        echo '<td>'.$result_record["pub_date"].'</td>';
+                    } else {
+                        echo '<td>Sem data</td>';
+                    }                      
+
                     if (isset($result_record["edition"])){
                         echo '<td>'.$result_record["edition"].'</td>';
                     } else {

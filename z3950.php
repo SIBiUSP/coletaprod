@@ -51,8 +51,7 @@ $isbn = $_GET["isbn"];
     z3950::query_z3950($isbn,"library.ox.ac.uk:210/aleph","University of Oxford");
     z3950::query_z3950($isbn,"zcat.libraries.psu.edu:2200","Penn State University");
     z3950::query_z3950($isbn,"ringding.law.yale.edu:210/INNOPAC","Yale Law School");
-    z3950::query_z3950($isbn,"newton.lib.cam.ac.uk:7090/VOYAGER","University of CambridgeYale Law School");             
-                
+    z3950::query_z3950($isbn,"newton.lib.cam.ac.uk:7090/VOYAGER","University of Cambridge");         
 ?>
             <hr class="uk-grid-divider">
             
