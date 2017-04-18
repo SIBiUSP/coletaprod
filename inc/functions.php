@@ -441,8 +441,7 @@ class dadosExternos {
             echo '<div class="uk-alert">';
             echo '<h3>Registros similares na BDPI</h3>';
             foreach ($data["hits"]["hits"] as $match){
-                //var_dump($match);
-                echo '<p><a href="http://bdpi.usp.br/single.php?_id='.$match["_id"].'">'.$match["_source"]["type"].' - '.$match["_source"]["title"].' ('.$match["_source"]["year"].')</a><br/> Autores: ';   
+                echo '<p>Nota de proximidade: '.$match["_score"].' - <a href="http://bdpi.usp.br/single.php?_id='.$match["_id"].'">'.$match["_source"]["type"].' - '.$match["_source"]["title"].' ('.$match["_source"]["year"].')</a><br/> Autores: ';   
                 foreach ($match["_source"]['authors'] as $autores) {
                     echo ''.$autores.', ';
                 }
