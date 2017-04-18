@@ -398,7 +398,7 @@ class dadosExternos {
     static function query_bdpi($query_title,$query_year) {        
         $query = '
         {
-            "min_score": 5,
+            "min_score": 50,
             "query":{
                 "bool": {
                     "should": [	
@@ -407,7 +407,7 @@ class dadosExternos {
                                 "query":      "'.str_replace('"','',$query_title).'",
                                 "type":       "cross_fields",
                                 "fields":     [ "title" ],
-                                "minimum_should_match": "80%" 
+                                "minimum_should_match": "90%" 
                              }
                         },	    
                         {
@@ -425,10 +425,6 @@ class dadosExternos {
         }
         ';
 
-        //print_r($query);
-        //172.31.0.90
-        
-
         $ch = curl_init();
         $method = "POST";
         $url = "http://172.31.1.187/sibi/producao/_search";
@@ -439,7 +435,6 @@ class dadosExternos {
         curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
         $result = curl_exec($ch);
         curl_close($ch);
-        //print_r($result);
         $data = json_decode($result, true);
 
         if ($data["hits"]["total"] > 0){
@@ -506,9 +501,14 @@ class dadosExternos {
 
         $doc_obra_array["doc"]["source"] = "Base DOI - CrossRef";
         $doc_obra_array["doc"]["source_id"] = $doi;    
-        $doc_obra_array["doc"]["tag"][] = $tag;    
-        $doc_obra_array["doc"]["tipo"] = $data["message"]["type"];
-        $doc_obra_array["doc"]["titulo"] = str_replace('"','',$data["message"]["title"][0]);
+        $doc_obra_array["doc"]["tag"][] = $tag;
+        
+        if ($data["message"]["type"] == "journal-article") {
+            $doc_obra_array["doc"]["tipo"] = "Artigo publicado";
+        } else {
+            $doc_obra_array["doc"]["tipo"] = $data["message"]["type"];
+        }
+        $doc_obra_array["doc"]["titulo"] = str_replace('"','',trim($data["message"]["title"][0]));
         if(isset($data["message"]["subtitle"][0])){
             $doc_obra_array["doc"]["subtitulo"] = $data["message"]["subtitle"][0];
         }    
@@ -549,7 +549,7 @@ class dadosExternos {
 
         $i = 0;
         foreach ($data["message"]["author"]  as $autores) {
-            $doc_obra_array["doc"]["autores"][$i]["nomeCompletoDoAutor"] = $autores["given"].", ".$autores["family"];
+            $doc_obra_array["doc"]["autores"][$i]["nomeCompletoDoAutor"] = $autores["given"]." ".$autores["family"];
             $doc_obra_array["doc"]["autores"][$i]["nomeParaCitacao"] = $autores["family"].", ".$autores["given"];
             $i++;
         } 
