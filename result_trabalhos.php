@@ -3,6 +3,18 @@
     include('inc/config.php'); 
     include('inc/functions.php');
 
+    if (!empty($_POST)) {
+        foreach ($_POST as $key=>$value) {            
+            $var_concluido["doc"]["concluido"] = $value;
+            $var_concluido["doc"]["doc_as_upsert"] = true; 
+            elasticsearch::elastic_update($key,$type,$var_concluido);
+        }
+        sleep(6);
+        header("Refresh:0");
+    }
+    
+    
+
     $result_get = get::analisa_get($_GET);
     $query = $result_get['query'];
     $limit = $result_get['limit'];
@@ -111,7 +123,11 @@
         $facets->facet("trabalhoEmEventos.cidadeDaEditora",100,"Cidade da editora",null,"trabalhos");
         
         echo '<hr><li>Periódicos</li>';
-        $facets->facet("artigoPublicado.tituloDoPeriodicoOuRevista",100,"Título do periódico",null,"trabalhos");   
+        $facets->facet("artigoPublicado.tituloDoPeriodicoOuRevista",100,"Título do periódico",null,"trabalhos");
+
+        echo '<hr><li>Concluído</li>';
+        $facets->facet("concluido",100,"Concluído",null,"trabalhos");
+
     ?>
     </ul>
         <?php if(!empty($_SESSION['oauthuserdata'])): ?>
@@ -184,7 +200,8 @@
                     
                     <hr class="uk-grid-divider">
                     <div class="uk-width-1-1 uk-margin-top uk-description-list-line">
-                    <ul class="uk-list uk-list-line">   
+                    <ul class="uk-list uk-list-line">
+                    <form class="uk-form" method="post">   
                     <?php foreach ($cursor["hits"]["hits"] as $r) : ?>
                         
                         <li>                        
@@ -193,6 +210,18 @@
                                     <div class="uk-panel uk-h6 uk-text-break">
                                         <a href="result_trabalhos.php?type[]=<?php echo $r["_source"]['tipo'];?>"><?php echo ucfirst(strtolower($r["_source"]['tipo']));?></a>
                                     </div>
+
+                                    <?php if($r["_source"]["concluido"]== "1") :?>    
+                                        <fieldset data-uk-margin>
+                                            <label><input type='hidden' value='0' name="<?php echo $r['_id'];?>"></label>                                     
+                                            <label><input type="checkbox" name="<?php echo $r['_id'];?>" value='1' checked>Concluído</label>
+                                        </fieldset>
+                                    <?php else : ?>
+                                        <fieldset data-uk-margin>
+                                            <label><input type='hidden' value='0' name="<?php echo $r['_id'];?>"></label>                                     
+                                            <label><input type="checkbox" name="<?php echo $r['_id'];?>" value='1'>Concluído</label>
+                                        </fieldset>
+                                    <?php endif ;?>                                        
                                     
                                 </div>
                                 <div class="uk-width-medium-8-10 uk-flex-middle">
@@ -363,6 +392,8 @@
                             </div>
                         </li>
                     <?php endforeach;?>
+                    <button class="uk-button-primary">Marcar como concluido</button>
+                    </form>
                     </ul>
                     </div>
                     <hr class="uk-grid-divider">
