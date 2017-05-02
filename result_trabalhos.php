@@ -211,18 +211,24 @@
                                         <a href="result_trabalhos.php?type[]=<?php echo $r["_source"]['tipo'];?>"><?php echo ucfirst(strtolower($r["_source"]['tipo']));?></a>
                                     </div>
 
-                                    <?php if($r["_source"]["concluido"]== "1") :?>    
-                                        <fieldset data-uk-margin>
-                                            <label><input type='hidden' value='0' name="<?php echo $r['_id'];?>"></label>                                     
-                                            <label><input type="checkbox" name="<?php echo $r['_id'];?>" value='1' checked>Concluído</label>
-                                        </fieldset>
+                                    <?php if(isset($r["_source"]["concluido"])) : ?>
+                                        <?php if($r["_source"]["concluido"]== "1") : ?>    
+                                            <fieldset data-uk-margin>
+                                                <label><input type='hidden' value='0' name="<?php echo $r['_id'];?>"></label>                                     
+                                                <label><input type="checkbox" name="<?php echo $r['_id'];?>" value='1' checked>Concluído</label>
+                                            </fieldset>
+                                        <?php else : ?>
+                                            <fieldset data-uk-margin>
+                                                <label><input type='hidden' value='0' name="<?php echo $r['_id'];?>"></label>                                     
+                                                <label><input type="checkbox" name="<?php echo $r['_id'];?>" value='1'>Concluído</label>
+                                            </fieldset>
+                                        <?php endif; ?>                                    
                                     <?php else : ?>
-                                        <fieldset data-uk-margin>
-                                            <label><input type='hidden' value='0' name="<?php echo $r['_id'];?>"></label>                                     
-                                            <label><input type="checkbox" name="<?php echo $r['_id'];?>" value='1'>Concluído</label>
-                                        </fieldset>
-                                    <?php endif ;?>                                        
-                                    
+                                            <fieldset data-uk-margin>
+                                                <label><input type='hidden' value='0' name="<?php echo $r['_id'];?>"></label>                                     
+                                                <label><input type="checkbox" name="<?php echo $r['_id'];?>" value='1'>Concluído</label>
+                                            </fieldset>
+                                   <?php endif; ?> 
                                 </div>
                                 <div class="uk-width-medium-8-10 uk-flex-middle">
                                     
