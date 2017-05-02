@@ -573,8 +573,9 @@ class dadosExternos {
 		$doc_obra_array["doc"]["autores"][$i]["id_orcid"] = $autores["ORCID"];
 	    }
             $i++;
-        } 
+        }
 
+        $doc_obra_array["doc"]["concluido"] = "0";
         $doc_obra_array["doc_as_upsert"] = true;
 
         // Retorna resultado
@@ -776,6 +777,7 @@ class processaLattes {
             $i++;
         }
 
+        $doc_obra_array["doc"]["concluido"] = "0";
         $doc_obra_array["doc_as_upsert"] = true;
 
         // Retorna resultado
