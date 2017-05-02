@@ -575,7 +575,7 @@ class dadosExternos {
             $i++;
         }
 
-        $doc_obra_array["doc"]["concluido"] = "0";
+        $doc_obra_array["doc"]["concluido"] = "Não";
         $doc_obra_array["doc_as_upsert"] = true;
 
         // Retorna resultado
@@ -777,7 +777,7 @@ class processaLattes {
             $i++;
         }
 
-        $doc_obra_array["doc"]["concluido"] = "0";
+        $doc_obra_array["doc"]["concluido"] = "Não";
         $doc_obra_array["doc_as_upsert"] = true;
 
         // Retorna resultado

@@ -212,21 +212,21 @@
                                     </div>
 
                                     <?php if(isset($r["_source"]["concluido"])) : ?>
-                                        <?php if($r["_source"]["concluido"]== "1") : ?>    
+                                        <?php if($r["_source"]["concluido"]== "Sim") : ?>    
                                             <fieldset data-uk-margin>
-                                                <label><input type='hidden' value='0' name="<?php echo $r['_id'];?>"></label>                                     
-                                                <label><input type="checkbox" name="<?php echo $r['_id'];?>" value='1' checked>Concluído</label>
+                                                <label><input type='hidden' value='Não' name="<?php echo $r['_id'];?>"></label>                                     
+                                                <label><input type="checkbox" name="<?php echo $r['_id'];?>" value='Sim' checked>Concluído</label>
                                             </fieldset>
                                         <?php else : ?>
                                             <fieldset data-uk-margin>
-                                                <label><input type='hidden' value='0' name="<?php echo $r['_id'];?>"></label>                                     
-                                                <label><input type="checkbox" name="<?php echo $r['_id'];?>" value='1'>Concluído</label>
+                                                <label><input type='hidden' value='Não' name="<?php echo $r['_id'];?>"></label>                                     
+                                                <label><input type="checkbox" name="<?php echo $r['_id'];?>" value='Sim'>Concluído</label>
                                             </fieldset>
                                         <?php endif; ?>                                    
                                     <?php else : ?>
                                             <fieldset data-uk-margin>
-                                                <label><input type='hidden' value='0' name="<?php echo $r['_id'];?>"></label>                                     
-                                                <label><input type="checkbox" name="<?php echo $r['_id'];?>" value='1'>Concluído</label>
+                                                <label><input type='hidden' value='Não' name="<?php echo $r['_id'];?>"></label>                                     
+                                                <label><input type="checkbox" name="<?php echo $r['_id'];?>" value='Sim'>Concluído</label>
                                             </fieldset>
                                    <?php endif; ?> 
                                 </div>
