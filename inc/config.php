@@ -13,10 +13,14 @@
 	$hosts = [
 		'localhost' 
 	];
+
+    /* Endereço da BDPI - Para o comparador */
 	$host_bdpi = [
 		'172.31.1.187'
 	];
-    $index = "lattes_teste";
+
+    /* Configurações do Elasticsearch */
+    $index = "coletaprod";
     $type = "trabalhos";
 
 	/* Load libraries for PHP composer */ 
