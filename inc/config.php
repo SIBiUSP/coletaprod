@@ -20,7 +20,7 @@
 	];
 
     /* Configurações do Elasticsearch */
-    $index = "lattes_teste";
+    $index = "coletaprod";
     $type = "trabalhos";
 
 	/* Load libraries for PHP composer */ 

@@ -57,7 +57,7 @@
                                     <fieldset data-uk-margin>
                                         <legend>Pesquisa por TAG</legend>
                                         <input type="text" placeholder="Pesquise por tag" class="uk-form-width-large" name="search[]" data-validation="required">                                        
-                                        <input type="hidden" name="fields[]" value="tag">
+                                        <input type="hidden" name="fields[]" value="tag.keyword">
                                         <button class="uk-button-primary">Buscar tag</button><br/>                                    
                                     </fieldset>
                                 </form>
