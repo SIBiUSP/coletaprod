@@ -172,17 +172,9 @@
         <div class="uk-form-row"><button class="uk-button-primary">Limitar datas</button></div>
     </fieldset>        
     </form>
-    <hr>
-    <?php if(!empty($_SESSION['oauthuserdata'])): ?>
-            <fieldset>
-                <legend>Gerar relatório</legend>                  
-                <div class="uk-form-row"><a href="<?php echo 'http://'.$_SERVER["SERVER_NAME"].'/~bdpi/report.php?'.$_SERVER["QUERY_STRING"].''; ?>" class="uk-button-primary">Gerar relatório</a>
-                </div>
-            </fieldset>        
-    <?php endif; ?>                
+    <hr>     
             
-</div>
-    
+</div>   
                     
                 </div>
                 <div class="uk-width-small-1-2 uk-width-medium-4-6">
@@ -205,7 +197,7 @@
                     <?php foreach ($cursor["hits"]["hits"] as $r) : ?>
                         
                         <li>                        
-                            <div class="uk-grid uk-flex-middle" data-uk-grid-   margin="">
+                            <div class="uk-grid uk-flex-middle" data-uk-grid-margin="">
                                 <div class="uk-width-medium-2-10 uk-row-first">
                                     <div class="uk-panel uk-h6 uk-text-break">
                                         <a href="result_trabalhos.php?type[]=<?php echo $r["_source"]['tipo'];?>"><?php echo ucfirst(strtolower($r["_source"]['tipo']));?></a>
