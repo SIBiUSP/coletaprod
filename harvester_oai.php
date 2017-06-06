@@ -3,166 +3,146 @@
 include('inc/config.php');             
 include('inc/functions.php');
 
-$oaiUrl   = 'http://openscholarship.wustl.edu/do/oai/';
-//$oaiUrl   = 'http://www.seer.ufal.br/index.php/cir/oai';
-$client_harvester = new \Phpoaipmh\Client(''.$oaiUrl.'');
-$myEndpoint = new \Phpoaipmh\Endpoint($client_harvester);
+if (isset($_GET["oai"])) {
 
+    $oaiUrl = $_GET["oai"];
+    $client_harvester = new \Phpoaipmh\Client(''.$oaiUrl.'');
+    $myEndpoint = new \Phpoaipmh\Endpoint($client_harvester);
+    // Result will be a SimpleXMLElement object
 
-$record = $myEndpoint->getRecord("oai:openscholarship.wustl.edu:bcs-1008","oai_dc");
-print_r($record);
+    $identify = $myEndpoint->identify();
+    echo '<pre>';
+ 
+    // Results will be iterator of SimpleXMLElement objects
+    $results = $myEndpoint->listMetadataFormats();
+    $metadata_formats = [];
+    foreach($results as $item) {
+        $metadata_formats[] = $item->{"metadataPrefix"};
+    }
+    if (in_array("nlm", $metadata_formats)) {
+        
+        $recs = $myEndpoint->listRecords('nlm');
+       
+     
+        foreach($recs as $rec) {
+            print_r($rec);
+            if ($rec->{'header'}->attributes()->{'status'} != "deleted"){
 
-//
-//// Result will be a SimpleXMLElement object
-//$identify = $myEndpoint->identify();
-//echo '<pre>';
-//print_r($identify);
-//
-//// Results will be iterator of SimpleXMLElement objects
-//$results = $myEndpoint->listMetadataFormats();
-//$metadata_formats = [];
-//foreach($results as $item) {
-//    $metadata_formats[] = $item->{"metadataPrefix"};
-//}
-//
-//if (in_array("nlm", $metadata_formats)) { 
-//    echo "Tem nlm";
-//    $recs = $myEndpoint->listRecords('nlm');
-//    foreach($recs as $rec) {
-//        if ($rec->{'header'}->attributes()->{'status'} != "deleted"){
-//            print_r($rec->{'metadata'});
-//        }
-//    }    
-//} elseif (in_array("oai_dc", $metadata_formats))  {
-//    echo "Tem oai_dc";
-//    $recs = $myEndpoint->listRecords('oai_dc');    
-//    foreach($recs as $rec) {
-//        if ($rec->{'header'}->attributes()->{'status'} != "deleted"){
-//            print_r($rec->{'metadata'});
-//        }
-//    }
-//    
-//} else {
-//    echo "Este repositório não possui um formato compatível";
-//}
+                $sha256 = hash('sha256', ''.$rec->{'header'}->{'identifier'}.'');
+                $query["doc"]["source"] = (string)$rec->{'metadata'}->{'article'}->{'front'}->{'journal-meta'}->{'journal-title'};
+                $query["doc"]["tag"] = $_GET['tag'];
+                $query["doc"]["harvester_id"] = (string)$rec->{'header'}->{'identifier'};
+                $query["doc"]["tipo"] = (string)$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'article-categories'}->{'subj-group'}->{'subject'};
+                $query["doc"]["titulo"] = str_replace('"','',(string)$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'title-group'}->{'article-title'});
+                $query["doc"]["ano"] = (string)$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'pub-date'}[0]->{'year'};                
+                $query["doc"]["doi"] = (string)$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'article-id'}[1];
+                $query["doc"]["resumo"] = str_replace('"','',(string)$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'abstract'}->{'p'});
+                // Palavras-chave
+                if (isset($rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'kwd-group'}[0]->{'kwd'})) {
+                    foreach ($rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'kwd-group'}[0]->{'kwd'} as $palavra_chave) {
+                        $palavraschave_array = explode(".", (string)$palavra_chave);
+                        foreach ($palavraschave_array  as $pc) {
+                            $query["doc"]["palavras_chave"][] = trim($pc);
+                        }
+                    }
+                }
+                $i = 0;
+                foreach ($rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'contrib-group'}->{'contrib'} as $autores) {
+                    if ($autores->attributes()->{'contrib-type'} == "author"){
+                        $query["doc"]["autores"][$i]["nomeCompletoDoAutor"] = (string)$autores->{'name'}->{'given-names'}.' '.$autores->{'name'}->{'surname'};
+                        $query["doc"]["autores"][$i]["nomeParaCitacao"] = (string)$autores->{'name'}->{'surname'}.', '.$autores->{'name'}->{'given-names'};
+                        if(isset($autores->{'aff'})) {
+                            $query["doc"]["autores"][$i]["afiliacao"] = (string)$autores->{'aff'};
+                        }
+                        if(isset($autores->{'uri'})) {
+                            $query["doc"]["autores"][$i]["nroIdCnpq"] = (string)$autores->{'uri'};
+                        }
+                        $i++;
+                    }
+                }
+                $query["doc"]["trabalhoEmEventos"]["tituloDosAnaisOuProceedings"] = str_replace('"','',(string)$rec->{'metadata'}->{'article'}->{'front'}->{'journal-meta'}->{'journal-title'});
+                $query["doc"]["trabalhoEmEventos"]["issn"] = (string)$rec->{'metadata'}->{'article'}->{'front'}->{'journal-meta'}->{'issn'};
+                $query["doc"]["trabalhoEmEventos"]["volume"] = (string)$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'volume'};
+                $query["doc"]["trabalhoEmEventos"]["fasciculo"] = (string)$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'issue-id'};
+                $query["doc"]["trabalhoEmEventos"]["nomeDoEvento"] = (string)$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'issue-title'};
+                $query["doc"]["url_principal"] = (string)$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'self-uri'}->attributes('http://www.w3.org/1999/xlink');
+                $query["doc_as_upsert"] = true;
+                foreach ($rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'self-uri'} as $self_uri) {
+                    $query["doc"]["relation"][]=(string)$self_uri->attributes('http://www.w3.org/1999/xlink');
+                }
+                //print_r($query);
+                $resultado = elasticsearch::elastic_update($sha256,$type,$query);
+                print_r($resultado);
+                unset($query);
+                flush();
+            }
+        }
+    } else {
+        
+        $recs = $myEndpoint->listRecords('rfc1807');
+        var_dump($recs);
+        foreach($recs as $rec) {
+            if ($rec->{'header'}->attributes()->{'status'} != "deleted"){
+                $sha256 = hash('sha256', ''.$rec->{'header'}->{'identifier'}.'');
+                $query["doc"]["source"] = (string)$identify->Identify->repositoryName;
+                    $query["doc"]["harvester_id"] = (string)$rec->{'header'}->{'identifier'};
+                    if (isset($_GET["qualis2015"])) {
+                        $query["doc"]["qualis2015"] = $_GET["qualis2015"];
+                    }                   
+                    $query["doc"]["tipo"] = "Trabalhos em eventos";
+                    $query["doc"]["titulo"] = str_replace('"','',(string)$rec->{'metadata'}->{'rfc1807'}->{'title'});
+                    $query["doc"]["ano"] = substr((string)$rec->{'metadata'}->{'rfc1807'}->{'entry'},0,4);
+                    print_r($rec->{'metadata'}->{'rfc1807'});
+    //                $query["doc"]["doi"] = (string)$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'article-id'}[1];
+                    $query["doc"]["resumo"] = str_replace('"','',(string)$rec->{'metadata'}->{'rfc1807'}->{'abstract'});
+                    $query["doc"]["evento"]["titulo_dos_anais"] = str_replace('"','',(string)$rec->{'metadata'}->{'rfc1807'}->{'organization'}[0]);
+    //
+                    // Palavras-chave
+                    if (isset($rec->{'metadata'}->{'rfc1807'}->{'keyword'})) {
+                        foreach ($rec->{'metadata'}->{'rfc1807'}->{'keyword'} as $palavra_chave) {
+                            $pc_array = [];
+                            $pc_array = explode(".", (string)$palavra_chave);
+                            foreach ($pc_array as $pc_explode){
+                                $pc_array_dot = explode("-", $pc_explode);
+                            }
+                            foreach ($pc_array_dot as $pc_dot){
+                                $pc_array_end = explode(".", $pc_dot);
+                            }                             
+                            foreach ($pc_array_end as $pc) {
+                                $query["doc"]["palavras_chave"][] = trim($pc);
+                            }                             
+                        }
+                    }
+                    $i = 0;
+                    foreach ($rec->{'metadata'}->{'rfc1807'}->{'author'} as $autor) {
+                        $autor_array = explode(";", (string)$autor);
+                        $autor_nome_array = explode(",", (string)$autor_array[0]);
+                            $query["doc"]["autores"][$i]["nomeCompletoDoAutor"] = $autor_nome_array[1].' '.ucwords(strtolower($autor_nome_array[0]));
+                            $query["doc"]["autores"][$i]["nomeParaCitacao"] = (string)$autor_array[0];
+                            if(isset($autor_array[1])) {
+                                $query["doc"]["autores"][$i]["afiliacao"] = (string)$autor_array[1];
+                            }
+                            $i++;
+                    }
+                    $query["doc"]["trabalhoEmEventos"]["tituloDosAnaisOuProceedings"] = (string)$identify->Identify->repositoryName;
+    //                $query["doc"]["artigoPublicado"]["nomeDaEditora"] = (string)$rec->{'metadata'}->{'article'}->{'front'}->{'journal-meta'}->{'publisher'}->{'publisher-name'};
+    //                $query["doc"]["artigoPublicado"]["issn"] = (string)$rec->{'metadata'}->{'article'}->{'front'}->{'journal-meta'}->{'issn'};
+    //                $query["doc"]["artigoPublicado"]["volume"] = (string)$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'volume'};
+    //                $query["doc"]["artigoPublicado"]["fasciculo"] = (string)$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'issue'};
+    //                $query["doc"]["artigoPublicado"]["paginaInicial"] = (string)$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'issue-id'};
+    //                $query["doc"]["artigoPublicado"]["serie"] = (string)$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'issue-title'};
+                    $query["doc"]["url_principal"] = (string)$rec->{'metadata'}->{'rfc1807'}->{'id'};
+                    $query["doc"]["relation"][]=(string)$rec->{'metadata'}->{'rfc1807'}->{'id'};
+                    $query["doc_as_upsert"] = true;
+                    $resultado = elasticsearch::elastic_update($sha256,$type,$query);
+                    print_r($resultado);
+                    unset($query);
+                    flush();
+            }
+        }        
+    } 
 
-//
-//$recs = $myEndpoint->listRecords('oai_dc');
-//foreach($recs as $rec) {
-//    if ($rec->{"header"}->attributes()->{"status"} != "deleted") {
-//        var_dump($rec);
-//    }
-//    
-//}
-
-
-//if ($_GET["metadata_format"] == "nlm") {
-//    
-//
-//
-//
-//    // Recs will be an iterator of SimpleXMLElement objects
-//    $recs = $myEndpoint->listRecords('nlm');
-//
-//    // The iterator will continue retrieving items across multiple HTTP requests.
-//    // You can keep running this loop through the *entire* collection you
-//    // are harvesting.  All OAI-PMH and HTTP pagination logic is hidden neatly
-//    // behind the iterator API.
-//    foreach($recs as $rec) {
-//
-//        if ($rec->{'header'}->attributes()->{'status'} != "deleted"){
-//
-//    //    print_r($rec->{'header'});
-//    //    echo '<br/><br/><br/>';
-//    //    print_r($rec->{'metadata'});
-//    //    
-//    //    echo '<br/><br/><br/>';
-//    //    echo '<br/><br/><br/>';
-//
-//        // Palavras-chave 
-//        foreach ($rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'kwd-group'}[0]->{'kwd'} as $palavra_chave) {
-//            $palavra_chave_array[] = $palavra_chave;        
-//        }
-//
-//
-//        $container_title = '
-//            "artigoPublicado":{
-//                "tituloDoPeriodicoOuRevista":"'.str_replace('"','',$rec->{'metadata'}->{'article'}->{'front'}->{'journal-meta'}->{'journal-title'}).'",
-//                "nomeDaEditora":"'.$rec->{'metadata'}->{'article'}->{'front'}->{'journal-meta'}->{'publisher'}->{'publisher-name'}.'",
-//                "issn":"'.$rec->{'metadata'}->{'article'}->{'front'}->{'journal-meta'}->{'issn'}.'",
-//                "volume":"'.$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'volume'}.'",
-//                "fasciculo":"'.$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'issue'}.'",
-//                "paginaInicial":"'.$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'issue-id'}.'",
-//                "serie":"'.$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'issue-title'}.'"
-//            },
-//        ';
-//
-//            foreach ($rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'contrib-group'}->{'contrib'}  as $autores) {
-//
-//                if ($autores->attributes()->{'contrib-type'} == "author"){
-//                    //print_r($autores);
-//                    //echo '<br/><br/>';                
-//
-//
-//                    $autores_base_array = [];
-//
-//                    $autores_base_array[] = '"nomeCompletoDoAutor":"'.$autores->{'name'}->{'given-names'}.' '.$autores->{'name'}->{'surname'}.'"';
-//                    $autores_base_array[] = '"nomeParaCitacao":"'.$autores->{'name'}->{'surname'}.', '.$autores->{'name'}->{'given-names'}.'"';
-//
-//                    if(isset($autores->{'aff'})) {
-//                        $autores_base_array[] = '"afiliacao":"'.$autores->{'aff'}.'"';
-//                    }              
-//                    if(isset($autores->{'uri'})) {
-//                        $autores_base_array[] = '"nroIdCnpq":"'.$autores->{'uri'}.'"';
-//                    }  
-//
-//                    $autores_array[] = '{ 
-//                        '.implode(",",$autores_base_array).'
-//                    }';
-//                    unset($autores_base_array);
-//                }
-//            }    
-//
-//        $sha256 = hash('sha256', ''.$rec->{'header'}->{'identifier'}.'');
-//
-//        $query_harvester = 
-//            '{
-//                "doc":{
-//                    "source":"'.$rec->{'metadata'}->{'article'}->{'front'}->{'journal-meta'}->{'journal-title'}.'",  
-//                    "harvester_id": "'.$rec->{'header'}->{'identifier'}.'",
-//                    "tag": ["'.$_GET["tag"].'"],
-//                    "tipo":"'.$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'article-categories'}->{'subj-group'}->{'subject'}.'",
-//                    "titulo": "'.str_replace('"','',$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'title-group'}->{'article-title'}).'",
-//                    "ano": "'.$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'pub-date'}[0]->{'year'}.'",
-//                    "doi":"'.$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'article-id'}[1].'",
-//                    '.$container_title.'
-//                    "resumo":"'.str_replace('"','',$rec->{'metadata'}->{'article'}->{'front'}->{'article-meta'}->{'abstract'}->{'p'}).'",
-//                    "palavras_chave":["'.implode('","',$palavra_chave_array).'"],	
-//                    "autores":['.implode(',',$autores_array).']
-//
-//                },
-//                "doc_as_upsert" : true
-//            }';  
-//
-//        //print_r($query_harvester);
-//
-//        $resultado = store_record($sha256,"trabalhos",$query_harvester);
-//        print_r($resultado);  
-//
-//
-//        //Limpar variáveis
-//        unset($palavras_chave_array);
-//        unset($autores_array); 
-//
-//        }
-//    }
-//} else {
-//    $recs = $myEndpoint->listRecords('oai_dc');
-//    foreach($recs as $rec) {
-//        print_r($rec);
-//    }
-//    
-//}
-
-
+} else {
+    echo "URL não informada";
+}
 ?>

@@ -114,7 +114,7 @@
                                 <form class="uk-form" action="harvester_oai.php" method="get" accept-charset="utf-8" enctype="multipart/form-data">
                                     <fieldset data-uk-margin>
                                         <legend>Incluir um URL OAI-PMH</legend>
-                                        <input type="text" placeholder="Insira um URL OAI válido" class="uk-form-width-medium" name="url" data-validation="required">
+                                        <input type="text" placeholder="Insira um URL OAI válido" class="uk-form-width-medium" name="oai" data-validation="required">
                                         <input type="text" placeholder="Tag para formar um grupo" class="uk-form-width-medium" name="tag">
                                         <button class="uk-button-primary" name="btn_submit">Incluir</button><br/>                                    
                                     </fieldset>
