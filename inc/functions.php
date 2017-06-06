@@ -406,7 +406,7 @@ class dadosExternos {
                             "multi_match" : {
                                 "query":      "'.str_replace('"','',$query_title).'",
                                 "type":       "cross_fields",
-                                "fields":     [ "title" ],
+                                "fields":     [ "name" ],
                                 "minimum_should_match": "90%" 
                              }
                         },	    
@@ -414,7 +414,7 @@ class dadosExternos {
                             "multi_match" : {
                                 "query":      "'.$query_year.'",
                                 "type":       "best_fields",
-                                "fields":     [ "year" ],
+                                "fields":     [ "datePublished" ],
                                 "minimum_should_match": "75%" 
                             }
                         }
@@ -427,7 +427,7 @@ class dadosExternos {
 
         $ch = curl_init();
         $method = "POST";
-        $url = "http://172.31.1.187/sibi/producao/_search";
+        $url = "http://172.31.0.90/sibi/producao/_search";
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_PORT, 9200);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -441,9 +441,9 @@ class dadosExternos {
             echo '<div class="uk-alert">';
             echo '<h3>Registros similares na BDPI</h3>';
             foreach ($data["hits"]["hits"] as $match){
-                echo '<p>Nota de proximidade: '.$match["_score"].' - <a href="http://bdpi.usp.br/single.php?_id='.$match["_id"].'">'.$match["_source"]["type"].' - '.$match["_source"]["title"].' ('.$match["_source"]["year"].')</a><br/> Autores: ';   
-                foreach ($match["_source"]['authors'] as $autores) {
-                    echo ''.$autores.', ';
+                echo '<p>Nota de proximidade: '.$match["_score"].' - <a href="http://bdpi.usp.br/single.php?_id='.$match["_id"].'">'.$match["_source"]["type"].' - '.$match["_source"]["name"].' ('.$match["_source"]["datePublished"].')</a><br/> Autores: ';   
+                foreach ($match["_source"]['author'] as $autores) {
+                    echo ''.$autores['person']['name'].', ';
                 }
                 echo '</p>';
 
