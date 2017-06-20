@@ -232,7 +232,7 @@
                                             Autores:
                                             <?php if (!empty($r["_source"]['autores'])) : ?>
                                             <?php foreach ($r["_source"]['autores'] as $autores) {
-                                                $authors_array[]='<a href="result_trabalhos.php?search[]=autores.nome_completo_do_autor.keyword:&quot;'.$autores["nomeCompletoDoAutor"].'&quot;">'.$autores["nomeCompletoDoAutor"].'</a>';
+                                                $authors_array[]='<a href="result_trabalhos.php?search[]=autores.nomeCompletoDoAutor.keyword:&quot;'.$autores["nomeCompletoDoAutor"].'&quot;">'.$autores["nomeCompletoDoAutor"].'</a>';
                                             } 
                                            $array_aut = implode(", ",$authors_array);
                                             unset($authors_array);
