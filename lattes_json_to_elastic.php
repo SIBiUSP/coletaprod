@@ -71,6 +71,16 @@
             $doc_curriculo_array["doc"]["resumo_cv"]["texto_resumo_cv_rh_en"] = str_replace('"','\"',$cursor["docs"][0]["dadosGerais"]["resumoCv"]["textoResumoCvRhEn"]);
         }
     }
+
+    if (isset($cursor["docs"][0]["linksPesquisador"])){
+        foreach ($cursor["docs"][0]["linksPesquisador"] as $links_pesquisador) {
+            //print_r($links_pesquisador);
+            if ($links_pesquisador["origemLink"] == "orcid") {
+                $doc_curriculo_array["doc"]["orcid"] = $links_pesquisador["link"]["path"];
+            }
+        }
+        
+    }      
     
     // Endereço profissional atual            
     if (isset($cursor["docs"][0]["dadosGerais"]["endereco"])) {
@@ -148,6 +158,22 @@
             $doc_curriculo_array = array_merge_recursive($doc_curriculo_array,$array_result);
         }          
 
+        // Formação máxima
+        if (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["livreDocencia"])){
+            $doc_curriculo_array["doc"]["formacao_maxima"] = "Livre Docência";
+        } elseif (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["posDoutorado"])){
+            $doc_curriculo_array["doc"]["formacao_maxima"] = "Pós Doutorado";
+        } elseif (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["doutorado"])){
+            $doc_curriculo_array["doc"]["formacao_maxima"] = "Doutorado";
+        } elseif (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["mestradoProfissionalizante"])) {
+            $doc_curriculo_array["doc"]["formacao_maxima"] = "Mestrado";
+        } elseif (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["mestrado"])) {
+            $doc_curriculo_array["doc"]["formacao_maxima"] = "Mestrado";
+        } elseif (isset($cursor["docs"][0]["dadosGerais"]["formacaoAcademicaTitulacao"]["graduacao"])) {
+            $doc_curriculo_array["doc"]["formacao_maxima"] = "Graduação";
+        } else {
+            $doc_curriculo_array["doc"]["formacao_maxima"] = "Sem formação informada";
+        }    
         
     }         
                 
@@ -235,6 +261,9 @@
     if (isset($cursor["docs"][0]["producaoTecnica"]["demaisTiposDeProducaoTecnica"]["midiaSocialWebsiteBlog"])) {
         foreach ($cursor["docs"][0]["producaoTecnica"]["demaisTiposDeProducaoTecnica"]["midiaSocialWebsiteBlog"] as $obra) {
             $resultadoProcessaObra = processaLattes::processaObra($obra,"midiaSocialWebsiteBlog",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"],$_GET['unidadeUSP'],$_GET['codpes']);
+            print_r($resultadoProcessaObra["body"]);
+            $resultadoProcessaObra["body"]["doc"]["midiaSocialWebsiteBlog"]["formacao_maxima"] = $doc_curriculo_array["doc"]["formacao_maxima"];
+            
             // Armazenar registro
             $resultado_blog = elasticsearch::store_record($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
             print_r($resultado_blog);

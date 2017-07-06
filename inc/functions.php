@@ -3,7 +3,7 @@
  * Arquivo de classes e funções do ColetaProd
  */
 
-include('functions_core.php');
+include('functions_core/functions_core.php');
 
 /**
  * Compara registros que estão entrando com os já existentes na base
@@ -368,7 +368,7 @@ class paginaInicial {
                 "group_by_state": {
                     "terms": {
                         "field": "tipo.keyword",                    
-                        "size" : 5
+                        "size" : 50
                     }
                 }
             }
@@ -782,7 +782,8 @@ class processaLattes {
 
         // Retorna resultado
 
-        $body = json_encode($doc_obra_array, JSON_UNESCAPED_UNICODE);  
+        //$body = json_encode($doc_obra_array, JSON_UNESCAPED_UNICODE);
+        $body = $doc_obra_array;  
         print_r($body);
 
         return compact ('body','sha256');
