@@ -260,6 +260,10 @@
                 <ul class="uk-list uk-list-divider">
                    
                 <?php foreach ($cursor["hits"]["hits"] as $r) : ?>
+                    <?php if (empty($r["_source"]['ano'])) {
+                        $r["_source"]['ano'] = "";
+                    }
+                    ?>
                     <li>
                         <div class="uk-grid-divider uk-padding-small" uk-grid>
                             <div class="uk-width-1-5@m">                        
