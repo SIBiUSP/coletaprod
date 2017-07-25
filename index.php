@@ -144,7 +144,7 @@
 </div>
 
 <div class="uk-section uk-container">
-    <h1 class="uk-heading-line uk-text-center"><span>Mais informações</span></h1>
+    <h1 class="uk-heading-line uk-text-center"><span>Estatísticas</span></h1>
     <div class="uk-child-width-expand@s uk-text-center" uk-grid>
         <div>
             <div class="uk-card">

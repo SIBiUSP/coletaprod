@@ -545,6 +545,7 @@ class dadosExternos {
         
         /* Título */
         $doc_obra_array["doc"]["titulo"] = str_replace('"','',trim($data["message"]["title"][0]));
+        $doc_obra_array["doc"]["titulo"] = str_replace('\'',' ',trim($data["message"]["title"][0]));
         $doc_obra_array["doc"]["titulo"] = str_replace("\n","",$doc_obra_array["doc"]["titulo"]);
         
         if(isset($data["message"]["subtitle"][0])){
