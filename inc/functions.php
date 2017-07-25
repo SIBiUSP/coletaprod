@@ -454,6 +454,56 @@ class dadosExternos {
         return $data;
     }
 
+    static function query_bdpi_index($query_title,$query_year) {        
+        $query = '
+        {
+            "min_score": 50,
+            "query":{
+                "bool": {
+                    "should": [	
+                        {
+                            "multi_match" : {
+                                "query":      "'.str_replace('"','',$query_title).'",
+                                "type":       "cross_fields",
+                                "fields":     [ "name" ],
+                                "minimum_should_match": "90%" 
+                             }
+                        },	    
+                        {
+                            "multi_match" : {
+                                "query":      "'.$query_year.'",
+                                "type":       "best_fields",
+                                "fields":     [ "datePublished" ],
+                                "minimum_should_match": "75%" 
+                            }
+                        }
+                    ],
+                    "minimum_should_match" : 1               
+                }
+            }
+        }
+        ';
+
+        $ch = curl_init();
+        $method = "POST";
+        $url = "http://172.31.0.90/sibi/producao/_search";
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_PORT, 9200);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
+        $result = curl_exec($ch);
+        curl_close($ch);
+        $data = json_decode($result, true);
+
+        if ($data["hits"]["total"] > 0){
+            $facet_bdpi = "Sim";
+        } else {
+            $facet_bdpi = "Não";
+        }
+        return $facet_bdpi;
+    }    
+
     static function coleta_json_lattes($id_lattes) {
 
         $ch = curl_init();
@@ -777,6 +827,7 @@ class processaLattes {
             $i++;
         }
 
+        $doc_obra_array["doc"]["bdpi"] = dadosExternos::query_bdpi_index($doc_obra_array["doc"]["titulo"],$doc_obra_array["doc"]["ano"]);
         $doc_obra_array["doc"]["concluido"] = "Não";
         $doc_obra_array["doc_as_upsert"] = true;
 
