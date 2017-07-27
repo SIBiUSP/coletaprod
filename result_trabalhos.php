@@ -131,9 +131,9 @@
                         $_GET["search"] = null;                                    
                     }                       
                     
-                    $facets->facet("natureza",10,"Natureza",null,"_term",$_GET["search"]);
-                    $facets->facet("tipo",10,"Tipo de material",null,"_term",$_GET["search"]);
-                    $facets->facet("tag",10,"Tag",null,"_term",$_GET["search"]);
+                    $facets->facet("natureza",100,"Natureza",null,"_term",$_GET["search"]);
+                    $facets->facet("tipo",100,"Tipo de material",null,"_term",$_GET["search"]);
+                    $facets->facet("tag",100,"Tag",null,"_term",$_GET["search"]);
                     
                     $facets->facet("autores.nomeCompletoDoAutor",100,"Nome completo do autor",null,"_term",$_GET["search"]);
                     $facets->facet("lattes_ids",100,"Número do lattes",null,"_term",$_GET["search"]);
