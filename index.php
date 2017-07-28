@@ -64,6 +64,17 @@
                         <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">Buscar TAG</button>
                     </div>    
             </form>
+            <form class="uk-form-stacked" action="result_trabalhos.php" method="get">
+                <div class="uk-margin" uk-grid>
+                    <label class="uk-form-label" for="form-stacked-text">Pesquisa por Número USP</label>
+                    <div class="uk-form-controls">
+                        <input type="text" placeholder="Pesquise por Número USP" class="uk-input uk-form-width-large" name="search[]">
+                        <input type="hidden" name="fields[]" value="codpes.keyword">
+                    </div>
+                    <div>
+                        <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">Buscar Número USP</button>
+                    </div>    
+            </form>            
             <br/>
             <form class="uk-form-stacked" action="result_autores.php" method="get">
                 <div class="uk-margin" uk-grid>
