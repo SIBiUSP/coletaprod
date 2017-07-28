@@ -35,6 +35,10 @@
     $cursor = $client->search($params);
     $total = $cursor["hits"]["total"];
 
+    /*pagination - start*/
+    $get_data = $_GET;    
+    /*pagination - end*/      
+
 ?>
 <html>
     <head>
