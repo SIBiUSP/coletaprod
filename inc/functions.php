@@ -386,7 +386,35 @@ class paginaInicial {
             echo '<li><a href="result_trabalhos.php?search[]=tipo.keyword:&quot;'.$facets['key'].'&quot;">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a></li>';
         }   
 
-    }    
+    }
+
+    static function unidadeUSP_inicio() {
+        global $client;
+        global $index;
+        $query = '{
+            "aggs": {
+                "group_by_state": {
+                    "terms": {
+                        "field": "unidadeUSP.keyword",                    
+                        "size" : 200
+                    }
+                }
+            }
+        }';
+
+        $params = [
+            'index' => $index,
+            'type' => 'trabalhos',
+            'size'=> 0,
+            'body' => $query
+        ];    
+
+        $response = $client->search($params);
+        foreach ($response["aggregations"]["group_by_state"]["buckets"] as $facets) {
+            echo '<li><a href="result_trabalhos.php?search[]=unidadeUSP.keyword:&quot;'.$facets['key'].'&quot;">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a></li>';
+        }   
+
+    }           
     
 }
 

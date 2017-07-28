@@ -159,12 +159,20 @@
     <div class="uk-child-width-expand@s uk-text-center" uk-grid>
         <div>
             <div class="uk-card">
+                <h2 class="uk-h3">Unidade USP</h2>
+                <ul class="uk-list uk-list-striped">
+                    <?php paginaInicial::unidadeUSP_inicio(); ?>
+                </ul>                    
+            </div>
+        </div>
+        <div>
+            <div class="uk-card">
                 <h2 class="uk-h3">Tipo de material</h2>
                 <ul class="uk-list uk-list-striped">
                     <?php paginaInicial::tipo_inicio(); ?>
                 </ul>                    
             </div>
-        </div>
+        </div>        
         <div>
             <div class="uk-card">
                 <h2 class="uk-h3">Fonte</h2>
