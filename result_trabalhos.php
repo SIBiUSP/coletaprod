@@ -344,6 +344,40 @@
                                     ?>        
                                     
                                     <li class="uk-h6">
+                                        <!-- This is a button toggling the modal -->
+                                        <button uk-toggle="target: #my-id" type="button">Ver em tabela</button>
+
+                                        <!-- This is the modal -->
+                                        <div id="my-id" uk-modal>
+                                            <div class="uk-modal-dialog uk-modal-body">
+                                                <h2 class="uk-modal-title">Tabela</h2>
+                                                <table class="uk-table">
+                                                    <caption></caption>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Titulo</th>
+                                                            <th>Autores</th>
+                                                            <th>Ano</th>
+                                                            <th>Idioma</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td><?php echo ($r["_source"]['titulo']);?></td>
+                                                            <td><?php echo ($array_aut);?></td>
+                                                            <td><?php echo $r["_source"]['ano']; ?></td>
+                                                            <td><?php echo $r["_source"]['idioma']; ?></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>                                                
+                                                <button class="uk-modal-close" type="button"></button>
+                                            </div>
+                                        </div>                                    
+                                    
+                                    </li>
+
+
+                                    <li class="uk-h6">
                                     <?php
                                         
                                         //print_r($r["_source"]);
