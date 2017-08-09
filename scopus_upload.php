@@ -90,8 +90,10 @@
             unset($palavras_chave_wos);
             unset($palavras_chave_array);
             unset($autores_array);
+            unset($autores_nome_array);
+            unset($autores_afiliacao_array);
             unset($autores_json_str);
-            unset($doc_obra_array["doc"]["tag"]);
+            unset($doc_obra_array["doc"]);
             
         }
     }
