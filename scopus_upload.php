@@ -73,6 +73,8 @@
             } else {
                 $sha256 = hash('sha256', ''.$row[40].'');
             }
+
+            $doc_obra_array["doc"]["bdpi"] = dadosExternos::query_bdpi_index($doc_obra_array["doc"]["titulo"],$doc_obra_array["doc"]["ano"]);
             
             $doc_obra_array["doc_as_upsert"] = true;            
             $body = json_encode($doc_obra_array, JSON_UNESCAPED_UNICODE); 
