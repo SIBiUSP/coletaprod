@@ -13,14 +13,16 @@
 
             // Monta array
             $doc_obra_array["doc"]["source"] = "Base Scopus";
-            $doc_obra_array["doc"]["source_id"] = $row[40];
+            $doc_obra_array["doc"]["source_id"] = $row[41];
             $doc_obra_array["doc"]["tag"][] = $_POST["tag"];
             if ($row[38] == "Article") {
                 $doc_obra_array["doc"]["tipo"] = "Artigo publicado";
+            } else {
+                $doc_obra_array["doc"]["tipo"] = $row[39];
             }
             $doc_obra_array["doc"]["titulo"] = str_replace('"','',$row[1]);
             $doc_obra_array["doc"]["ano"] = $row[2];
-            $doc_obra_array["doc"]["idioma"] = $row[36];
+            $doc_obra_array["doc"]["idioma"] = $row[37];
             if (isset($row[11])){
                 $doc_obra_array["doc"]["doi"] = $row[11];
             }
@@ -52,17 +54,17 @@
             }
             
             // Agência de fomento
-            $agencia_de_fomento_array = explode(";",$row[26]);
+            $agencia_de_fomento_array = explode(";",$row[27]);
             $doc_obra_array["doc"]["agencia_de_fomento"] = $agencia_de_fomento_array;
             
             // Afiliação
             $afiliacao_array = explode(",",$row[13]);
             $doc_obra_array["doc"]["afiliacao"] = $agencia_de_fomento_array;
 
-            if ($row[38] == "Article") {
+            if ($row[39] == "Article") {
                 $doc_obra_array["doc"]["artigoPublicado"]["tituloDoPeriodicoOuRevista"] = str_replace('"','',$row[3]);
-                $doc_obra_array["doc"]["artigoPublicado"]["nomeDaEditora"] = $row[25];
-                $doc_obra_array["doc"]["artigoPublicado"]["issn"] = $row[32];                                                                                      
+                $doc_obra_array["doc"]["artigoPublicado"]["nomeDaEditora"] = $row[26];
+                $doc_obra_array["doc"]["artigoPublicado"]["issn"] = $row[33];                                                                                      
                 $doc_obra_array["doc"]["artigoPublicado"]["volume"] = $row[4];
                 $doc_obra_array["doc"]["artigoPublicado"]["fasciculo"] = $row[5];                                                                                 
                 $doc_obra_array["doc"]["artigoPublicado"]["paginaInicial"] = $row[7];                                                                             $doc_obra_array["doc"]["artigoPublicado"]["paginaFinal"] = $row[8]; 
@@ -71,7 +73,7 @@
             if (!empty($row[11])) {
                 $sha256 = hash('sha256', ''.$row[11].'');
             } else {
-                $sha256 = hash('sha256', ''.$row[40].'');
+                $sha256 = hash('sha256', ''.$row[41].'');
             }
 
             $doc_obra_array["doc"]["bdpi"] = dadosExternos::query_bdpi_index($doc_obra_array["doc"]["titulo"],$doc_obra_array["doc"]["ano"]);
