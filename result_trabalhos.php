@@ -339,7 +339,7 @@
                                     <?php endif; ?>
                                     
                                     <?php if ($instituicao == "USP") {
-                                            dadosExternos::query_bdpi($r["_source"]['titulo'],$r["_source"]['ano']);
+                                            dadosExternos::query_bdpi($r["_source"]['titulo'],$r["_source"]['ano'],$r['_id']);
                                             }
                                     ?>        
                                     

@@ -423,7 +423,7 @@ class paginaInicial {
  */
 class dadosExternos {
     
-    static function query_bdpi($query_title,$query_year) {        
+    static function query_bdpi($query_title,$query_year,$sha256) {        
         $query = '
         {
             "min_score": 50,
@@ -474,10 +474,12 @@ class dadosExternos {
                     echo ''.$autores['person']['name'].', ';
                 }
                 echo '</p>';
-
-
             }
             echo '</div>';
+
+            $doc["doc"]["bdpi"] = "Sim";
+            $doc["doc_as_upsert"] = true;
+            $result_elastic = elasticsearch::elastic_update($sha256,"trabalhos",$doc);
         }
         return $data;
     }
