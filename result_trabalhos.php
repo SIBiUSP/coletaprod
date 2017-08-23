@@ -315,8 +315,9 @@
                                         <?php endif; ?>                           
                                     </li>
                                     
-                                    <?php if (!empty($r["_source"]['periodico'])) : ?>
-                                        <li class="uk-h6">In: <a href="result_trabalhos.php?search[]=periodico.titulo_do_periodico.keyword:&quot;<?php echo $r["_source"]['periodico']['titulo_do_periodico'];?>&quot;"><?php echo $r["_source"]['periodico']['titulo_do_periodico'];?></a></li>                                        
+                                    <?php if (!empty($r["_source"]['artigoPublicado'])) : ?>
+                                        <li class="uk-h6">In: <a href="result_trabalhos.php?search[]=periodico.titulo_do_periodico.keyword:&quot;<?php echo $r["_source"]['artigoPublicado']['tituloDoPeriodicoOuRevista'];?>&quot;"><?php echo $r["_source"]['artigoPublicado']['tituloDoPeriodicoOuRevista'];?></a></li>
+                                        <li class="uk-h6">ISSN: <a href="result_trabalhos.php?search[]=periodico.issn.keyword:&quot;<?php echo $r["_source"]['artigoPublicado']['issn'];?>&quot;"><?php echo $r["_source"]['artigoPublicado']['issn'];?></a></li>                                        
                                     <?php endif; ?>
                                     
                                     <?php if (!empty($r["_source"]['doi'])) : ?>
