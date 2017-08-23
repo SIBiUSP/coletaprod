@@ -484,7 +484,7 @@ class dadosExternos {
 
             $doc["doc"]["bdpi"]["existe"] = "Sim";
             $doc["doc_as_upsert"] = true;
-            $result_elastic = elasticsearch::elastic_update($sha256,"trabalhos",$doc);
+            //$result_elastic = elasticsearch::elastic_update($sha256,"trabalhos",$doc);
         }
         return $data;
     }
