@@ -473,11 +473,16 @@ class dadosExternos {
                 foreach ($match["_source"]['author'] as $autores) {
                     echo ''.$autores['person']['name'].', ';
                 }
+                if (isset($match["_source"]["doi"])){
+                    $doc["doc"]["doi_bdpi"] = $match["_source"]["doi"];
+                } else {
+                    
+                }
                 echo '</p>';
             }
-            echo '</div>';
+            echo '</div>';            
 
-            $doc["doc"]["bdpi"] = "Sim";
+            $doc["doc"]["bdpi"]["existe"] = "Sim";
             $doc["doc_as_upsert"] = true;
             $result_elastic = elasticsearch::elastic_update($sha256,"trabalhos",$doc);
         }
@@ -525,11 +530,16 @@ class dadosExternos {
         $result = curl_exec($ch);
         curl_close($ch);
         $data = json_decode($result, true);
-
+        $facet_bdpi = [];
         if ($data["hits"]["total"] > 0){
-            $facet_bdpi = "Sim";
+            $facet_bdpi["existe"] = "Sim";
+            foreach ($data["hits"]["hits"] as $match){
+                if (isset($match["_source"]["doi"])){
+                    $facet_bdpi["doi_bdpi"] = $match["_source"]["doi"];
+                }
+            }
         } else {
-            $facet_bdpi = "Não";
+            $facet_bdpi["existe"] = "Não";
         }
         return $facet_bdpi;
     }    

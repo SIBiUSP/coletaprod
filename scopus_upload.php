@@ -67,7 +67,8 @@
                 $doc_obra_array["doc"]["artigoPublicado"]["issn"] = $row[33];                                                                                      
                 $doc_obra_array["doc"]["artigoPublicado"]["volume"] = $row[4];
                 $doc_obra_array["doc"]["artigoPublicado"]["fasciculo"] = $row[5];                                                                                 
-                $doc_obra_array["doc"]["artigoPublicado"]["paginaInicial"] = $row[7];                                                                             $doc_obra_array["doc"]["artigoPublicado"]["paginaFinal"] = $row[8]; 
+                $doc_obra_array["doc"]["artigoPublicado"]["paginaInicial"] = $row[7];
+                $doc_obra_array["doc"]["artigoPublicado"]["paginaFinal"] = $row[8]; 
             }
             
             if (!empty($row[11])) {
@@ -78,12 +79,8 @@
 
             $doc_obra_array["doc"]["bdpi"] = dadosExternos::query_bdpi_index($doc_obra_array["doc"]["titulo"],$doc_obra_array["doc"]["ano"]);
             
-            $doc_obra_array["doc_as_upsert"] = true;            
-            $body = json_encode($doc_obra_array, JSON_UNESCAPED_UNICODE); 
-            
-            //print_r($body);
-
-            $resultado_scopus = elasticsearch::store_record($sha256,"trabalhos",$body);
+            $doc_obra_array["doc_as_upsert"] = true;  
+            $resultado_scopus = elasticsearch::elastic_update($sha256,"trabalhos",$doc_obra_array);
             print_r($resultado_scopus);            
             
             
