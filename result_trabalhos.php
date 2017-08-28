@@ -346,10 +346,10 @@
                                     
                                     <li class="uk-h6">
                                         <!-- This is a button toggling the modal -->
-                                        <button uk-toggle="target: #my-id" type="button">Ver em tabela</button>
+                                        <button uk-toggle="target: #<?php echo $r['_id']; ?>" type="button">Ver em tabela</button>
 
                                         <!-- This is the modal -->
-                                        <div id="my-id" uk-modal>
+                                        <div id="<?php echo $r['_id']; ?>" uk-modal>
                                             <div class="uk-modal-dialog uk-modal-body">
                                                 <h2 class="uk-modal-title">Tabela</h2>
                                                 <table class="uk-table">
