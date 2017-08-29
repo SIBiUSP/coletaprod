@@ -18,7 +18,8 @@ class compararRegistros {
     */      
     public static function doi($doi) {
         global $index;
-        global $client;        
+        global $client;
+        global $type;        
         $body = '
             {
                 "query":{
@@ -27,8 +28,7 @@ class compararRegistros {
                     }
                 }
             }
-        ';        
-        $type = "trabalhos";
+        ';    
         $response = elasticsearch::elastic_search($type,NULL,$size,$body);
         return $response; 
     }    
@@ -474,7 +474,7 @@ class dadosExternos {
                     echo ''.$autores['person']['name'].', ';
                 }
                 if (isset($match["_source"]["doi"])){
-                    $doc["doc"]["doi_bdpi"] = $match["_source"]["doi"];
+                    $doc["doc"]["bdpi"]["doi_bdpi"] = $match["_source"]["doi"];
                 } else {
                     
                 }
@@ -484,7 +484,7 @@ class dadosExternos {
 
             $doc["doc"]["bdpi"]["existe"] = "Sim";
             $doc["doc_as_upsert"] = true;
-            //$result_elastic = elasticsearch::elastic_update($sha256,"trabalhos",$doc);
+            $result_elastic = elasticsearch::elastic_update($sha256,"trabalhos",$doc);
         }
         return $data;
     }
@@ -581,7 +581,7 @@ class dadosExternos {
     }
 
     static function query_doi($doi,$tag) {
-	global $client; 
+	    global $client; 
         global $index;
         $url = "https://api.crossref.org/v1/works/http://dx.doi.org/$doi";
         $json = file_get_contents($url);
@@ -589,10 +589,11 @@ class dadosExternos {
 
         $sha256 = hash('sha256', ''.$doi.'');
 	
-	print_r($data);
+	    print_r($data);
 
         $doc_obra_array["doc"]["source"] = "Base DOI - CrossRef";
-        $doc_obra_array["doc"]["source_id"] = $doi;    
+        $doc_obra_array["doc"]["source_id"] = $doi;
+        $doc_obra_array["doc"]["doi"] = $doi;     
         $doc_obra_array["doc"]["tag"][] = $tag;
         
         if ($data["message"]["type"] == "journal-article") {
@@ -623,11 +624,7 @@ class dadosExternos {
 		$doc_obra_array["doc"]["tipo"] = "Livros publicados ou organizados";
 		if(isset($data["message"]["publisher"])){
 		    $doc_obra_array["doc"]["detalhamentoDoLivro"]["nomeDaEditora"] = $data["message"]["publisher"];
-		}		
-		
-		
-		
-	
+		}
 	    
         } else {
             $doc_obra_array["doc"]["tipo"] = $data["message"]["type"];
@@ -650,18 +647,18 @@ class dadosExternos {
         $doc_obra_array["doc"]["doi"] = $doi;
 
   
-	if(isset($data["message"]["subject"])){
-		foreach ($data["message"]["subject"]  as $assunto) {	
-		   $doc_obra_array["doc"]["palavras_chave"][] = $assunto;
-		}
-	}
+        if(isset($data["message"]["subject"])){
+            foreach ($data["message"]["subject"]  as $assunto) {	
+            $doc_obra_array["doc"]["palavras_chave"][] = $assunto;
+            }
+        }
 
         $i = 0;
         foreach ($data["message"]["author"]  as $autores) {
             $doc_obra_array["doc"]["autores"][$i]["nomeCompletoDoAutor"] = $autores["given"]." ".$autores["family"];
             $doc_obra_array["doc"]["autores"][$i]["nomeParaCitacao"] = $autores["family"].", ".$autores["given"];
 	    if (isset($autores["ORCID"])) {
-		$doc_obra_array["doc"]["autores"][$i]["id_orcid"] = $autores["ORCID"];
+		    $doc_obra_array["doc"]["autores"][$i]["id_orcid"] = $autores["ORCID"];
 	    }
             $i++;
         }
@@ -670,8 +667,8 @@ class dadosExternos {
         $doc_obra_array["doc_as_upsert"] = true;
 
         // Retorna resultado
-	echo '<br/><br/><br/>';
-	print_r($doc_obra_array);
+	    echo '<br/><br/><br/>';
+	    print_r($doc_obra_array);
 
         $body = json_encode($doc_obra_array, JSON_UNESCAPED_UNICODE); 
 
@@ -733,7 +730,7 @@ class processaLattes {
 
             case "artigoPublicado":
                 $tipo_de_obra_nome = "Artigo publicado";
-                $campos_dadosBasicosDoTrabalho = ["natureza","tituloDoArtigo","anoDoArtigo","idioma","meioDeDivulgacao","homePageDoTrabalho","flagRelevancia","flagDivulgacaoCientifica"];
+                $campos_dadosBasicosDoTrabalho = ["natureza","tituloDoArtigo","anoDoArtigo","idioma","meioDeDivulgacao","homePageDoTrabalho","flagRelevancia","doi","tituloDoArtigoIngles","flagDivulgacaoCientifica"];
                 $campos_detalhamentoDoTrabalho = ["tituloDoPeriodicoOuRevista","issn","volume","serie","paginaInicial","paginaFinal","localDePublicacao"];            
                 $dadosBasicosNomeCampo = "dadosBasicosDoArtigo";
                 $detalhamentoNomeCampo = "detalhamentoDoArtigo";
@@ -809,7 +806,7 @@ class processaLattes {
         $doc_obra_array["doc"]["tipo"] = $tipo_de_obra_nome;
         $doc_obra_array["doc"]["source"] = "Base Lattes";
         $doc_obra_array["doc"]["lattes_ids"][] = $id_lattes;
-        $doc_obra_array["doc"]["tag"] = $tag;
+        $doc_obra_array["doc"]["tag"][] = $tag;
         $doc_obra_array["doc"]["unidadeUSP"][] = $unidadeUSP;
         $doc_obra_array["doc"]["codpes"] = $codpes;       
 
