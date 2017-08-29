@@ -12,7 +12,6 @@
 <script src="inc/jquery/jquery.min.js"></script>
 <script src="inc/jquery/jquery-ui.js"></script>
 <link rel="stylesheet" href="inc/jquery/jquery-ui.css">
-<script src="inc/jquery/jquery.form-validator.min.js"></script> 
 
 <!-- Uikit - Local -->
 <link rel="stylesheet" href="inc/uikit/css/uikit.min.css" />
