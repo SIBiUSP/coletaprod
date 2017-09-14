@@ -254,7 +254,21 @@
             
             flush();
         }
-    } 
+    }
+    
+    //Parser de Textos em Jornais e Revistas
+
+    if (isset($cursor["docs"][0]["producaoBibliografica"]["textosEmJornaisOuRevistas"]["textoEmJornalOuRevista"])) {
+        foreach ($cursor["docs"][0]["producaoBibliografica"]["textosEmJornaisOuRevistas"]["textoEmJornalOuRevista"] as $texto) {
+            $resultadoProcessaObra = processaLattes::processaObra($texto,"textoEmJornalOuRevista",$_GET['tag'],$cursor["docs"][0]["numeroIdentificador"],$_GET['unidadeUSP'],$_GET['codpes']);
+            // Armazenar registro
+            $resultado_texto = elasticsearch::elastic_update($resultadoProcessaObra["sha256"],"trabalhos",$resultadoProcessaObra["body"]);
+            print_r($resultado_texto);
+            
+            flush();
+        }
+    }     
+
 
     //Parser de Mídia Social Website Blog
 

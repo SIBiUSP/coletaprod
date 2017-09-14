@@ -768,6 +768,15 @@ class processaLattes {
                 $resultado_comparador_local = compararRegistros::lattesCapitulos(str_replace('"','',$obra["dadosBasicosDoCapitulo"]["tituloDoCapituloDoLivro"]),str_replace('"','',$obra["detalhamentoDoCapitulo"]["tituloDoLivro"]),"Capítulo de livro publicado");
                 break;
 
+            case "textoEmJornalOuRevista":       
+                $tipo_de_obra_nome = "Textos em jornais de notícias/revistas";
+                $campos_dadosBasicosDoTrabalho = ["natureza","tituloDoTexto","anoDoTexto","paisDePublicacao","idioma","meioDeDivulgacao","flagRelevancia","flagDivulgacaoCientifica"];
+                $campos_detalhamentoDoTrabalho = ["tituloDoJornalOuRevista","formatoDataDePublicacao","dataDePublicacao","dataPublicacaoFormatoSimples"];            
+                $dadosBasicosNomeCampo = "dadosBasicosDoTexto";
+                $detalhamentoNomeCampo = "detalhamentoDoTexto";
+                $campos_sha256 = ["natureza","tituloDoTexto","tituloDoJornalOuRevista"];                
+                break;                
+
             case "midiaSocialWebsiteBlog":       
                 $tipo_de_obra_nome = "Mídia Social ou Website ou Blog";
                 $campos_dadosBasicosDoTrabalho = ["natureza","titulo","ano","pais","idioma","homePage","flagRelevancia","flagDivulgacaoCientifica"];
@@ -810,8 +819,8 @@ class processaLattes {
         $doc_obra_array["doc"]["unidadeUSP"][] = $unidadeUSP;
         $doc_obra_array["doc"]["codpes"] = $codpes;       
 
-        $titulos_array = ["tituloDoTrabalho","tituloDoArtigo","tituloDoLivro","tituloDoCapituloDoLivro"];
-        $ano_array = ["anoDoTrabalho","anoDoArtigo"];
+        $titulos_array = ["tituloDoTrabalho","tituloDoArtigo","tituloDoLivro","tituloDoCapituloDoLivro","tituloDoTexto"];
+        $ano_array = ["anoDoTrabalho","anoDoArtigo","anoDoTexto"];
         foreach ($campos_dadosBasicosDoTrabalho as $dados_basicos) {
             if (isset($obra[$dadosBasicosNomeCampo][$dados_basicos])) {
                 $doc_obra_array["doc"][$dados_basicos] = $obra[$dadosBasicosNomeCampo][$dados_basicos];
@@ -852,18 +861,20 @@ class processaLattes {
 
         // Comparador Local
         $i = 0;
-        foreach ($resultado_comparador_local["hits"]["hits"] as $result1) {
-
-            if ($result1["_id"] != $sha256){
-                if (!empty($result1["_id"])){
-                    $doc_obra_array["doc"]["ids_match"][$i]["id_match"] = $result1["_id"];
+        if (!empty($resultado_comparador_local["hits"]["hits"]) ) {
+            foreach ($resultado_comparador_local["hits"]["hits"] as $result1) {                
+                if ($result1["_id"] != $sha256){
+                    if (!empty($result1["_id"])){
+                        $doc_obra_array["doc"]["ids_match"][$i]["id_match"] = $result1["_id"];
+                    }
+                    if (isset($result1["_score"])){
+                        $doc_obra_array["doc"]["ids_match"][$i]["nota"] = $result1["_score"];
+                    }
                 }
-                if (isset($result1["_score"])){
-                    $doc_obra_array["doc"]["ids_match"][$i]["nota"] = $result1["_score"];
-                }
+                $i++;
             }
-            $i++;
         }
+
 
         $doc_obra_array["doc"]["bdpi"] = dadosExternos::query_bdpi_index($doc_obra_array["doc"]["titulo"],$doc_obra_array["doc"]["ano"]);
         $doc_obra_array["doc"]["concluido"] = "Não";
