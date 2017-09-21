@@ -1045,12 +1045,16 @@ class z3950 {
                     $rec = yaz_record($id, $p, "string");
                     //print_r($rec);
                     $result_record = z3950::parse_usmarc_string($rec);
-                    //print_r($result_record);
+                    print_r($result_record);
                     $rec_download = yaz_record($id, $p, "raw");
                     $rec_download = str_replace('"','',$rec_download);            
                     echo '<tr>';
                     echo '<th>'.$host_name.'</th>';
-                    echo '<td>'.$result_record["isbn"].'</td>';
+                    if (isset($result_record["isbn"])) {
+                        echo '<td>'.$result_record["isbn"].'</td>';
+                    } else {
+                        echo '<td></td>';
+                    }                    
                     echo '<td>'.$result_record["title"].'</td>';
                     
                     if (!empty($result_record["author"])) {
@@ -1083,7 +1087,11 @@ class z3950 {
                         echo '<td></td>';
                     }
 
-                    echo '<td>'.$result_record["extent"].'</td>';
+                    if (isset($result_record["extent"])) {
+                        echo '<td>'.$result_record["extent"].'</td>';
+                    } else {
+                        echo '<td></td>';
+                    }                    
                     echo '<td><button onclick="SaveAsFile(\''.addslashes($rec_download).'\',\'record.mrc\',\'text/plain;charset=CP1252\')">Baixar MARC</button></td>';
                     echo '</tr>';
                 }        
