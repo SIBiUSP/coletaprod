@@ -37,21 +37,29 @@
 
 <?php 
 
-$isbn = $_GET["isbn"];
+if (!empty($_GET["isbn"])) {
+    $query = $_GET["isbn"];
+    $type = "isbn";
+}
+
+if (!empty($_GET["title"])) {
+    $query = $_GET["title"];
+    $type = "title";
+}
 
 //Consultas                
-    z3950::query_z3950($isbn,"dedalus.usp.br:9991/usp01","USP - DEDALUS");    
-    //z3950::query_z3950($isbn,"biblioteca2.senado.leg.br:9992/sen01","Biblioteca do Senado");             
-    z3950::query_z3950($isbn,"lx2.loc.gov:210/LCDB","Library of Congress");
-    z3950::query_z3950($isbn,"marte.biblioteca.upm.es:2200","Universidade Politécnica de Madrid");            
-    z3950::query_z3950($isbn,"sirsi.library.utoronto.ca:2200","University of Toronto");
-    z3950::query_z3950($isbn,"ilsz3950.nlm.nih.gov:7091/VOYAGER","U.S. National Library of Medicine (NLM)");
-    z3950::query_z3950($isbn,"168.176.5.96:9991/SNB01","Universidade Nacional de Colombia(UNAL)");            
-    z3950::query_z3950($isbn,"athena.biblioteca.unesp.br:9992/uep01","UNESP - Athena");            
-    z3950::query_z3950($isbn,"library.ox.ac.uk:210/aleph","University of Oxford");
-    z3950::query_z3950($isbn,"zcat.libraries.psu.edu:2200","Penn State University");
-    z3950::query_z3950($isbn,"ringding.law.yale.edu:210/INNOPAC","Yale Law School");
-    z3950::query_z3950($isbn,"newton.lib.cam.ac.uk:7090/VOYAGER","University of Cambridge");         
+    z3950::query_z3950($query,"dedalus.usp.br:9991/usp01","USP - DEDALUS",$type);    
+    //z3950::query_z3950($query,"biblioteca2.senado.leg.br:9992/sen01","Biblioteca do Senado");             
+    z3950::query_z3950($query,"lx2.loc.gov:210/LCDB","Library of Congress",$type);
+    z3950::query_z3950($query,"marte.biblioteca.upm.es:2200","Universidade Politécnica de Madrid",$type);            
+    z3950::query_z3950($query,"sirsi.library.utoronto.ca:2200","University of Toronto",$type);
+    z3950::query_z3950($query,"ilsz3950.nlm.nih.gov:7091/VOYAGER","U.S. National Library of Medicine (NLM)",$type);
+    z3950::query_z3950($query,"168.176.5.96:9991/SNB01","Universidade Nacional de Colombia(UNAL)",$type);            
+    z3950::query_z3950($query,"athena.biblioteca.unesp.br:9992/uep01","UNESP - Athena",$type);            
+    z3950::query_z3950($query,"library.ox.ac.uk:210/aleph","University of Oxford",$type);
+    z3950::query_z3950($query,"zcat.libraries.psu.edu:2200","Penn State University",$type);
+    z3950::query_z3950($query,"ringding.law.yale.edu:210/INNOPAC","Yale Law School",$type);
+    z3950::query_z3950($query,"newton.lib.cam.ac.uk:7090/VOYAGER","University of Cambridge",$type);         
 ?>
             <hr class="uk-grid-divider">
             

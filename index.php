@@ -140,12 +140,17 @@
     </fieldset>
 </form>
 <br/>
-<form class="uk-form" action="z3950.php" method="get" accept-charset="utf-8">
-    <fieldset data-uk-margin>
-        <legend>Incluir um ISBN</legend>
-        <input type="text" placeholder="Insira um ISBN válido" class="uk-form-width-medium" name="isbn" size="13" data-validation="required">
-        <button class="uk-button-primary" name="btn_submit">Pesquisa Z39.50</button><br/>                                    
-    </fieldset>
+<form class="uk-form-stacked" action="z3950.php" method="get" accept-charset="utf-8">
+    <div class="uk-margin" uk-grid>
+    <label class="uk-form-label" for="form-stacked-text">Consulta no Z39.50</a></label>
+        <div class="uk-form-controls">
+            <input type="text" placeholder="Insira um ISBN válido" class="uk-input uk-form-width-large" name="isbn" size="13"><br/>
+            <input type="text" placeholder="Ou pesquisar por título" class="uk-input uk-form-width-large" name="title" size="200">
+        </div>
+        <div>    
+            <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom" name="btn_submit">Pesquisa Z39.50</button><br/>
+        </div>                                
+    </div>
 </form>                                
 
 

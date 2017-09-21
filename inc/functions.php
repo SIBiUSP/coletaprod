@@ -1002,12 +1002,17 @@ class z3950 {
         $value = trim($value);
     }
     
-    static function query_z3950($isbn,$host,$host_name) {
-        $isbn_query='@attr 1=7 '.$isbn.'';    
+    static function query_z3950($query,$host,$host_name,$type) {
+        if ($type == "isbn") {
+            $query_data='@attr 1=7 '.$query.'';
+        } elseif ($type == "title") {
+            $query_data='@attr 1=4 '.$query.'';
+        }
+            
         $id = yaz_connect($host);
         yaz_syntax($id, "usmarc");
         yaz_range($id, 1, 10);
-        yaz_search($id, "rpn", $isbn_query);    
+        yaz_search($id, "rpn", $query_data);    
         yaz_wait();
         $error = yaz_error($id);
 
