@@ -43,7 +43,7 @@ if (!empty($_GET["isbn"])) {
 }
 
 if (!empty($_GET["title"])) {
-    $query = $_GET["title"];
+    $query = '"'.$_GET["title"].'"';
     $type = "title";
 }
 
