@@ -1045,7 +1045,7 @@ class z3950 {
                     $rec = yaz_record($id, $p, "string");
                     //print_r($rec);
                     $result_record = z3950::parse_usmarc_string($rec);
-                    print_r($result_record);
+                    //print_r($result_record);
                     $rec_download = yaz_record($id, $p, "raw");
                     $rec_download = str_replace('"','',$rec_download);            
                     echo '<tr>';
