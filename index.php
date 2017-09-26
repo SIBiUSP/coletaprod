@@ -145,11 +145,15 @@
     <label class="uk-form-label" for="form-stacked-text">Consulta no Z39.50</a></label>
         <div class="uk-form-controls">
             <input type="text" placeholder="Insira um ISBN válido" class="uk-input uk-form-width-large" name="isbn" size="13"><br/>
-            <input type="text" placeholder="Ou pesquisar por título" class="uk-input uk-form-width-large" name="title" size="200">
+            <input type="text" placeholder="Ou número do sistema" class="uk-input uk-form-width-large" name="sysno" size="13"><br/>
+            <input type="text" placeholder="Ou pesquisar por título" class="uk-input uk-form-width-large" name="title" size="200"><br/>
+            <input type="text" placeholder="e autor" class="uk-input uk-form-width-large" name="author" size="100"><br/>
+            <input type="text" placeholder="e ano" class="uk-input uk-form-width-large" name="year" size="4"><br/>
         </div>
         <div>    
             <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom" name="btn_submit">Pesquisa Z39.50</button><br/>
-        </div>                                
+        </div>
+        <div><p>A busca só aceita 2 critérios simultâneos nos campos de titulo, autor e ano</p></div>                                
     </div>
 </form>                                
 

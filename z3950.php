@@ -29,10 +29,11 @@
 
     <body>     
         
-        <?php include('inc/navbar.php'); ?>
+        
         
         <div class="uk-container uk-container-center uk-margin-large-bottom">
             <div class="uk-width-medium-1-1">
+            <?php include('inc/navbar.php'); ?>
             <br/><br/>    
 
 <?php 
@@ -42,8 +43,20 @@ if (!empty($_GET["isbn"])) {
     $type = "isbn";
 }
 
+if (!empty($_GET["sysno"])) {
+    $query = $_GET["sysno"];
+    $type = "sysno";
+}
+
 if (!empty($_GET["title"])) {
-    $query = '"'.$_GET["title"].'"';
+    $query = [];
+    $query[0] = '"'.$_GET["title"].'"';
+    if (!empty($_GET["author"])) {
+        $query[1] = '"'.$_GET["author"].'"';
+    }
+    if (!empty($_GET["year"])) {
+        $query[2] = '"'.$_GET["year"].'"';
+    }
     $type = "title";
 }
 

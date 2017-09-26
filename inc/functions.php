@@ -620,7 +620,7 @@ class dadosExternos {
 		if(isset($data["message"]["cited-count"])){
 		    $doc_obra_array["doc"]["citacoes_recebidas"] = $data["message"]["cited-count"];
 		}   	    
-	} elseif ($data["message"]["type"] == "book") {    
+	    } elseif ($data["message"]["type"] == "book") {    
 		$doc_obra_array["doc"]["tipo"] = "Livros publicados ou organizados";
 		if(isset($data["message"]["publisher"])){
 		    $doc_obra_array["doc"]["detalhamentoDoLivro"]["nomeDaEditora"] = $data["message"]["publisher"];
@@ -1005,43 +1005,72 @@ class z3950 {
     static function query_z3950($query,$host,$host_name,$type) {
         if ($type == "isbn") {
             $query_data='@attr 1=7 '.$query.'';
-        } elseif ($type == "title") {
-            $query_data='@attr 1=4 '.$query.'';
+        } elseif ($type == "title") {            
+            if ((!empty($query[0])) && (!empty($query[1])) && (!empty($query[2]))){
+                $query_data = '@attrset gils @and @attr 1=4 @attr 2=3 '.$query[0].' @attr 1=1003 @attr 2=3 '.$query[1].' @attr 1=31 @attr 2=3 '.$query[2].'';
+            } elseif ((!empty($query[0])) && (!empty($query[1]))) {
+                $query_data='@attrset gils @and @attr 1=4 @attr 2=3 '.$query[0].' @attr 1=1003 @attr 2=3 '.$query[1].'';
+            } elseif ((!empty($query[0])) && (!empty($query[2]))) {
+                $query_data = '@attrset gils @and @attr 1=4 @attr 2=3 '.$query[0].' @attr 1=31 @attr 2=3 '.$query[2].'';
+            } elseif ((!empty($query[1])) && (!empty($query[2])) && (empty($query[0])) ) {
+                $query_data = '@attrset gils @and @attr 1=1003 @attr 2=3 '.$query[1].' @attr 1=31 @attr 2=3 '.$query[2].'';     
+            } else {
+                $query_data='@attrset gils @attr 1=4 '.$query[0].'';
+            }
+            //print_r($query_data);
+
+            
+        } elseif ($type == "sysno") {
+            $query_data='@attr 1=12 '.$query.'';
         }
             
         $id = yaz_connect($host);
-        yaz_syntax($id, "usmarc");
         yaz_range($id, 1, 10);
+        yaz_syntax($id, "usmarc");        
         yaz_search($id, "rpn", $query_data);    
         yaz_wait();
+        
         $error = yaz_error($id);
 
         if (!empty($error)) {
             echo "$host_name error: $error";
         } else {
             $hits = yaz_hits($id);
+            echo "<p>$host_name - $hits resultado(s) </p>";
 
             if ($hits >= 1){
 
-                echo '<table class="uk-table">    
-                    <thead>
-                        <tr>
-                            <th>Fonte</th>    
-                            <th>ISBN</th>
-                            <th>Título</th>
-                            <th>Autor</th>
-                            <th>Editora</th>
-                            <th>Local</th>
-                            <th>Ano</th>
-                            <th>Edição</th>
-                            <th>Descrição física</th>
-                            <th>Download</th>
-                        </tr>
-                    </thead>
-                    <tbody>       
-                ';      
+       
+
 
                 for ($p = 1; $p <= $hits; $p++) {
+
+                    echo '<ul class="uk-subnav uk-subnav-pill" uk-switcher>
+                    <li><a href="#">Resumo</a></li>
+                    <li><a href="#">Registro completo</a></li>
+                    </ul>         
+                    <ul class="uk-switcher uk-margin">';
+
+                    echo '<li><table class="uk-table">    
+                        <thead>
+                            <tr>
+                                <th>Fonte</th>    
+                                <th>ISBN</th>
+                                <th>Título</th>
+                                <th>Autor</th>
+                                <th>Editora</th>
+                                <th>Local</th>
+                                <th>Ano</th>
+                                <th>Edição</th>
+                                <th>Descrição física</th>
+                                <th>Download</th>
+                            </tr>
+                        </thead>
+                        <tbody>    
+                    ';        
+
+
+
                     $rec = yaz_record($id, $p, "string");
                     //print_r($rec);
                     $result_record = z3950::parse_usmarc_string($rec);
@@ -1094,10 +1123,17 @@ class z3950 {
                     }                    
                     echo '<td><button onclick="SaveAsFile(\''.addslashes($rec_download).'\',\'record.mrc\',\'text/plain;charset=CP1252\')">Baixar MARC</button></td>';
                     echo '</tr>';
+                    echo '</tbody>
+                    </table></li>';  
+    
+                    echo '<li>'.nl2br($rec).'</li>';
+                    
+                    echo '</ul>';  
+                    
+                    flush();
                 }        
 
-                echo '</tbody>
-                </table>';  
+
 
             }
         }
