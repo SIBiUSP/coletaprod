@@ -97,8 +97,8 @@
         }
     }
     
-    //sleep(5); 
-    //echo '<script>window.location = \'http://bdpife2.sibi.usp.br/coletaprod/result_trabalhos.php?search[]=tag.keyword:"'.$_POST["tag"].'"\'</script>';
+    sleep(5); 
+    echo '<script>window.location = \'result_trabalhos.php?search[]=tag.keyword:"'.$_POST["tag"].'"\'</script>';
 
 ?>
 
