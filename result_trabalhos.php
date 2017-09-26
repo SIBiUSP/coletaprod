@@ -392,28 +392,48 @@
                                         $record[] = "000000001 008   L ^^^^^^s^^^^^^^^^^^^^^^^^^^^^^000^0^^^^^d";
                                         if (isset($r["_source"]['doi'])){
                                             $record[] = '000000001 0247  L \$\$a'.$r["_source"]["doi"].'\$\$2DOI';         
-                                        } 
+                                        } else {
+                                            $record[] = '000000001 0247  L \$\$a\$\$2DOI';
+                                        }
                                         $record[] = "000000001 040   L \$\$aUSP/SIBI";
                                         $record[] = '000000001 0410  L \$\$a';
                                         $record[] = '000000001 044   L \$\$a';
                                         if ($author_number > 1) {
-                                            $record[] = '000000001 1001  L \$\$a'.$r["_source"]['autores'][0]["nomeCompletoDoAutor"].'';
+                                            if (isset($r["_source"]['autores'][0]["nomeParaCitacao"])) {
+                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['autores'][0]["nomeParaCitacao"].'';
+                                            } else {
+                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['autores'][0]["nomeCompletoDoAutor"].'';
+                                            }                                            
                                             for ($i = 1; $i < $author_number; $i++) {
-                                                $record[] = '000000001 7001  L \$\$a'.$r["_source"]['autores'][$i]["nomeCompletoDoAutor"].'';
+                                                if (isset($r["_source"]['autores'][$i]["nomeParaCitacao"])) {
+                                                    $record[] = '000000001 7001  L \$\$a'.$r["_source"]['autores'][$i]["nomeParaCitacao"].'';
+                                                } else {
+                                                    $record[] = '000000001 7001  L \$\$a'.$r["_source"]['autores'][$i]["nomeCompletoDoAutor"].'';
+                                                }
                                             }
                                         } else {
-                                            $record[] = '000000001 1001  L \$\$a'.$r["_source"]['autores'][0]["nomeCompletoDoAutor"].'';
+                                            if (isset($r["_source"]['autores'][0]["nomeParaCitacao"])) {
+                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['autores'][0]["nomeParaCitacao"].'';
+                                            } else {
+                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['autores'][0]["nomeCompletoDoAutor"].'';
+                                            }
                                         }                                            
                                         $record[] = '000000001 24510 L \$\$a'.$r["_source"]["titulo"].'';                                            
                                         if (isset($r["_source"]["trabalhoEmEventos"])){  
                                             $record[] = '000000001 260   L \$\$a'.((isset($r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"]) && $r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"])? $r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"] : '').'\$\$b'.((isset($r["_source"]["trabalhoEmEventos"]["nomeDaEditora"]) && $r["_source"]["trabalhoEmEventos"]["nomeDaEditora"])? $r["_source"]["trabalhoEmEventos"]["nomeDaEditora"] : '').'\$\$c'.$r["_source"]["ano"].'';
+                                        } else {
+                                            $record[] = '000000001 260   L \$\$a\$\$b\$\$c';
                                         }
                                         if (isset($r["_source"]["trabalhoEmEventos"])){
                                             $record[] = '000000001 300   L \$\$ap. -, res.';
-                                        }                                            
-                                        if (isset($r["_source"]["artigoPublicado"])){
+                                        } elseif (isset($r["_source"]["artigoPublicado"])){
                                             $record[] = '000000001 300   L \$\$ap. -';
+                                        } else {
+                                            $record[] = '000000001 300   L \$\$a';
                                         }
+
+                                        $record[] = '000000001 500   L \$\$a';
+
                                         if (isset($r["_source"]["artigoPublicado"])){
                                             $record[] = '000000001 5101  L \$\$aIndexado no:';
                                         }                                               
@@ -440,7 +460,9 @@
                                         
                                         if (isset($r["_source"]['doi'])){                                            
                                             $record[] = '000000001 8564  L \$\$zClicar sobre o botão para acesso ao texto completo\$\$uhttps://dx.doi.org/'.$r["_source"]["doi"].'\$\$3DOI';           
-                                        }                           
+                                        } else {
+                                            $record[] = '000000001 8564  L \$\$zClicar sobre o botão para acesso ao texto completo\$\$u\$\$3DOI';
+                                        }                          
                                         
                                         if (isset($r["_source"]["trabalhoEmEventos"])){
                                             $record[] = '000000001 945   L \$\$aP\$\$bTRABALHO DE EVENTO\$\$c10\$\$j'.$r["_source"]["ano"].'\$\$l';
