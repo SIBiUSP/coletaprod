@@ -189,7 +189,7 @@ class compararRegistros {
                              }
                         }
                     ],
-                    "minimum_should_match" : 3               
+                    "minimum_should_match" : 2               
                 }
             }
         }
@@ -423,31 +423,34 @@ class paginaInicial {
  */
 class dadosExternos {
     
-    static function query_bdpi($query_title,$query_year,$sha256) {        
+    static function query_bdpi($query_title,$query_year,$sha256) {  
+        
+        $query_title =  str_replace('"','',$query_title);
         $query = '
         {
-            "min_score": 50,
+            "min_score": 35,
             "query":{
                 "bool": {
                     "should": [	
                         {
                             "multi_match" : {
-                                "query":      "'.str_replace('"','',$query_title).'",
+                                "query":      "'.$query_title.'",
                                 "type":       "cross_fields",
                                 "fields":     [ "name" ],
-                                "minimum_should_match": "90%" 
-                             }
+                                "minimum_should_match": "85%" 
+                            }
                         },	    
                         {
                             "multi_match" : {
                                 "query":      "'.$query_year.'",
                                 "type":       "best_fields",
                                 "fields":     [ "datePublished" ],
+                                "operator":   "and",
                                 "minimum_should_match": "75%" 
                             }
                         }
                     ],
-                    "minimum_should_match" : 1               
+                    "minimum_should_match" : 2               
                 }
             }
         }
@@ -484,7 +487,8 @@ class dadosExternos {
 
             $doc["doc"]["bdpi"]["existe"] = "Sim";
             $doc["doc_as_upsert"] = true;
-            //$result_elastic = elasticsearch::elastic_update($sha256,"trabalhos",$doc);
+            //print_r($doc);
+            $result_elastic = elasticsearch::elastic_update($sha256,"trabalhos",$doc);
         }
         return $data;
     }
