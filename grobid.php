@@ -104,7 +104,7 @@ if ($xml->teiHeader->fileDesc->sourceDesc->biblStruct->idno->attributes()->type 
 }
 
 $record_blob[] = '000000001 945   L $$aP$$bARTIGO DE PERIODICO$$c01$$j'.substr($date, 0, 4).'$$l\n';
-$record_blob[] = '000000001 946   L $$a';
+$record_blob[] = '000000001 946   L $$a\n';
 
 sort($record_blob);
 
