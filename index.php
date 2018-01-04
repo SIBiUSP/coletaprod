@@ -155,7 +155,24 @@
         </div>
         <div><p>A busca só aceita 2 critérios simultâneos nos campos de titulo, autor e ano</p></div>                                
     </div>
-</form>                                
+</form>
+<br/>
+<form class="uk-form" action="grobid.php" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+    <fieldset data-uk-margin>
+        <legend>PDF para Aleph Sequencial</legend>
+        <input type="file" name="file">        
+        <button class="uk-button-primary" name="btn_submit">Upload</button><br/>                                    
+    </fieldset>
+</form>
+<br/>
+<form class="uk-form" action="grobid.php" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+    <fieldset data-uk-margin>
+        <legend>URL de PDF para Aleph Sequencial</legend>
+        <input type="text" placeholder="Insira um URL de PDF válido" class="uk-form-width-medium" name="url" data-validation="required">
+        <button class="uk-button-primary" name="btn_submit">Incluir</button><br/>                         
+    </fieldset>
+</form>
+<br/>                                   
 
 
         </li>
