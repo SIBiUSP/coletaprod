@@ -172,6 +172,14 @@
         <button class="uk-button-primary" name="btn_submit">Incluir</button><br/>                         
     </fieldset>
 </form>
+<br/>
+<form class="uk-form" action="grobidtojats.php" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+    <fieldset data-uk-margin>
+        <legend>PDF para JATS</legend>
+        <input type="file" name="file">        
+        <button class="uk-button-primary" name="btn_submit">Upload</button><br/>                                    
+    </fieldset>
+</form>
 <br/>                                   
 
 
