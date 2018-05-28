@@ -319,7 +319,13 @@ class paginaInicial {
         $body = '
             {
                 "query": {
-                    "match_all": {}
+                    "bool":{
+                        "filter":{
+                            "term": {
+                                "type.keyword":"Work"
+                            }
+                        }
+                    }
                 }
             }        
         ';    
@@ -382,6 +388,15 @@ class paginaInicial {
         global $client;
         global $index;
         $query = '{
+            "query": {
+                "bool":{
+                    "filter":{
+                        "term": {
+                            "type.keyword":"Work"
+                        }
+                    }
+                }
+            },            
             "aggs": {
                 "group_by_state": {
                     "terms": {
