@@ -345,6 +345,15 @@ class paginaInicial {
         global $client;
         global $index;
         $query = '{
+            "query": {
+                "bool":{
+                    "filter":{
+                        "term": {
+                            "type.keyword":"Work"
+                        }
+                    }
+                }
+            },
             "aggs": {
                 "group_by_state": {
                     "terms": {
@@ -364,7 +373,7 @@ class paginaInicial {
 
         $response = $client->search($params);
         foreach ($response["aggregations"]["group_by_state"]["buckets"] as $facets) {
-            echo '<li><a href="result_trabalhos.php?search[]=source.keyword:&quot;'.$facets['key'].'&quot;">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a></li>';
+            echo '<li><a href="result_trabalhos.php?filter[]=type:&quot;Work&quot;&filter[]=source:&quot;'.$facets['key'].'&quot;">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a></li>';
         }   
 
     }
@@ -392,7 +401,7 @@ class paginaInicial {
 
         $response = $client->search($params);
         foreach ($response["aggregations"]["group_by_state"]["buckets"] as $facets) {
-            echo '<li><a href="result_trabalhos.php?search[]=tipo.keyword:&quot;'.$facets['key'].'&quot;">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a></li>';
+            echo '<li><a href="result_trabalhos.php?filter[]=type:&quot;Work&filter[]=tipo:&quot;'.$facets['key'].'&quot;">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a></li>';
         }   
 
     }
@@ -401,6 +410,15 @@ class paginaInicial {
         global $client;
         global $index;
         $query = '{
+            "query": {
+                "bool":{
+                    "filter":{
+                        "term": {
+                            "type.keyword":"Work"
+                        }
+                    }
+                }
+            },            
             "aggs": {
                 "group_by_state": {
                     "terms": {
@@ -420,7 +438,7 @@ class paginaInicial {
 
         $response = $client->search($params);
         foreach ($response["aggregations"]["group_by_state"]["buckets"] as $facets) {
-            echo '<li><a href="result_trabalhos.php?search[]=unidadeUSP.keyword:&quot;'.$facets['key'].'&quot;">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a></li>';
+            echo '<li><a href="result_trabalhos.php?filter[]=unidadeUSP:&quot;'.$facets['key'].'&quot;">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a></li>';
         }   
 
     }           
