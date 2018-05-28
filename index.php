@@ -104,6 +104,17 @@
     </fieldset>
 </form>
 <br/>
+<form class="uk-form" action="lattes_xml_to_elastic.php" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+    <fieldset data-uk-margin>
+        <legend>Inserir XML do Currículo Lattes que deseja incluir</legend>
+        <input type="file" name="file">
+        <input type="text" placeholder="TAG para formar um grupo" class="uk-form-width-medium" name="tag">
+        <input type="text" placeholder="Número USP" class="uk-form-width-medium" name="codpes">
+        <input type="text" placeholder="Unidade USP" class="uk-form-width-medium" name="unidadeUSP">
+        <button class="uk-button-primary">Incluir</button><br/>                                    
+    </fieldset>
+</form>
+<br/>
 <form class="uk-form" action="doi_to_elastic.php" method="get">
     <fieldset data-uk-margin>
         <legend>Inserir um DOI de artigo que queira incluir (sem http://dx.doi.org/)</legend>
