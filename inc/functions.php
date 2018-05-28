@@ -5,6 +5,15 @@
 
 include('functions_core/functions_core.php');
 
+function pregReplaceVariableName($string) {
+
+    $arrayString = explode("-", $string);
+    $arrayString = array_map('ucwords', $arrayString);
+    $result =  implode("", $arrayString);
+    $result = lcfirst($result);
+    return $result;
+}
+
 /**
  * Compara registros que estão entrando com os já existentes na base
  */
