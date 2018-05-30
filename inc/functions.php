@@ -1196,4 +1196,195 @@ class testadores {
     }
 }
 
+
+/**
+ * Exporters
+ *
+ * @category Class
+ * @package  Exporters
+ * @author   Tiago Rodrigo Marçal Murakami <tiago.murakami@dt.sibi.usp.br>
+ * @license  http://www.gnu.org/copyleft/gpl.html GNU General Public License
+ * @link     http://github.com/sibiusp/nav_elastic 
+ */
+class Exporters
+{
+
+    static function RIS($cursor) 
+    {
+
+        $record = [];
+        switch ($cursor["_source"]["type"]) {
+        case "ARTIGO DE PERIODICO":
+            $record[] = "TY  - JOUR";
+            break;
+        case "PARTE DE MONOGRAFIA/LIVRO":
+            $record[] = "TY  - CHAP";
+            break;
+        case "TRABALHO DE EVENTO-RESUMO":
+            $record[] = "TY  - CPAPER";
+            break;
+        case "TEXTO NA WEB":
+            $record[] = "TY  - ICOMM";
+            break;
+        }
+
+        $record[] = "TI  - ".$cursor["_source"]['name']."";
+
+        if (!empty($cursor["_source"]['datePublished'])) {
+            $record[] = "PY  - ".$cursor["_source"]['datePublished']."";
+        }
+
+        foreach ($cursor["_source"]['author'] as $autores) {
+            $record[] = "AU  - ".$autores["person"]["name"]."";
+        }
+
+        if (!empty($cursor["_source"]["isPartOf"]["name"])) {
+            $record[] = "T2  - ".$cursor["_source"]["isPartOf"]["name"]."";
+        }
+
+        if (!empty($cursor["_source"]['isPartOf']['issn'])) {
+            $record[] = "SN  - ".$cursor["_source"]['isPartOf']['issn'][0]."";
+        }
+
+        if (!empty($cursor["_source"]["doi"])) {
+            $record[] = "DO  - ".$cursor["_source"]["doi"]."";
+        }
+
+        if (!empty($cursor["_source"]["url"])) {
+            $record[] = "UR  - ".$cursor["_source"]["url"][0]."";
+        }
+
+        if (!empty($cursor["_source"]["publisher"]["organization"]["location"])) {
+            $record[] = "PP  - ".$cursor["_source"]["publisher"]["organization"]["location"]."";
+        }
+
+        if (!empty($cursor["_source"]["publisher"]["organization"]["name"])) {
+            $record[] = "PB  - ".$cursor["_source"]["publisher"]["organization"]["name"]."";
+        }
+
+        if (!empty($cursor["_source"]["isPartOf"]["USP"]["dados_do_periodico"])) {
+            $periodicos_array = explode(",", $cursor["_source"]["isPartOf"]["USP"]["dados_do_periodico"]);
+            foreach ($periodicos_array as $periodicos_array_new) {
+                if (strpos($periodicos_array_new, 'v.') !== false) {
+                    $record[] = "VL  - ".trim(str_replace("v.", "", $periodicos_array_new))."";
+                } elseif (strpos($periodicos_array_new, 'n.') !== false) {
+                    $record[] = "IS  - ".str_replace("n.", "", trim(str_replace("n.","",$periodicos_array_new)))."";
+                } elseif (strpos($periodicos_array_new, 'p.') !== false) {
+                    $record[] = "SP  - ".str_replace("p.", "", trim(str_replace("p.","",$periodicos_array_new)))."";
+                }
+
+            }
+        } 
+    
+        $record[] = "ER  - ";
+        $record[] = "";
+        $record[] = "";
+
+        $record_blob = implode("\\n", $record);
+
+        return $record_blob;
+
+    }
+
+    static function alephseq($r) 
+    {
+
+        $author_number = count($r["_source"]['author']);
+                                        
+        $record = [];
+        $record[] = "000000001 FMT   L BK";
+        $record[] = "000000001 LDR   L ^^^^^nab^^22^^^^^Ia^4500";
+        $record[] = '000000001 BAS   L $$a04';
+        $record[] = "000000001 008   L ^^^^^^s^^^^^^^^^^^^^^^^^^^^^^000^0^^^^^d";
+        if (isset($r["_source"]['doi'])){
+            $record[] = '000000001 0247  L $$a'.$r["_source"]["doi"].'$$2DOI';         
+        } else {
+            $record[] = '000000001 0247  L $$a$$2DOI';
+        }
+        $record[] = '000000001 040   L $$aUSP/SIBI';
+        $record[] = '000000001 0410  L $$a';
+        $record[] = '000000001 044   L $$a';
+        if ($author_number > 1) {
+            if (isset($r["_source"]['author'][0]["person"]["name"])) {
+                $record[] = '000000001 1001  L $$a'.$r["_source"]['author'][0]["nomeParaCitacao"].'';
+            } else {
+                $record[] = '000000001 1001  L $$a'.$r["_source"]['author'][0]["person"]["name"].'';
+            }                                            
+            for ($i = 1; $i < $author_number; $i++) {
+                if (isset($r["_source"]['author'][$i]["person"]["name"])) {
+                    $record[] = '000000001 7001  L $$a'.$r["_source"]['author'][$i]["nomeParaCitacao"].'';
+                } else {
+                    $record[] = '000000001 7001  L $$a'.$r["_source"]['author'][$i]["person"]["name"].'';
+                }
+            }
+        } else {
+            if (isset($r["_source"]['author'][0]["person"]["name"])) {
+                $record[] = '000000001 1001  L $$a'.$r["_source"]['author'][0]["nomeParaCitacao"].'';
+            } else {
+                $record[] = '000000001 1001  L $$a'.$r["_source"]['author'][0]["person"]["name"].'';
+            }
+        }                                            
+        $record[] = '000000001 24510 L $$a'.$r["_source"]["name"].'';                                            
+        if (isset($r["_source"]["trabalhoEmEventos"])){  
+            $record[] = '000000001 260   L $$a'.((isset($r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"]) && $r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"])? $r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"] : '').'$$b'.((isset($r["_source"]["trabalhoEmEventos"]["nomeDaEditora"]) && $r["_source"]["trabalhoEmEventos"]["nomeDaEditora"])? $r["_source"]["trabalhoEmEventos"]["nomeDaEditora"] : '').'$$c'.$r["_source"]["datePublished"].'';
+        } else {
+            $record[] = '000000001 260   L $$a$$b$$c';
+        }
+        if (isset($r["_source"]["trabalhoEmEventos"])){
+            $record[] = '000000001 300   L $$ap. -, res.';
+        } elseif (isset($r["_source"]["artigoPublicado"])){
+            $record[] = '000000001 300   L $$ap. -';
+        } else {
+            $record[] = '000000001 300   L $$a';
+        }
+
+        $record[] = '000000001 500   L $$a';
+
+        if (isset($r["_source"]["artigoPublicado"])){
+            $record[] = '000000001 5101  L $$aIndexado no:';
+        }                                               
+        
+        $record[] = '000000001 650 7 L $$a';
+        $record[] = '000000001 650 7 L $$a';
+        $record[] = '000000001 650 7 L $$a';
+        $record[] = '000000001 650 7 L $$a';
+        
+        if (isset($r["_source"]["trabalhoEmEventos"])){
+            if (empty($r["_source"]["trabalhoEmEventos"]["cidadeDoEvento"])) {
+                $r["_source"]["trabalhoEmEventos"]["cidadeDoEvento"] = "Não informado";
+            }
+
+            $record[] = '000000001 7112  L $$a'.$r["_source"]["trabalhoEmEventos"]["nomeDoEvento"].'$$d('.((isset($r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"]) && $r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"])? $r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"] : '').'$$c'.$r["_source"]["trabalhoEmEventos"]["cidadeDoEvento"].')';
+            
+            $record[] = '000000001 7730  L $$t'.((isset($r["_source"]["trabalhoEmEventos"]["tituloDosAnaisOuProceedings"]) && $r["_source"]["trabalhoEmEventos"]["tituloDosAnaisOuProceedings"])? $r["_source"]["trabalhoEmEventos"]["tituloDosAnaisOuProceedings"] : '').'$$x'.((isset($r["_source"]["trabalhoEmEventos"]["isbn"]) && $r["_source"]["trabalhoEmEventos"]["isbn"])? $r["_source"]["trabalhoEmEventos"]["isbn"] : '').'$$hv. , n. , p.'.((isset($r["_source"]["trabalhoEmEventos"]["paginaInicial"]) && $r["_source"]["trabalhoEmEventos"]["paginaInicial"])? $r["_source"]["trabalhoEmEventos"]["paginaInicial"] : '').'-'.((isset($r["_source"]["trabalhoEmEventos"]["paginaFinal"]) && $r["_source"]["trabalhoEmEventos"]["paginaFinal"])? $r["_source"]["trabalhoEmEventos"]["paginaFinal"] : '').', '.((isset($r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"]) && $r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"])? $r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"] : '').'';
+        }
+        
+        if (isset($r["_source"]["isPartOf"])){
+            $record[] = '000000001 7730  L $$t'.$r["_source"]["isPartOf"]["name"].'$$x'.((isset($r["_source"]["isPartOf"]["issn"]) && $r["_source"]["isPartOf"]["issn"])? $r["_source"]["isPartOf"]["issn"] : '').'$$hv.'.((isset($r["_source"]["volume"]) && $r["_source"]["volume"])? $r["_source"]["volume"] : '').', n. '.((isset($r["_source"]["serie"]) && $r["_source"]["serie"])? $r["_source"]["serie"] : '').', p.'.((isset($r["_source"]["pageStart"]) && $r["_source"]["pageStart"])? $r["_source"]["pageStart"] : '').'-'.((isset($r["_source"]["pageEnd"]) && $r["_source"]["pageEnd"])? $r["_source"]["pageEnd"] : '').', '.$r["_source"]["datePublished"].'';
+        }                                            
+        
+        
+        if (isset($r["_source"]['doi'])){                                            
+            $record[] = '000000001 8564  L $$zClicar sobre o botão para acesso ao texto completo$$uhttps://dx.doi.org/'.$r["_source"]["doi"].'$$3DOI';           
+        } else {
+            $record[] = '000000001 8564  L $$zClicar sobre o botão para acesso ao texto completo$$u$$3DOI';
+        }                          
+        
+        if (isset($r["_source"]["trabalhoEmEventos"])){
+            $record[] = '000000001 945   L $$aP$$bTRABALHO DE EVENTO$$c10$$j'.$r["_source"]["datePublished"].'$$l';
+        }
+        if (isset($r["_source"]["isPartOf"])){
+            $record[] = '000000001 945   L $$aP$$bARTIGO DE PERIODICO$$c01$$j'.$r["_source"]["datePublished"].'$$l';
+        }                                            
+        $record[] = '000000001 946   L $$a';    
+
+        $record_blob = implode("\\n", $record);
+
+        return $record_blob;
+
+    }
+
+}
+
+
 ?>

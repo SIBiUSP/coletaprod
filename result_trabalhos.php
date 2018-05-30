@@ -482,6 +482,9 @@
                                         
                                     ?> 
                                     </li>
+                                    <li class="uk-h6">
+                                        <a href="tools/export.php?search[]=_id:<?php echo $r['_id'] ?>&format=alephseq" class="uk-margin-top">Exportar Alephseq</a>
+                                    </li>
                                     
                                     <p><a href="#" class="uk-margin-top" uk-toggle="target: #citacao<?php echo  $r['_id'];?>">Ver todos os dados deste registro</a></p>
                                     <div id="citacao<?php echo  $r['_id'];?>" hidden>                                        
