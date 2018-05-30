@@ -3,17 +3,17 @@
     include('inc/config.php'); 
     include('inc/functions.php');
 
+    $_GET["filter"][] = "type:\"Curriculum\"";
+
     $result_get = get::analisa_get($_GET);
     $query = $result_get['query'];
     $limit = $result_get['limit'];
     $page = $result_get['page'];
     $skip = $result_get['skip'];
-
-    $type = 'curriculos';
    
     $params = [];
     $params["index"] = $index;
-    $params["type"] = 'curriculos';
+    $params["type"] = $type;
     $params["size"] = $limit;
     $params["from"] = $skip;
     $params["body"] = $query;  
@@ -122,7 +122,7 @@
                         $_GET["search"] = null;                                    
                     }            
                 
-        $facets->facet("id_usp",100,"Número USP",null,"_term",$_GET["search"]);
+        $facets->facet("codpes",100,"Número USP",null,"_term",$_GET["search"]);
         $facets->facet("tag",100,"Tag",null,"_term",$_GET["search"]);
         $facets->facet("nacionalidade",100,"Nacionalidade",null,"_term",$_GET["search"]);
         $facets->facet("pais_de_nascimento",100,"País de nascimento",null,"_term",$_GET["search"]);

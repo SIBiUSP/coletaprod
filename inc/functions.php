@@ -315,14 +315,15 @@ class compararRegistros {
  */
 class paginaInicial {
     
-    static function contar_tipo_de_registro($type) {
+    static function contar_tipo_de_registro($type) 
+    {
         $body = '
             {
                 "query": {
                     "bool":{
                         "filter":{
                             "term": {
-                                "type.keyword":"Work"
+                                "type.keyword":"'.$type.'"
                             }
                         }
                     }
@@ -330,8 +331,8 @@ class paginaInicial {
             }        
         ';    
         $size = 0;
-        $response = elasticsearch::elastic_search($type,NULL,$size,$body);
-        return number_format($response['hits']['total'],0,',','.');
+        $response = elasticsearch::elastic_search("trabalhos", null, $size, $body);
+        return number_format($response['hits']['total'], 0, ',', '.');
     } 
 
     static function contar_registros_match ($type) {
@@ -416,7 +417,7 @@ class paginaInicial {
 
         $response = $client->search($params);
         foreach ($response["aggregations"]["group_by_state"]["buckets"] as $facets) {
-            echo '<li><a href="result_trabalhos.php?filter[]=type:&quot;Work&filter[]=tipo:&quot;'.$facets['key'].'&quot;">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a></li>';
+            echo '<li><a href="result_trabalhos.php?filter[]=type:&quot;Work&quot;&filter[]=tipo:&quot;'.$facets['key'].'&quot;">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a></li>';
         }   
 
     }
@@ -437,7 +438,7 @@ class paginaInicial {
             "aggs": {
                 "group_by_state": {
                     "terms": {
-                        "field": "unidadeUSP.keyword",                    
+                        "field": "USP.unidadeUSP.keyword",                    
                         "size" : 200
                     }
                 }
@@ -453,7 +454,7 @@ class paginaInicial {
 
         $response = $client->search($params);
         foreach ($response["aggregations"]["group_by_state"]["buckets"] as $facets) {
-            echo '<li><a href="result_trabalhos.php?filter[]=unidadeUSP:&quot;'.$facets['key'].'&quot;">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a></li>';
+            echo '<li><a href="result_trabalhos.php?filter[]=type:&quot;Work&quot;&filter[]=USP.unidadeUSP:&quot;'.$facets['key'].'&quot;">'.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a></li>';
         }   
 
     }           

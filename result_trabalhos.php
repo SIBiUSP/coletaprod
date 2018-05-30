@@ -7,14 +7,12 @@
         foreach ($_POST as $key=>$value) {            
             $var_concluido["doc"]["concluido"] = $value;
             $var_concluido["doc"]["doc_as_upsert"] = true; 
-            elasticsearch::elastic_update($key,$type,$var_concluido);
+            elasticsearch::elastic_update($key, $type, $var_concluido);
         }
         sleep(6);
         header("Refresh:0");
     }
-    
-    
-
+    $_GET["filter"][] = "type:\"Work\"";
     $result_get = get::analisa_get($_GET);
     $query = $result_get['query'];
     $limit = $result_get['limit'];
@@ -22,7 +20,7 @@
     $skip = $result_get['skip'];
 
     $query['sort'] = [
-	    ['ano.keyword' => ['order' => 'desc']],
+        ['datePublished.keyword' => ['order' => 'desc']],
     ];
     
     $params = [];
@@ -135,49 +133,52 @@
                         $_GET["search"] = null;                                    
                     }                       
                     
-                    $facets->facet("natureza",100,"Natureza",null,"_term",$_GET["search"]);
-                    $facets->facet("tipo",100,"Tipo de material",null,"_term",$_GET["search"]);
-                    $facets->facet("tag",100,"Tag",null,"_term",$_GET["search"]);
+                    $facets->facet("Lattes.natureza", 100, "Natureza", null, "_term", $_GET["search"]);
+                    $facets->facet("tipo", 100, "Tipo de material", null, "_term", $_GET["search"]);
+                    $facets->facet("tag", 100, "Tag", null, "_term", $_GET["search"]);
                     
-                    $facets->facet("autores.nomeCompletoDoAutor",100,"Nome completo do autor",null,"_term",$_GET["search"]);
-                    $facets->facet("lattes_ids",100,"Número do lattes",null,"_term",$_GET["search"]);
-                    $facets->facet("codpes",100,"Número USP",null,"_term",$_GET["search"]);
-                    $facets->facet("unidadeUSP",100,"Unidade USP",null,"_term",$_GET["search"]);
+                    $facets->facet("author.person.name", 100, "Nome completo do autor", null, "_term", $_GET["search"]);
+                    $facets->facet("lattes_ids", 100, "Número do lattes", null, "_term", $_GET["search"]);
+                    $facets->facet("USP.codpes",100,"Número USP",null,"_term",$_GET["search"]);
+                    $facets->facet("USP.unidadeUSP",100,"Unidade USP",null,"_term",$_GET["search"]);
                     
                     echo '<hr><li>Informações da publicação</li>';
-                    $facets->facet("pais",200,"País de publicação",null,"_term",$_GET["search"]);
-                    $facets->facet("ano",120,"Ano de publicação","desc","_term",$_GET["search"]);
-                    $facets->facet("idioma",40,"Idioma",null,"_term",$_GET["search"]);
-                    $facets->facet("meioDeDivulgacao",100,"Meio de divulgação",null,"_term",$_GET["search"]);
-                    $facets->facet("palavras_chave",100,"Palavras-chave",null,"_term",$_GET["search"]);
+                    $facets->facet("country",200,"País de publicação",null,"_term",$_GET["search"]);
+                    $facets->facet("datePublished",120,"Ano de publicação","desc","_term",$_GET["search"]);
+                    $facets->facet("language",40,"Idioma",null,"_term",$_GET["search"]);
+                    $facets->facet("Lattes.meioDeDivulgacao",100,"Meio de divulgação",null,"_term",$_GET["search"]);
+                    $facets->facet("about",100,"Palavras-chave",null,"_term",$_GET["search"]);
                     $facets->facet("agencia_de_fomento",100,"Agências de fomento",null,"_term",$_GET["search"]);
-                    $facets->facet("citacoes_recebidas",100,"Citações recebidas",null,"_term",$_GET["search"]);
+
+                    echo '<hr><li>Lattes</li>';
+                    $facets->facet("Lattes.flagRelevancia",100,"Relevância",null,"_term",$_GET["search"]);
+                    $facets->facet("Lattes.flagDivulgacaoCientifica",100,"Divulgação científica",null,"_term",$_GET["search"]);
                     
                     echo '<hr><li>Área do conhecimento</li>';
-                    $facets->facet("area_do_conhecimento.nomeGrandeAreaDoConhecimento",100,"Nome da Grande Área do Conhecimento",null,"_term",$_GET["search"]);
-                    $facets->facet("area_do_conhecimento.nomeDaAreaDoConhecimento",100,"Nome da Área do Conhecimento",null,"_term",$_GET["search"]);
-                    $facets->facet("area_do_conhecimento.nomeDaSubAreaDoConhecimento",100,"Nome da Sub Área do Conhecimento",null,"_term",$_GET["search"]);
-                    $facets->facet("area_do_conhecimento.nomeDaEspecialidade",100,"Nome da Especialidade",null,"_term",$_GET["search"]);
+                    $facets->facet("area_do_conhecimento.nomeGrandeAreaDoConhecimento", 100, "Nome da Grande Área do Conhecimento", null, "_term", $_GET["search"]);
+                    $facets->facet("area_do_conhecimento.nomeDaAreaDoConhecimento", 100, "Nome da Área do Conhecimento", null, "_term", $_GET["search"]);
+                    $facets->facet("area_do_conhecimento.nomeDaSubAreaDoConhecimento", 100, "Nome da Sub Área do Conhecimento", null, "_term", $_GET["search"]);
+                    $facets->facet("area_do_conhecimento.nomeDaEspecialidade", 100, "Nome da Especialidade", null, "_term", $_GET["search"]);
                     
                     echo '<hr><li>Eventos</li>';
-                    $facets->facet("trabalhoEmEventos.classificacaoDoEvento",100,"Classificação do evento",null,"_term",$_GET["search"]); 
-                    $facets->facet("trabalhoEmEventos.nomeDoEvento",100,"Nome do evento",null,"_term",$_GET["search"]);
-                    $facets->facet("trabalhoEmEventos.cidadeDoEvento",100,"Cidade do evento",null,"_term",$_GET["search"]);
-                    $facets->facet("trabalhoEmEventos.anoDeRealizacao",100,"Ano de realização do evento",null,"_term",$_GET["search"]);
-                    $facets->facet("trabalhoEmEventos.tituloDosAnaisOuProceedings",100,"Título dos anais",null,"_term",$_GET["search"]);
-                    $facets->facet("trabalhoEmEventos.isbn",100,"ISBN dos anais",null,"_term",$_GET["search"]);
-                    $facets->facet("trabalhoEmEventos.nomeDaEditora",100,"Editora dos anais",null,"_term",$_GET["search"]);
-                    $facets->facet("trabalhoEmEventos.cidadeDaEditora",100,"Cidade da editora",null,"_term",$_GET["search"]);
+                    $facets->facet("trabalhoEmEventos.classificacaoDoEvento", 100, "Classificação do evento", null, "_term", $_GET["search"]); 
+                    $facets->facet("EducationEvent.name", 100, "Nome do evento", null, "_term", $_GET["search"]);
+                    $facets->facet("publisher.organization.location", 100, "Cidade do evento", null, "_term", $_GET["search"]);
+                    $facets->facet("trabalhoEmEventos.anoDeRealizacao", 100, "Ano de realização do evento", null, "_term", $_GET["search"]);
+                    $facets->facet("trabalhoEmEventos.tituloDosAnaisOuProceedings", 100, "Título dos anais", null, "_term", $_GET["search"]);
+                    $facets->facet("trabalhoEmEventos.isbn", 100, "ISBN dos anais", null, "_term", $_GET["search"]);
+                    $facets->facet("trabalhoEmEventos.nomeDaEditora", 100, "Editora dos anais", null, "_term", $_GET["search"]);
+                    $facets->facet("trabalhoEmEventos.cidadeDaEditora", 100, "Cidade da editora", null, "_term", $_GET["search"]);
 
                     echo '<hr><li>Mídias sociais e blogs</li>';
-                    $facets->facet("midiaSocialWebsiteBlog.formacao_maxima",100,"Formação máxima - Blogs e mídias sociais",null,"_term",$_GET["search"]);
+                    $facets->facet("midiaSocialWebsiteBlog.formacao_maxima", 100, "Formação máxima - Blogs e mídias sociais", null, "_term", $_GET["search"]);
                     
                     echo '<hr><li>Periódicos</li>';
-                    $facets->facet("artigoPublicado.tituloDoPeriodicoOuRevista",100,"Título do periódico",null,"_term",$_GET["search"]);
+                    $facets->facet("isPartOf.name", 100, "Título do periódico", null, "_term", $_GET["search"]);
 
                     echo '<hr><li>Concluído</li>';
-                    $facets->facet("concluido",100,"Concluído",null,"_term",$_GET["search"]);
-                    $facets->facet("bdpi.existe",100,"Está na BDPI?",null,"_term",$_GET["search"]);
+                    $facets->facet("concluido", 100, "Concluído", null, "_term", $_GET["search"]);
+                    $facets->facet("bdpi.existe", 100, "Está na BDPI?", null, "_term", $_GET["search"]);
 
                 ?>
                 </ul>
@@ -203,10 +204,10 @@
                         max: 2030,
                         values: [ 1900, 2030 ],
                         slide: function( event, ui ) {
-                            $( "#date" ).val( "ano:[" + ui.values[ 0 ] + " TO " + ui.values[ 1 ] + "]" );
+                            $( "#date" ).val( "datePublished:[" + ui.values[ 0 ] + " TO " + ui.values[ 1 ] + "]" );
                         }
                         });
-                        $( "#date" ).val( "ano:[" + $( "#limitar-data" ).slider( "values", 0 ) +
+                        $( "#date" ).val( "datePublished:[" + $( "#limitar-data" ).slider( "values", 0 ) +
                         " TO " + $( "#limitar-data" ).slider( "values", 1 ) + "]");
                         } );
                     </script>
@@ -264,8 +265,8 @@
                 <ul class="uk-list uk-list-divider">
                    
                 <?php foreach ($cursor["hits"]["hits"] as $r) : ?>
-                    <?php if (empty($r["_source"]['ano'])) {
-                        $r["_source"]['ano'] = "";
+                    <?php if (empty($r["_source"]['datePublished'])) {
+                        $r["_source"]['datePublished'] = "";
                     }
                     ?>
                     <li>
@@ -298,13 +299,13 @@
                             </div>
                             <div class="uk-width-4-5@m">
                                 <article class="uk-article">
-                                <p class="uk-text-lead uk-margin-remove" style="font-size:115%"><?php echo ($r["_source"]['titulo']);?> (<?php echo $r["_source"]['ano']; ?>)</p> 
+                                <p class="uk-text-lead uk-margin-remove" style="font-size:115%"><?php echo ($r["_source"]['name']);?> (<?php echo $r["_source"]['datePublished']; ?>)</p> 
                                 <ul class="uk-list">
                                     <li class="uk-h6">
                                         Autores:
-                                        <?php if (!empty($r["_source"]['autores'])) : ?>
-                                        <?php foreach ($r["_source"]['autores'] as $autores) {
-                                            $authors_array[]='<a href="result_trabalhos.php?search[]=autores.nomeCompletoDoAutor.keyword:&quot;'.$autores["nomeCompletoDoAutor"].'&quot;">'.$autores["nomeCompletoDoAutor"].'</a>';
+                                        <?php if (!empty($r["_source"]['author'])) : ?>
+                                        <?php foreach ($r["_source"]['author'] as $autores) {
+                                            $authors_array[]='<a href="result_trabalhos.php?search[]=author.person.name.keyword:&quot;'.$autores["person"]["name"].'&quot;">'.$autores["person"]["name"].'</a>';
                                         } 
                                         $array_aut = implode(", ",$authors_array);
                                         unset($authors_array);
@@ -340,7 +341,7 @@
                                     <?php endif; ?>
                                     
                                     <?php if ($instituicao == "USP") {
-                                            dadosExternos::query_bdpi($r["_source"]['titulo'],$r["_source"]['ano'],$r['_id']);
+                                            dadosExternos::query_bdpi($r["_source"]['name'],$r["_source"]['datePublished'],$r['_id']);
                                             }
                                     ?>        
                                     
@@ -364,10 +365,10 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr>
-                                                            <td><?php echo ($r["_source"]['titulo']);?></td>
+                                                            <td><?php echo ($r["_source"]['name']);?></td>
                                                             <td><?php echo ($array_aut);?></td>
-                                                            <td><?php echo $r["_source"]['ano']; ?></td>
-                                                            <td><?php echo $r["_source"]['idioma']; ?></td>
+                                                            <td><?php echo $r["_source"]['datePublished']; ?></td>
+                                                            <td><?php echo $r["_source"]['language']; ?></td>
                                                         </tr>
                                                     </tbody>
                                                 </table>                                                
@@ -383,7 +384,7 @@
                                         
                                         //print_r($r["_source"]);
                                         
-                                        $author_number = count($r["_source"]['autores']);
+                                        $author_number = count($r["_source"]['author']);
                                         
                                         $record = [];
                                         $record[] = "000000001 FMT   L BK";
@@ -399,28 +400,28 @@
                                         $record[] = '000000001 0410  L \$\$a';
                                         $record[] = '000000001 044   L \$\$a';
                                         if ($author_number > 1) {
-                                            if (isset($r["_source"]['autores'][0]["nomeParaCitacao"])) {
-                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['autores'][0]["nomeParaCitacao"].'';
+                                            if (isset($r["_source"]['author'][0]["person"]["name"])) {
+                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['author'][0]["nomeParaCitacao"].'';
                                             } else {
-                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['autores'][0]["nomeCompletoDoAutor"].'';
+                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['author'][0]["person"]["name"].'';
                                             }                                            
                                             for ($i = 1; $i < $author_number; $i++) {
-                                                if (isset($r["_source"]['autores'][$i]["nomeParaCitacao"])) {
-                                                    $record[] = '000000001 7001  L \$\$a'.$r["_source"]['autores'][$i]["nomeParaCitacao"].'';
+                                                if (isset($r["_source"]['author'][$i]["person"]["name"])) {
+                                                    $record[] = '000000001 7001  L \$\$a'.$r["_source"]['author'][$i]["nomeParaCitacao"].'';
                                                 } else {
-                                                    $record[] = '000000001 7001  L \$\$a'.$r["_source"]['autores'][$i]["nomeCompletoDoAutor"].'';
+                                                    $record[] = '000000001 7001  L \$\$a'.$r["_source"]['author'][$i]["person"]["name"].'';
                                                 }
                                             }
                                         } else {
-                                            if (isset($r["_source"]['autores'][0]["nomeParaCitacao"])) {
-                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['autores'][0]["nomeParaCitacao"].'';
+                                            if (isset($r["_source"]['author'][0]["person"]["name"])) {
+                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['author'][0]["nomeParaCitacao"].'';
                                             } else {
-                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['autores'][0]["nomeCompletoDoAutor"].'';
+                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['author'][0]["person"]["name"].'';
                                             }
                                         }                                            
-                                        $record[] = '000000001 24510 L \$\$a'.$r["_source"]["titulo"].'';                                            
+                                        $record[] = '000000001 24510 L \$\$a'.$r["_source"]["name"].'';                                            
                                         if (isset($r["_source"]["trabalhoEmEventos"])){  
-                                            $record[] = '000000001 260   L \$\$a'.((isset($r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"]) && $r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"])? $r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"] : '').'\$\$b'.((isset($r["_source"]["trabalhoEmEventos"]["nomeDaEditora"]) && $r["_source"]["trabalhoEmEventos"]["nomeDaEditora"])? $r["_source"]["trabalhoEmEventos"]["nomeDaEditora"] : '').'\$\$c'.$r["_source"]["ano"].'';
+                                            $record[] = '000000001 260   L \$\$a'.((isset($r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"]) && $r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"])? $r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"] : '').'\$\$b'.((isset($r["_source"]["trabalhoEmEventos"]["nomeDaEditora"]) && $r["_source"]["trabalhoEmEventos"]["nomeDaEditora"])? $r["_source"]["trabalhoEmEventos"]["nomeDaEditora"] : '').'\$\$c'.$r["_source"]["datePublished"].'';
                                         } else {
                                             $record[] = '000000001 260   L \$\$a\$\$b\$\$c';
                                         }
@@ -454,7 +455,7 @@
                                         }
                                         
                                         if (isset($r["_source"]["artigoPublicado"])){
-                                            $record[] = '000000001 7730  L \$\$t'.$r["_source"]["artigoPublicado"]["tituloDoPeriodicoOuRevista"].'\$\$x'.$r["_source"]["artigoPublicado"]["issn"].'\$\$hv.'.((isset($r["_source"]["artigoPublicado"]["volume"]) && $r["_source"]["artigoPublicado"]["volume"])? $r["_source"]["artigoPublicado"]["volume"] : '').', n. '.((isset($r["_source"]["artigoPublicado"]["serie"]) && $r["_source"]["artigoPublicado"]["serie"])? $r["_source"]["artigoPublicado"]["serie"] : '').', p.'.((isset($r["_source"]["artigoPublicado"]["paginaInicial"]) && $r["_source"]["artigoPublicado"]["paginaInicial"])? $r["_source"]["artigoPublicado"]["paginaInicial"] : '').'-'.((isset($r["_source"]["artigoPublicado"]["paginaFinal"]) && $r["_source"]["artigoPublicado"]["paginaFinal"])? $r["_source"]["artigoPublicado"]["paginaFinal"] : '').', '.$r["_source"]["ano"].'';
+                                            $record[] = '000000001 7730  L \$\$t'.$r["_source"]["artigoPublicado"]["tituloDoPeriodicoOuRevista"].'\$\$x'.$r["_source"]["artigoPublicado"]["issn"].'\$\$hv.'.((isset($r["_source"]["artigoPublicado"]["volume"]) && $r["_source"]["artigoPublicado"]["volume"])? $r["_source"]["artigoPublicado"]["volume"] : '').', n. '.((isset($r["_source"]["artigoPublicado"]["serie"]) && $r["_source"]["artigoPublicado"]["serie"])? $r["_source"]["artigoPublicado"]["serie"] : '').', p.'.((isset($r["_source"]["artigoPublicado"]["paginaInicial"]) && $r["_source"]["artigoPublicado"]["paginaInicial"])? $r["_source"]["artigoPublicado"]["paginaInicial"] : '').'-'.((isset($r["_source"]["artigoPublicado"]["paginaFinal"]) && $r["_source"]["artigoPublicado"]["paginaFinal"])? $r["_source"]["artigoPublicado"]["paginaFinal"] : '').', '.$r["_source"]["datePublished"].'';
                                         }                                            
                                         
                                         
@@ -465,10 +466,10 @@
                                         }                          
                                         
                                         if (isset($r["_source"]["trabalhoEmEventos"])){
-                                            $record[] = '000000001 945   L \$\$aP\$\$bTRABALHO DE EVENTO\$\$c10\$\$j'.$r["_source"]["ano"].'\$\$l';
+                                            $record[] = '000000001 945   L \$\$aP\$\$bTRABALHO DE EVENTO\$\$c10\$\$j'.$r["_source"]["datePublished"].'\$\$l';
                                         }
                                         if (isset($r["_source"]["artigoPublicado"])){
-                                            $record[] = '000000001 945   L \$\$aP\$\$bARTIGO DE PERIODICO\$\$c01\$\$j'.$r["_source"]["ano"].'\$\$l';
+                                            $record[] = '000000001 945   L \$\$aP\$\$bARTIGO DE PERIODICO\$\$c01\$\$j'.$r["_source"]["datePublished"].'\$\$l';
                                         }                                            
                                         $record[] = '000000001 946   L \$\$a';
                                         

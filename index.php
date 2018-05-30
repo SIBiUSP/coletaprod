@@ -230,9 +230,8 @@
             <div class="uk-card">
                         <h2 class="uk-h3">Alguns números</h2>
                         <ul class="uk-list uk-list-striped">
-                            <li><?php echo paginaInicial::contar_tipo_de_registro("trabalhos"); ?> registros</li> 
-                            <li><?php echo paginaInicial::contar_tipo_de_registro("curriculos"); ?> currículos</li>
-                            <li><?php echo paginaInicial::contar_registros_match("trabalhos"); ?> Registros similares identificados</li>
+                            <li><?php echo paginaInicial::contar_tipo_de_registro("Work"); ?> registros</li> 
+                            <li><?php echo paginaInicial::contar_tipo_de_registro("Curriculum"); ?> currículos</li>
                         </ul>    
             </div>
         </div>

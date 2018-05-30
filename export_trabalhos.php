@@ -22,7 +22,7 @@
     $skip = $result_get['skip'];
 
     $query['sort'] = [
-	    ['ano.keyword' => ['order' => 'desc']],
+	    ['datePublished.keyword' => ['order' => 'desc']],
     ];
     
     $params = [];
