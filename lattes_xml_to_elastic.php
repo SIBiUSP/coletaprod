@@ -1057,6 +1057,100 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'DEMAIS-TIPOS-DE-PRODUCAO-BIB
 
         }
     }
+
+    if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'DEMAIS-TIPOS-DE-PRODUCAO-BIBLIOGRAFICA'}->{'TRADUCAO'})) {
+
+        $traducaoArray = $curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'DEMAIS-TIPOS-DE-PRODUCAO-BIBLIOGRAFICA'}->{'TRADUCAO'};
+        foreach ($traducaoArray as $obra) {
+            $obra = get_object_vars($obra);
+            $dadosBasicosDoTrabalho = get_object_vars($obra["DADOS-BASICOS-DA-TRADUCAO"]);
+            $detalhamentoDoTrabalho = get_object_vars($obra["DETALHAMENTO-DA-TRADUCAO"]);
+
+            $doc["doc"]["type"] = "Work";
+            $doc["doc"]["tipo"] = "Tradução";
+            $doc["doc"]["source"] = "Base Lattes";
+            $doc["doc"]["lattes_ids"][] = (string)$curriculo->attributes()->{'NUMERO-IDENTIFICADOR'};
+            $doc["doc"]["tag"][] = $_REQUEST['tag'];
+            $doc["doc"]["USP"]["unidadeUSP"][] = $_REQUEST['unidadeUSP'];
+            $doc["doc"]["USP"]["codpes"] = $_REQUEST['codpes'];
+            $doc["doc"]["Lattes"]["natureza"] = $dadosBasicosDoTrabalho['@attributes']['NATUREZA'];        
+            $doc["doc"]["name"] = $dadosBasicosDoTrabalho['@attributes']["TITULO"];
+            $doc["doc"]["datePublished"] = $dadosBasicosDoTrabalho['@attributes']["ANO"];
+            $doc["doc"]["country"] = $dadosBasicosDoTrabalho['@attributes']["PAIS-DE-PUBLICACAO"];
+            $doc["doc"]["language"] = $dadosBasicosDoTrabalho['@attributes']["IDIOMA"];
+            $doc["doc"]["Lattes"]["meioDeDivulgacao"] = $dadosBasicosDoTrabalho['@attributes']["MEIO-DE-DIVULGACAO"];
+            $doc["doc"]["url"] = $dadosBasicosDoTrabalho['@attributes']["HOME-PAGE-DO-TRABALHO"];
+            $doc["doc"]["Lattes"]["flagRelevancia"] = $dadosBasicosDoTrabalho['@attributes']["FLAG-RELEVANCIA"];
+            $doc["doc"]["doi"] = $dadosBasicosDoTrabalho['@attributes']["DOI"];
+            $doc["doc"]["alternateName"] = $dadosBasicosDoTrabalho['@attributes']["TITULO-INGLES"];
+
+            $doc["doc"]["originalName"] = $detalhamentoDoTrabalho['@attributes']["TITULO-DA-OBRA-ORIGINAL"];
+            $doc["doc"]["issnIsbn"] = $detalhamentoDoTrabalho['@attributes']["ISSN-ISBN"];
+            $doc["doc"]["originalLanguage"] = $detalhamentoDoTrabalho['@attributes']["IDIOMA-DA-OBRA-ORIGINAL"];
+            $doc["doc"]["publisher"]["organization"]["name"] = $detalhamentoDoTrabalho['@attributes']["EDITORA-DA-TRADUCAO"];
+            $doc["doc"]["publisher"]["organization"]["location"] = $detalhamentoDoTrabalho['@attributes']["CIDADE-DA-EDITORA"];
+            $doc["doc"]["numberOfPages"] = $detalhamentoDoTrabalho['@attributes']["NUMERO-DE-PAGINAS"];
+            $doc["doc"]["bookEdition"] = $detalhamentoDoTrabalho['@attributes']["NUMERO-DA-EDICAO-REVISAO"];
+            $doc["doc"]["volume"] = $detalhamentoDoTrabalho['@attributes']["VOLUME"];
+            $doc["doc"]["fasciculo"] = $detalhamentoDoTrabalho['@attributes']["FASCICULO"];
+            $doc["doc"]["serie"] = $detalhamentoDoTrabalho['@attributes']["FASCICULO"];
+            
+
+            if (!empty($obra["AUTORES"])) {
+                $array_result = processaAutoresLattes($obra["AUTORES"]);
+                $doc = array_merge_recursive($doc, $array_result);
+            }
+
+            if (isset($obra["PALAVRAS-CHAVE"])) {
+                $array_result_pc = processaPalavrasChaveLattes($obra["PALAVRAS-CHAVE"]);
+                if (isset($array_result_pc)) {
+                    $doc = array_merge_recursive($doc, $array_result_pc);
+                }
+                unset($array_result_pc);            
+            }
+
+            if (isset($obra["AREAS-DO-CONHECIMENTO"])) {
+                $array_result_ac = processaAreaDoConhecimentoLattes($obra["AREAS-DO-CONHECIMENTO"]);
+                if (isset($array_result_ac)) {
+                    $doc = array_merge_recursive($doc, $array_result_ac);
+                } 
+                unset($array_result_ac);           
+            }
+
+            // Constroi sha256
+                
+
+            if (!empty($doc["doc"]["doi"])) {
+                $sha256 = hash('sha256', $doc["doc"]["doi"]);
+            } else {
+                $sha_array[] = $doc["doc"]["Lattes"]["natureza"];
+                $sha_array[] = $doc["doc"]["name"];
+                $sha_array[] = $doc["doc"]["datePublished"];
+                $sha_array[] = $doc["doc"]["formacaoInstrumental"];
+                $sha_array[] = $doc["doc"]["url"];
+                $sha256 = hash('sha256', ''.implode("", $sha_array).'');
+            }
+
+
+
+            $doc["doc"]["concluido"] = "Não";
+            $doc["doc_as_upsert"] = true;
+
+            // Armazenar registro
+            $resultado = elasticsearch::elastic_update($sha256, "trabalhos", $doc);
+            echo "<br/>";
+            print_r($resultado);
+            echo "<br/><br/>";
+            unset($dadosBasicosDoTrabalho);
+            unset($detalhamentoDoTrabalho);
+            unset($obra);
+            unset($doc);
+            unset($sha256);
+            flush();
+
+        }
+    }
+    
 }
 
 
