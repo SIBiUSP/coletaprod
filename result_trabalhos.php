@@ -381,106 +381,16 @@
 
                                     <li class="uk-h6">
                                     <?php
-                                        
-                                        //print_r($r["_source"]);
-                                        
-                                        $author_number = count($r["_source"]['author']);
-                                        
-                                        $record = [];
-                                        $record[] = "000000001 FMT   L BK";
-                                        $record[] = "000000001 LDR   L ^^^^^nab^^22^^^^^Ia^4500";
-                                        $record[] = "000000001 BAS   L \$\$a04";
-                                        $record[] = "000000001 008   L ^^^^^^s^^^^^^^^^^^^^^^^^^^^^^000^0^^^^^d";
-                                        if (isset($r["_source"]['doi'])){
-                                            $record[] = '000000001 0247  L \$\$a'.$r["_source"]["doi"].'\$\$2DOI';         
-                                        } else {
-                                            $record[] = '000000001 0247  L \$\$a\$\$2DOI';
-                                        }
-                                        $record[] = "000000001 040   L \$\$aUSP/SIBI";
-                                        $record[] = '000000001 0410  L \$\$a';
-                                        $record[] = '000000001 044   L \$\$a';
-                                        if ($author_number > 1) {
-                                            if (isset($r["_source"]['author'][0]["person"]["name"])) {
-                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['author'][0]["nomeParaCitacao"].'';
-                                            } else {
-                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['author'][0]["person"]["name"].'';
-                                            }                                            
-                                            for ($i = 1; $i < $author_number; $i++) {
-                                                if (isset($r["_source"]['author'][$i]["person"]["name"])) {
-                                                    $record[] = '000000001 7001  L \$\$a'.$r["_source"]['author'][$i]["nomeParaCitacao"].'';
-                                                } else {
-                                                    $record[] = '000000001 7001  L \$\$a'.$r["_source"]['author'][$i]["person"]["name"].'';
-                                                }
-                                            }
-                                        } else {
-                                            if (isset($r["_source"]['author'][0]["person"]["name"])) {
-                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['author'][0]["nomeParaCitacao"].'';
-                                            } else {
-                                                $record[] = '000000001 1001  L \$\$a'.$r["_source"]['author'][0]["person"]["name"].'';
-                                            }
-                                        }                                            
-                                        $record[] = '000000001 24510 L \$\$a'.$r["_source"]["name"].'';                                            
-                                        if (isset($r["_source"]["trabalhoEmEventos"])){  
-                                            $record[] = '000000001 260   L \$\$a'.((isset($r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"]) && $r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"])? $r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"] : '').'\$\$b'.((isset($r["_source"]["trabalhoEmEventos"]["nomeDaEditora"]) && $r["_source"]["trabalhoEmEventos"]["nomeDaEditora"])? $r["_source"]["trabalhoEmEventos"]["nomeDaEditora"] : '').'\$\$c'.$r["_source"]["datePublished"].'';
-                                        } else {
-                                            $record[] = '000000001 260   L \$\$a\$\$b\$\$c';
-                                        }
-                                        if (isset($r["_source"]["trabalhoEmEventos"])){
-                                            $record[] = '000000001 300   L \$\$ap. -, res.';
-                                        } elseif (isset($r["_source"]["artigoPublicado"])){
-                                            $record[] = '000000001 300   L \$\$ap. -';
-                                        } else {
-                                            $record[] = '000000001 300   L \$\$a';
-                                        }
-
-                                        $record[] = '000000001 500   L \$\$a';
-
-                                        if (isset($r["_source"]["artigoPublicado"])){
-                                            $record[] = '000000001 5101  L \$\$aIndexado no:';
-                                        }                                               
-                                        
-                                        $record[] = '000000001 650 7 L \$\$a';
-                                        $record[] = '000000001 650 7 L \$\$a';
-                                        $record[] = '000000001 650 7 L \$\$a';
-                                        $record[] = '000000001 650 7 L \$\$a';
-                                        
-                                        if (isset($r["_source"]["trabalhoEmEventos"])){
-                                            if (empty($r["_source"]["trabalhoEmEventos"]["cidadeDoEvento"])) {
-                                                $r["_source"]["trabalhoEmEventos"]["cidadeDoEvento"] = "Não informado";
-                                            }
-
-                                            $record[] = '000000001 7112  L \$\$a'.$r["_source"]["trabalhoEmEventos"]["nomeDoEvento"].'\$\$d('.((isset($r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"]) && $r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"])? $r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"] : '').'\$\$c'.$r["_source"]["trabalhoEmEventos"]["cidadeDoEvento"].')';
-                                            
-                                            $record[] = '000000001 7730  L \$\$t'.((isset($r["_source"]["trabalhoEmEventos"]["tituloDosAnaisOuProceedings"]) && $r["_source"]["trabalhoEmEventos"]["tituloDosAnaisOuProceedings"])? $r["_source"]["trabalhoEmEventos"]["tituloDosAnaisOuProceedings"] : '').'\$\$x'.((isset($r["_source"]["trabalhoEmEventos"]["isbn"]) && $r["_source"]["trabalhoEmEventos"]["isbn"])? $r["_source"]["trabalhoEmEventos"]["isbn"] : '').'\$\$hv. , n. , p.'.((isset($r["_source"]["trabalhoEmEventos"]["paginaInicial"]) && $r["_source"]["trabalhoEmEventos"]["paginaInicial"])? $r["_source"]["trabalhoEmEventos"]["paginaInicial"] : '').'-'.((isset($r["_source"]["trabalhoEmEventos"]["paginaFinal"]) && $r["_source"]["trabalhoEmEventos"]["paginaFinal"])? $r["_source"]["trabalhoEmEventos"]["paginaFinal"] : '').', '.((isset($r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"]) && $r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"])? $r["_source"]["trabalhoEmEventos"]["anoDeRealizacao"] : '').'';
-                                        }
-                                        
-                                        if (isset($r["_source"]["artigoPublicado"])){
-                                            $record[] = '000000001 7730  L \$\$t'.$r["_source"]["artigoPublicado"]["tituloDoPeriodicoOuRevista"].'\$\$x'.$r["_source"]["artigoPublicado"]["issn"].'\$\$hv.'.((isset($r["_source"]["artigoPublicado"]["volume"]) && $r["_source"]["artigoPublicado"]["volume"])? $r["_source"]["artigoPublicado"]["volume"] : '').', n. '.((isset($r["_source"]["artigoPublicado"]["serie"]) && $r["_source"]["artigoPublicado"]["serie"])? $r["_source"]["artigoPublicado"]["serie"] : '').', p.'.((isset($r["_source"]["artigoPublicado"]["paginaInicial"]) && $r["_source"]["artigoPublicado"]["paginaInicial"])? $r["_source"]["artigoPublicado"]["paginaInicial"] : '').'-'.((isset($r["_source"]["artigoPublicado"]["paginaFinal"]) && $r["_source"]["artigoPublicado"]["paginaFinal"])? $r["_source"]["artigoPublicado"]["paginaFinal"] : '').', '.$r["_source"]["datePublished"].'';
-                                        }                                            
-                                        
-                                        
-                                        if (isset($r["_source"]['doi'])){                                            
-                                            $record[] = '000000001 8564  L \$\$zClicar sobre o botão para acesso ao texto completo\$\$uhttps://dx.doi.org/'.$r["_source"]["doi"].'\$\$3DOI';           
-                                        } else {
-                                            $record[] = '000000001 8564  L \$\$zClicar sobre o botão para acesso ao texto completo\$\$u\$\$3DOI';
-                                        }                          
-                                        
-                                        if (isset($r["_source"]["trabalhoEmEventos"])){
-                                            $record[] = '000000001 945   L \$\$aP\$\$bTRABALHO DE EVENTO\$\$c10\$\$j'.$r["_source"]["datePublished"].'\$\$l';
-                                        }
-                                        if (isset($r["_source"]["artigoPublicado"])){
-                                            $record[] = '000000001 945   L \$\$aP\$\$bARTIGO DE PERIODICO\$\$c01\$\$j'.$r["_source"]["datePublished"].'\$\$l';
-                                        }                                            
-                                        $record[] = '000000001 946   L \$\$a';
-                                        
-                                        $record_blob = implode("\\n", $record);
-                                        
-                                        echo '<h4>Exportar</h4>';
-                                        echo '<p><button  class="ui blue label" onclick="SaveAsFile(\''.$record_blob.'\',\'aleph.seq\',\'text/plain;charset=utf-8\')">Baixar ALEPH Sequencial</button></p>';
-                                        unset($record);
-                                        unset($record_blob);
-                                        
-                                    ?> 
+                                    
+                                    if (isset($dspaceRest)) { 
+                                        echo '<form action="dspaceConnect.php" method="get">
+                                              <input type="hidden" name="createRecord" value="true" />
+                                              <input type="hidden" name="_id" value="'.$r['_id'].'" />
+                                              <button class="uk-button uk-button-danger" name="btn_submit">Criar registro no DSpace</button>
+                                              </form>';  
+                                    }
+                                    
+                                    ?>
                                     </li>
                                     <li class="uk-h6">
                                         <a href="tools/export.php?search[]=_id:<?php echo $r['_id'] ?>&format=alephseq" class="uk-margin-top">Exportar Alephseq</a>

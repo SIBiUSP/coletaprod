@@ -16,7 +16,7 @@
 
     /* Endereço da BDPI - Para o comparador */
 	$host_bdpi = [
-		'172.31.1.187'
+		'locahost'
 	];
 
     /* Configurações do Elasticsearch */
@@ -30,7 +30,17 @@
 	$client = \Elasticsearch\ClientBuilder::create()->setHosts($hosts)->build(); 
 
     /* Load Elasticsearch Client for BDPI */ 
-	$client_bdpi = \Elasticsearch\ClientBuilder::create()->setHosts($host_bdpi)->build(); 
+    $client_bdpi = \Elasticsearch\ClientBuilder::create()->setHosts($host_bdpi)->build(); 
+    
+    /* DSpace Config */
+
+    $dspaceRest = "http//127.1.1.1:8080/:"; /* URL do DSpace */ 
+    $dspaceCollection = "351f4026-a43a-4639-be92-a812d26a6919";
+    $dspaceAnnonymousID = "2ad3ba80-0db8-40f4-9d49-bd2467f95cff";
+    $dspaceRestrictedID = "6d28bcd6-4c62-40eb-b548-839d2f5b589f";
+    $dspaceEmail = "email@teste.com.br";
+    $dspacePassword = "123456";
+    $testDSpace = true;
 
 
 ?>

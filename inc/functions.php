@@ -627,16 +627,17 @@ class dadosExternos {
 
     }
 
-    static function query_doi($doi,$tag) {
-	    global $client; 
+    static function query_doi($doi,$tag) 
+    {
+        global $client; 
         global $index;
         $url = "https://api.crossref.org/v1/works/http://dx.doi.org/$doi";
         $json = file_get_contents($url);
-        $data = json_decode($json, TRUE);
+        $data = json_decode($json, true);
 
         $sha256 = hash('sha256', ''.$doi.'');
 	
-	    print_r($data);
+        print_r($data);
 
         $doc_obra_array["doc"]["source"] = "Base DOI - CrossRef";
         $doc_obra_array["doc"]["source_id"] = $doi;
@@ -644,69 +645,69 @@ class dadosExternos {
         $doc_obra_array["doc"]["tag"][] = $tag;
         
         if ($data["message"]["type"] == "journal-article") {
-		$doc_obra_array["doc"]["tipo"] = "Artigo publicado";
-	    
-		if(isset($data["message"]["container-title"][0])){
-		    $doc_obra_array["doc"]["artigoPublicado"]["tituloDoPeriodicoOuRevista"] = $data["message"]["container-title"][0];
-		}
-		if(isset($data["message"]["ISSN"][0])){
-		    $doc_obra_array["doc"]["artigoPublicado"]["issn"] = $data["message"]["ISSN"][0];
-		}      
-		if(isset($data["message"]["volume"])){
-		    $doc_obra_array["doc"]["artigoPublicado"]["volume"] = $data["message"]["volume"];
-		}         
-		if(isset($data["message"]["issue"])){
-		    $doc_obra_array["doc"]["artigoPublicado"]["fasciculo"] = $data["message"]["issue"];
-		}      
-		if(isset($data["message"]["page"])){
-		    $doc_obra_array["doc"]["artigoPublicado"]["paginaInicial"] = $data["message"]["page"];
-		}      
-		if(isset($data["message"]["publisher"])){
-		    $doc_obra_array["doc"]["artigoPublicado"]["nomeDaEditora"] = $data["message"]["publisher"];
-		}
-		if(isset($data["message"]["cited-count"])){
-		    $doc_obra_array["doc"]["citacoes_recebidas"] = $data["message"]["cited-count"];
-		}   	    
-	    } elseif ($data["message"]["type"] == "book") {    
-		$doc_obra_array["doc"]["tipo"] = "Livros publicados ou organizados";
-		if(isset($data["message"]["publisher"])){
-		    $doc_obra_array["doc"]["detalhamentoDoLivro"]["nomeDaEditora"] = $data["message"]["publisher"];
-		}
-	    
+            $doc_obra_array["doc"]["tipo"] = "Artigo publicado";
+            
+            if (isset($data["message"]["container-title"][0])) {
+                $doc_obra_array["doc"]["isPartOf"]["name"] = $data["message"]["container-title"][0];
+            }
+            if (isset($data["message"]["ISSN"][0])) {
+                $doc_obra_array["doc"]["isPartOf"]["issn"] = $data["message"]["ISSN"][0];
+            }      
+            if (isset($data["message"]["volume"])) {
+                $doc_obra_array["doc"]["isPartOf"]["volume"] = $data["message"]["volume"];
+            }         
+            if (isset($data["message"]["issue"])) {
+                $doc_obra_array["doc"]["isPartOf"]["fasciculo"] = $data["message"]["issue"];
+            }      
+            if (isset($data["message"]["page"])) {
+                $doc_obra_array["doc"]["pageStart"] = $data["message"]["page"];
+            }      
+            if (isset($data["message"]["publisher"])) {
+                $doc_obra_array["doc"]["pageEnd"] = $data["message"]["publisher"];
+            }
+            if (isset($data["message"]["cited-count"])) {
+                $doc_obra_array["doc"]["citacoesRecebidas"] = $data["message"]["cited-count"];
+            }
+
+        } elseif ($data["message"]["type"] == "book") {    
+            $doc_obra_array["doc"]["tipo"] = "Livros publicados ou organizados";
+            if (isset($data["message"]["publisher"])) {
+                $doc_obra_array["doc"]["publisher"]["organization"]["name"] = $data["message"]["publisher"];
+            }  
         } else {
             $doc_obra_array["doc"]["tipo"] = $data["message"]["type"];
         }
         
         /* Título */
-        $doc_obra_array["doc"]["titulo"] = str_replace('"','',trim($data["message"]["title"][0]));
-        $doc_obra_array["doc"]["titulo"] = str_replace('\'',' ',trim($data["message"]["title"][0]));
-        $doc_obra_array["doc"]["titulo"] = str_replace("\n","",$doc_obra_array["doc"]["titulo"]);
+        $doc_obra_array["doc"]["name"] = str_replace('"', '', trim($data["message"]["title"][0]));
+        $doc_obra_array["doc"]["name"] = str_replace('\'', ' ', trim($doc_obra_array["doc"]["name"]));
+        $doc_obra_array["doc"]["name"] = str_replace("\n", "", $doc_obra_array["doc"]["name"]);
         
-        if(isset($data["message"]["subtitle"][0])){
+        if (isset($data["message"]["subtitle"][0])) {
             $doc_obra_array["doc"]["subtitulo"] = $data["message"]["subtitle"][0];
         }    
-        if(isset($data["message"]["published-online"]["date-parts"][0][0])){
-            $doc_obra_array["doc"]["ano"] = $data["message"]["published-online"]["date-parts"][0][0];
+        if (isset($data["message"]["published-online"]["date-parts"][0][0])) {
+            $doc_obra_array["doc"]["datePublished"] = $data["message"]["published-online"]["date-parts"][0][0];
         }     
-        if(isset($data["message"]["URL"])){
+        if (isset($data["message"]["URL"])) {
             $doc_obra_array["doc"]["url"] = $data["message"]["URL"];
         }
         $doc_obra_array["doc"]["doi"] = $doi;
 
   
-        if(isset($data["message"]["subject"])){
-            foreach ($data["message"]["subject"]  as $assunto) {	
-            $doc_obra_array["doc"]["palavras_chave"][] = $assunto;
+        if (isset($data["message"]["subject"])) {
+            foreach ($data["message"]["subject"]  as $assunto) {
+                $doc_obra_array["doc"]["about"][] = $assunto;
             }
         }
 
         $i = 0;
         foreach ($data["message"]["author"]  as $autores) {
-            $doc_obra_array["doc"]["autores"][$i]["nomeCompletoDoAutor"] = $autores["given"]." ".$autores["family"];
-            $doc_obra_array["doc"]["autores"][$i]["nomeParaCitacao"] = $autores["family"].", ".$autores["given"];
-	    if (isset($autores["ORCID"])) {
-		    $doc_obra_array["doc"]["autores"][$i]["id_orcid"] = $autores["ORCID"];
-	    }
+            $doc_obra_array["doc"]["author"][$i]["person"]["name"] = $autores["given"]." ".$autores["family"];
+            $doc_obra_array["doc"]["author"][$i]["nomeParaCitacao"] = $autores["family"].", ".$autores["given"];
+            if (isset($autores["ORCID"])) {
+                $doc_obra_array["doc"]["author"][$i]["id_orcid"] = $autores["ORCID"];
+            }
             $i++;
         }
 
@@ -714,12 +715,12 @@ class dadosExternos {
         $doc_obra_array["doc_as_upsert"] = true;
 
         // Retorna resultado
-	    echo '<br/><br/><br/>';
-	    print_r($doc_obra_array);
+        echo '<br/><br/><br/>';
+        print_r($doc_obra_array);
 
         $body = json_encode($doc_obra_array, JSON_UNESCAPED_UNICODE); 
 
-        $resultado_crossref = elasticsearch::store_record($sha256,"trabalhos",$body);
+        $resultado_crossref = elasticsearch::store_record($sha256, "trabalhos", $body);
         print_r($resultado_crossref);
     }    
     
