@@ -1161,7 +1161,286 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'DEMAIS-TIPOS-DE-PRODUCAO-BIB
     
 }
 
+//Parser de Produção Técnica
 
+if (isset($curriculo->{'PRODUCAO-TECNICA'})) {
+
+    if (isset($curriculo->{'PRODUCAO-TECNICA'}->{'SOFTWARE'})) {
+
+        $softwareArray = $curriculo->{'PRODUCAO-TECNICA'}->{'SOFTWARE'};
+        foreach ($softwareArray as $obra) {
+            $obra = get_object_vars($obra);
+            $dadosBasicosDoTrabalho = get_object_vars($obra["DADOS-BASICOS-DO-SOFTWARE"]);
+            $detalhamentoDoTrabalho = get_object_vars($obra["DETALHAMENTO-DO-SOFTWARE"]);
+
+            $doc["doc"]["type"] = "Work";
+            $doc["doc"]["tipo"] = "Software";
+            $doc["doc"]["source"] = "Base Lattes";
+            $doc["doc"]["lattes_ids"][] = (string)$curriculo->attributes()->{'NUMERO-IDENTIFICADOR'};
+            $doc["doc"]["tag"][] = $_REQUEST['tag'];
+            $doc["doc"]["USP"]["unidadeUSP"][] = $_REQUEST['unidadeUSP'];
+            $doc["doc"]["USP"]["codpes"] = $_REQUEST['codpes'];
+            $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+            $doc["doc"]["Lattes"]["natureza"] = $dadosBasicosDoTrabalho['@attributes']['NATUREZA'];        
+            $doc["doc"]["name"] = $dadosBasicosDoTrabalho['@attributes']["TITULO-DO-SOFTWARE"];
+            $doc["doc"]["datePublished"] = $dadosBasicosDoTrabalho['@attributes']["ANO"];
+            $doc["doc"]["country"] = $dadosBasicosDoTrabalho['@attributes']["PAIS"];
+            $doc["doc"]["language"] = $dadosBasicosDoTrabalho['@attributes']["IDIOMA"];
+            $doc["doc"]["Lattes"]["meioDeDivulgacao"] = $dadosBasicosDoTrabalho['@attributes']["MEIO-DE-DIVULGACAO"];
+            $doc["doc"]["url"] = $dadosBasicosDoTrabalho['@attributes']["HOME-PAGE-DO-TRABALHO"];
+            $doc["doc"]["Lattes"]["flagRelevancia"] = $dadosBasicosDoTrabalho['@attributes']["FLAG-RELEVANCIA"];
+            $doc["doc"]["doi"] = $dadosBasicosDoTrabalho['@attributes']["DOI"];
+            $doc["doc"]["alternateName"] = $dadosBasicosDoTrabalho['@attributes']["TITULO-INGLES"];
+            $doc["doc"]["Lattes"]["flagDivulgacaoCientifica"] = $dadosBasicosDoTrabalho['@attributes']["FLAG-DIVULGACAO-CIENTIFICA"];
+            $doc["doc"]["Lattes"]["flagPotencialInovacao"] = $dadosBasicosDoTrabalho['@attributes']["FLAG-POTENCIAL-INOVACAO"];
+
+            $doc["doc"]["Lattes"]["finalidade"] = $detalhamentoDoTrabalho['@attributes']["FINALIDADE"];
+            $doc["doc"]["Lattes"]["plataforma"] = $detalhamentoDoTrabalho['@attributes']["PLATAFORMA"];
+            $doc["doc"]["Lattes"]["ambiente"] = $detalhamentoDoTrabalho['@attributes']["AMBIENTE"];
+            $doc["doc"]["Lattes"]["disponibilidade"] = $detalhamentoDoTrabalho['@attributes']["DISPONIBILIDADE"];            
+            $doc["doc"]["Lattes"]["instituicaoFinanciadora"] = $detalhamentoDoTrabalho['@attributes']["INSTITUICAO-FINANCIADORA"];
+
+            if (!empty($obra["AUTORES"])) {
+                $array_result = processaAutoresLattes($obra["AUTORES"]);
+                $doc = array_merge_recursive($doc, $array_result);
+            }
+
+            if (isset($obra["PALAVRAS-CHAVE"])) {
+                $array_result_pc = processaPalavrasChaveLattes($obra["PALAVRAS-CHAVE"]);
+                if (isset($array_result_pc)) {
+                    $doc = array_merge_recursive($doc, $array_result_pc);
+                }
+                unset($array_result_pc);            
+            }
+
+            if (isset($obra["AREAS-DO-CONHECIMENTO"])) {
+                $array_result_ac = processaAreaDoConhecimentoLattes($obra["AREAS-DO-CONHECIMENTO"]);
+                if (isset($array_result_ac)) {
+                    $doc = array_merge_recursive($doc, $array_result_ac);
+                } 
+                unset($array_result_ac);           
+            }
+
+            // Constroi sha256
+                
+
+            if (!empty($doc["doc"]["doi"])) {
+                $sha256 = hash('sha256', $doc["doc"]["doi"]);
+            } else {
+                $sha_array[] = $doc["doc"]["Lattes"]["natureza"];
+                $sha_array[] = $doc["doc"]["name"];
+                $sha_array[] = $doc["doc"]["datePublished"];
+                $sha_array[] = $doc["doc"]["url"];
+                $sha256 = hash('sha256', ''.implode("", $sha_array).'');
+            }
+
+
+
+            $doc["doc"]["concluido"] = "Não";
+            $doc["doc_as_upsert"] = true;
+
+            // Armazenar registro
+            $resultado = elasticsearch::elastic_update($sha256, "trabalhos", $doc);
+            echo "<br/>";
+            print_r($resultado);
+            echo "<br/><br/>";
+            unset($dadosBasicosDoTrabalho);
+            unset($detalhamentoDoTrabalho);
+            unset($obra);
+            unset($doc);
+            unset($sha256);
+            flush();
+
+        }
+    }
+
+    if (isset($curriculo->{'PRODUCAO-TECNICA'}->{'PATENTE'})) {
+
+        $patenteArray = $curriculo->{'PRODUCAO-TECNICA'}->{'PATENTE'};
+        foreach ($patenteArray as $obra) {
+            $obra = get_object_vars($obra);
+            $dadosBasicosDoTrabalho = get_object_vars($obra["DADOS-BASICOS-DA-PATENTE"]);
+            $detalhamentoDoTrabalho = get_object_vars($obra["DETALHAMENTO-DA-PATENTE"]);
+
+            $doc["doc"]["type"] = "Work";
+            $doc["doc"]["tipo"] = "Patente";
+            $doc["doc"]["source"] = "Base Lattes";
+            $doc["doc"]["lattes_ids"][] = (string)$curriculo->attributes()->{'NUMERO-IDENTIFICADOR'};
+            $doc["doc"]["tag"][] = $_REQUEST['tag'];
+            $doc["doc"]["USP"]["unidadeUSP"][] = $_REQUEST['unidadeUSP'];
+            $doc["doc"]["USP"]["codpes"] = $_REQUEST['codpes'];
+            $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];       
+            $doc["doc"]["name"] = $dadosBasicosDoTrabalho['@attributes']["TITULO"];
+            $doc["doc"]["datePublished"] = $dadosBasicosDoTrabalho['@attributes']["ANO-DESENVOLVIMENTO"];
+            $doc["doc"]["country"] = $dadosBasicosDoTrabalho['@attributes']["PAIS"];
+            $doc["doc"]["Lattes"]["meioDeDivulgacao"] = $dadosBasicosDoTrabalho['@attributes']["MEIO-DE-DIVULGACAO"];
+            $doc["doc"]["url"] = $dadosBasicosDoTrabalho['@attributes']["HOME-PAGE"];
+            $doc["doc"]["Lattes"]["flagRelevancia"] = $dadosBasicosDoTrabalho['@attributes']["FLAG-RELEVANCIA"];
+            $doc["doc"]["alternateName"] = $dadosBasicosDoTrabalho['@attributes']["TITULO-INGLES"];
+            $doc["doc"]["Lattes"]["flagPotencialInovacao"] = $dadosBasicosDoTrabalho['@attributes']["FLAG-POTENCIAL-INOVACAO"];
+
+            $doc["doc"]["Lattes"]["finalidade"] = $detalhamentoDoTrabalho['@attributes']["FINALIDADE"];
+            $doc["doc"]["Lattes"]["instituicaoFinanciadora"] = $detalhamentoDoTrabalho['@attributes']["INSTITUICAO-FINANCIADORA"];
+            $doc["doc"]["Lattes"]["categoria"] = $detalhamentoDoTrabalho['@attributes']["CATEGORIA"];
+            
+
+            if (!empty($obra["AUTORES"])) {
+                $array_result = processaAutoresLattes($obra["AUTORES"]);
+                $doc = array_merge_recursive($doc, $array_result);
+            }
+
+            if (isset($obra["PALAVRAS-CHAVE"])) {
+                $array_result_pc = processaPalavrasChaveLattes($obra["PALAVRAS-CHAVE"]);
+                if (isset($array_result_pc)) {
+                    $doc = array_merge_recursive($doc, $array_result_pc);
+                }
+                unset($array_result_pc);            
+            }
+
+            if (isset($obra["AREAS-DO-CONHECIMENTO"])) {
+                $array_result_ac = processaAreaDoConhecimentoLattes($obra["AREAS-DO-CONHECIMENTO"]);
+                if (isset($array_result_ac)) {
+                    $doc = array_merge_recursive($doc, $array_result_ac);
+                } 
+                unset($array_result_ac);           
+            }
+
+            // Constroi sha256
+                
+
+            if (!empty($doc["doc"]["doi"])) {
+                $sha256 = hash('sha256', $doc["doc"]["doi"]);
+            } else {
+                $sha_array[] = $doc["doc"]["Lattes"]["natureza"];
+                $sha_array[] = $doc["doc"]["name"];
+                $sha_array[] = $doc["doc"]["datePublished"];
+                $sha_array[] = $doc["doc"]["url"];
+                $sha256 = hash('sha256', ''.implode("", $sha_array).'');
+            }
+
+
+
+            $doc["doc"]["concluido"] = "Não";
+            $doc["doc_as_upsert"] = true;
+
+            // Armazenar registro
+            $resultado = elasticsearch::elastic_update($sha256, "trabalhos", $doc);
+            echo "<br/>";
+            print_r($resultado);
+            echo "<br/><br/>";
+            unset($dadosBasicosDoTrabalho);
+            unset($detalhamentoDoTrabalho);
+            unset($obra);
+            unset($doc);
+            unset($sha256);
+            flush();
+
+        }
+    }
+    
+}
+
+//Parser de Outra Produção
+
+if (isset($curriculo->{'OUTRA-PRODUCAO'})) {
+
+    if (isset($curriculo->{'OUTRA-PRODUCAO'}->{'PRODUCAO-ARTISTICA-CULTURAL'})) {
+
+        if (isset($curriculo->{'OUTRA-PRODUCAO'}->{'PRODUCAO-ARTISTICA-CULTURAL'}->{'APRESENTACAO-DE-OBRA-ARTISTICA'})) {
+
+            $obraArtisticaArray = $curriculo->{'OUTRA-PRODUCAO'}->{'PRODUCAO-ARTISTICA-CULTURAL'}->{'APRESENTACAO-DE-OBRA-ARTISTICA'};
+            foreach ($obraArtisticaArray as $obra) {
+                $obra = get_object_vars($obra);
+                $dadosBasicosDoTrabalho = get_object_vars($obra["DADOS-BASICOS-DA-APRESENTACAO-DE-OBRA-ARTISTICA"]);
+                $detalhamentoDoTrabalho = get_object_vars($obra["DETALHAMENTO-DA-APRESENTACAO-DE-OBRA-ARTISTICA"]);
+
+                $doc["doc"]["type"] = "Work";
+                $doc["doc"]["tipo"] = "Apresentação de obra artística";
+                $doc["doc"]["source"] = "Base Lattes";
+                $doc["doc"]["lattes_ids"][] = (string)$curriculo->attributes()->{'NUMERO-IDENTIFICADOR'};
+                $doc["doc"]["tag"][] = $_REQUEST['tag'];
+                $doc["doc"]["USP"]["unidadeUSP"][] = $_REQUEST['unidadeUSP'];
+                $doc["doc"]["USP"]["codpes"] = $_REQUEST['codpes'];
+                $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+                $doc["doc"]["Lattes"]["natureza"] = $dadosBasicosDoTrabalho['@attributes']['NATUREZA'];        
+                $doc["doc"]["name"] = $dadosBasicosDoTrabalho['@attributes']["TITULO"];
+                $doc["doc"]["datePublished"] = $dadosBasicosDoTrabalho['@attributes']["ANO"];
+                $doc["doc"]["country"] = $dadosBasicosDoTrabalho['@attributes']["PAIS"];
+                $doc["doc"]["language"] = $dadosBasicosDoTrabalho['@attributes']["IDIOMA"];
+                $doc["doc"]["Lattes"]["meioDeDivulgacao"] = $dadosBasicosDoTrabalho['@attributes']["MEIO-DE-DIVULGACAO"];
+                $doc["doc"]["url"] = $dadosBasicosDoTrabalho['@attributes']["HOME-PAGE"];
+                $doc["doc"]["Lattes"]["flagRelevancia"] = $dadosBasicosDoTrabalho['@attributes']["FLAG-RELEVANCIA"];
+                $doc["doc"]["doi"] = $dadosBasicosDoTrabalho['@attributes']["DOI"];
+                $doc["doc"]["alternateName"] = $dadosBasicosDoTrabalho['@attributes']["TITULO-INGLES"];
+
+                $doc["doc"]["Lattes"]["tipoDeEvento"] = $detalhamentoDoTrabalho['@attributes']["TIPO-DE-EVENTO"];
+                $doc["doc"]["Lattes"]["atividadeDosAutores"] = $detalhamentoDoTrabalho['@attributes']["ATIVIDADE-DOS-AUTORES"];
+                $doc["doc"]["Lattes"]["flagIneditismoDaObra"] = $detalhamentoDoTrabalho['@attributes']["FLAG-INEDITISMO-DA-OBRA"];
+                $doc["doc"]["Lattes"]["premiacao"] = $detalhamentoDoTrabalho['@attributes']["PREMIACAO"];            
+                $doc["doc"]["Lattes"]["obraDeReferencia"] = $detalhamentoDoTrabalho['@attributes']["OBRA-DE-REFERENCIA"];
+                $doc["doc"]["Lattes"]["autorDaObraDeReferencia"] = $detalhamentoDoTrabalho['@attributes']["AUTOR-DA-OBRA-DE-REFERENCIA"];
+                $doc["doc"]["Lattes"]["anoDaObraDeReferencia"] = $detalhamentoDoTrabalho['@attributes']["ANO-DA-OBRA-DE-REFERENCIA"];    
+                $doc["doc"]["Lattes"]["duracaoEmMinutos"] = $detalhamentoDoTrabalho['@attributes']["DURACAO-EM-MINUTOS"]; 
+                $doc["doc"]["Lattes"]["instituicaoPromotoraDoEvento"] = $detalhamentoDoTrabalho['@attributes']["INSTITUICAO-PROMOTORA-DO-EVENTO"]; 
+                $doc["doc"]["Lattes"]["localDoEvento"] = $detalhamentoDoTrabalho['@attributes']["LOCAL-DO-EVENTO"]; 
+                $doc["doc"]["Lattes"]["cidade"] = $detalhamentoDoTrabalho['@attributes']["CIDADE"]; 
+
+
+                if (!empty($obra["AUTORES"])) {
+                    $array_result = processaAutoresLattes($obra["AUTORES"]);
+                    $doc = array_merge_recursive($doc, $array_result);
+                }
+
+                if (isset($obra["PALAVRAS-CHAVE"])) {
+                    $array_result_pc = processaPalavrasChaveLattes($obra["PALAVRAS-CHAVE"]);
+                    if (isset($array_result_pc)) {
+                        $doc = array_merge_recursive($doc, $array_result_pc);
+                    }
+                    unset($array_result_pc);            
+                }
+
+                if (isset($obra["AREAS-DO-CONHECIMENTO"])) {
+                    $array_result_ac = processaAreaDoConhecimentoLattes($obra["AREAS-DO-CONHECIMENTO"]);
+                    if (isset($array_result_ac)) {
+                        $doc = array_merge_recursive($doc, $array_result_ac);
+                    } 
+                    unset($array_result_ac);           
+                }
+
+                // Constroi sha256
+                    
+
+                if (!empty($doc["doc"]["doi"])) {
+                    $sha256 = hash('sha256', $doc["doc"]["doi"]);
+                } else {
+                    $sha_array[] = $doc["doc"]["Lattes"]["natureza"];
+                    $sha_array[] = $doc["doc"]["name"];
+                    $sha_array[] = $doc["doc"]["datePublished"];
+                    $sha_array[] = $doc["doc"]["url"];
+                    $sha256 = hash('sha256', ''.implode("", $sha_array).'');
+                }
+
+
+
+                $doc["doc"]["concluido"] = "Não";
+                $doc["doc_as_upsert"] = true;
+
+                // Armazenar registro
+                $resultado = elasticsearch::elastic_update($sha256, "trabalhos", $doc);
+                echo "<br/>";
+                print_r($resultado);
+                echo "<br/><br/>";
+                unset($dadosBasicosDoTrabalho);
+                unset($detalhamentoDoTrabalho);
+                unset($obra);
+                unset($doc);
+                unset($sha256);
+                flush();
+
+            }
+        }
+    }    
+}
 
 
 
