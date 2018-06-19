@@ -466,64 +466,45 @@ class paginaInicial {
  */
 class dadosExternos {
     
-    static function query_bdpi($query_title,$query_year,$sha256) {  
+    static function query_bdpi($query_title,$query_year,$sha256) 
+    {  
         
-        $query_title =  str_replace('"','',$query_title);
-        $query = '
-        {
-            "min_score": 35,
-            "query":{
-                "bool": {
-                    "should": [	
-                        {
-                            "multi_match" : {
-                                "query":      "'.$query_title.'",
-                                "type":       "cross_fields",
-                                "fields":     [ "name" ],
-                                "minimum_should_match": "85%" 
-                            }
-                        },	    
-                        {
-                            "multi_match" : {
-                                "query":      "'.$query_year.'",
-                                "type":       "best_fields",
-                                "fields":     [ "datePublished" ],
-                                "operator":   "and",
-                                "minimum_should_match": "75%" 
-                            }
-                        }
-                    ],
-                    "minimum_should_match" : 2               
-                }
-            }
-        }
-        ';
+        global $client_bdpi;
+        
+        $query_title =  str_replace('"', '', $query_title);
+        $query["min_score"] = 35;
+        $query["query"]["bool"]["should"][0]["multi_match"]["query"] = $query_title;
+        $query["query"]["bool"]["should"][0]["multi_match"]["type"] = "cross_fields";
+        $query["query"]["bool"]["should"][0]["multi_match"]["fields"][] = "name";
+        $query["query"]["bool"]["should"][0]["multi_match"]["minimum_should_match"] = "85%";
+        $query["query"]["bool"]["should"][1]["multi_match"]["query"] = $query_year;
+        $query["query"]["bool"]["should"][1]["multi_match"]["type"] = "best_fields";
+        $query["query"]["bool"]["should"][1]["multi_match"]["fields"][] = "datePublished";
+        $query["query"]["bool"]["should"][1]["multi_match"]["operator"] = "and";
+        $query["query"]["bool"]["should"][1]["multi_match"]["minimum_should_match"] = "75%";
+        $query["query"]["bool"]["minimum_should_match"] = 2;
 
-        $ch = curl_init();
-        $method = "POST";
-        $url = "http://172.31.0.90/sibi/producao/_search";
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_PORT, 9200);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
-        $result = curl_exec($ch);
-        curl_close($ch);
-        $data = json_decode($result, true);
+        $params = [];
 
-        if ($data["hits"]["total"] > 0){
+        $params["index"] = "bdpi";
+        $params["type"] = "producao";
+        //$params["_source"] = $fields;
+        //$params["size"] = $size;
+        $params["body"] = $query;
+
+        $data = $client_bdpi->search($params);
+
+        if ($data["hits"]["total"] > 0) {
             echo '<div class="uk-alert">';
             echo '<h3>Registros similares na BDPI</h3>';
-            foreach ($data["hits"]["hits"] as $match){
+            foreach ($data["hits"]["hits"] as $match) {
                 echo '<p>Nota de proximidade: '.$match["_score"].' - <a href="http://bdpi.usp.br/single.php?_id='.$match["_id"].'">'.$match["_source"]["type"].' - '.$match["_source"]["name"].' ('.$match["_source"]["datePublished"].')</a><br/> Autores: ';   
                 foreach ($match["_source"]['author'] as $autores) {
                     echo ''.$autores['person']['name'].', ';
                 }
-                if (isset($match["_source"]["doi"])){
+                if (isset($match["_source"]["doi"])) {
                     $doc["doc"]["bdpi"]["doi_bdpi"] = $match["_source"]["doi"];
-                } else {
-                    
-                }
+                } 
                 echo '</p>';
             }
             echo '</div>';            
@@ -531,7 +512,7 @@ class dadosExternos {
             $doc["doc"]["bdpi"]["existe"] = "Sim";
             $doc["doc_as_upsert"] = true;
             //print_r($doc);
-            $result_elastic = elasticsearch::elastic_update($sha256,"trabalhos",$doc);
+            $result_elastic = elasticsearch::elastic_update($sha256, "trabalhos", $doc);
         }
         return $data;
     }

@@ -340,9 +340,10 @@
                                     <?php endforeach;?>
                                     <?php endif; ?>
                                     
-                                    <?php if ($instituicao == "USP") {
-                                            dadosExternos::query_bdpi($r["_source"]['name'],$r["_source"]['datePublished'],$r['_id']);
-                                            }
+                                    <?php 
+                                    if ($instituicao == "USP") {
+                                        DadosExternos::query_bdpi($r["_source"]['name'], $r["_source"]['datePublished'], $r['_id']);
+                                    }
                                     ?>        
                                     
                                     <li class="uk-h6">

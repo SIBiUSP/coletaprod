@@ -1,8 +1,11 @@
 {
     "require": {
-        "elasticsearch/elasticsearch": "~5.0",
+        "elasticsearch/elasticsearch": "~6.0",
         "caseyamcl/phpoaipmh": "~2.0",
-        "guzzlehttp/guzzle":   "~5.0",
+        "guzzlehttp/guzzle":   "~6.0",
         "phpdocumentor/phpdocumentor": "2.*"
-    }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "3.*"
+    }    
 }

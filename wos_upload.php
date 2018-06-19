@@ -68,7 +68,7 @@
                 $sha256 = hash('sha256', ''.$row[60].'');
             }
 
-            $doc_obra_array["doc"]["bdpi"] = dadosExternos::query_bdpi_index($doc_obra_array["doc"]["titulo"],$doc_obra_array["doc"]["ano"]);           
+            $doc_obra_array["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc_obra_array["doc"]["titulo"],$doc_obra_array["doc"]["ano"]);           
 
             $doc_obra_array["doc_as_upsert"] = true;
             

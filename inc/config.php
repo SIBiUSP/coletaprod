@@ -9,14 +9,14 @@
     $instituicao = "USP";
 
 	/* Endereço do server, sem http:// */ 
-	$server = 'localhost'; 
+	$server = '172.31.1.186'; 
 	$hosts = [
-		'localhost' 
+		'172.31.1.186' 
 	];
 
     /* Endereço da BDPI - Para o comparador */
 	$host_bdpi = [
-		'locahost'
+		'172.31.0.90'
 	];
 
     /* Configurações do Elasticsearch */
@@ -34,11 +34,11 @@
     
     /* DSpace Config */
 
-    $dspaceRest = "http//127.1.1.1:8080/:"; /* URL do DSpace */ 
+    $dspaceRest = "http://172.31.1.37:8080";
     $dspaceCollection = "351f4026-a43a-4639-be92-a812d26a6919";
     $dspaceAnnonymousID = "2ad3ba80-0db8-40f4-9d49-bd2467f95cff";
     $dspaceRestrictedID = "6d28bcd6-4c62-40eb-b548-839d2f5b589f";
-    $dspaceEmail = "email@teste.com.br";
+    $dspaceEmail = "dgti@dt.sibi.usp.br";
     $dspacePassword = "123456";
     $testDSpace = true;
 
