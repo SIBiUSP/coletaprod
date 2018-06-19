@@ -517,52 +517,39 @@ class DadosExternos {
         return $data;
     }
 
-    static function query_bdpi_index($query_title,$query_year) {        
-        $query = '
-        {
-            "min_score": 50,
-            "query":{
-                "bool": {
-                    "should": [	
-                        {
-                            "multi_match" : {
-                                "query":      "'.str_replace('"','',$query_title).'",
-                                "type":       "cross_fields",
-                                "fields":     [ "name" ],
-                                "minimum_should_match": "90%" 
-                             }
-                        },	    
-                        {
-                            "multi_match" : {
-                                "query":      "'.$query_year.'",
-                                "type":       "best_fields",
-                                "fields":     [ "datePublished" ],
-                                "minimum_should_match": "75%" 
-                            }
-                        }
-                    ],
-                    "minimum_should_match" : 1               
-                }
-            }
-        }
-        ';
+    static function query_bdpi_index($query_title,$query_year) 
+    {        
 
-        $ch = curl_init();
-        $method = "POST";
-        $url = "http://172.31.0.90/sibi/producao/_search";
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_PORT, 9200);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
-        $result = curl_exec($ch);
-        curl_close($ch);
-        $data = json_decode($result, true);
+        global $client_bdpi;
+        
+        $query_title =  str_replace('"', '', $query_title);
+        $query["min_score"] = 50;
+        $query["query"]["bool"]["should"][0]["multi_match"]["query"] = $query_title;
+        $query["query"]["bool"]["should"][0]["multi_match"]["type"] = "cross_fields";
+        $query["query"]["bool"]["should"][0]["multi_match"]["fields"][] = "name";
+        $query["query"]["bool"]["should"][0]["multi_match"]["minimum_should_match"] = "85%";
+        $query["query"]["bool"]["should"][1]["multi_match"]["query"] = $query_year;
+        $query["query"]["bool"]["should"][1]["multi_match"]["type"] = "best_fields";
+        $query["query"]["bool"]["should"][1]["multi_match"]["fields"][] = "datePublished";
+        $query["query"]["bool"]["should"][1]["multi_match"]["operator"] = "and";
+        $query["query"]["bool"]["should"][1]["multi_match"]["minimum_should_match"] = "75%";
+        $query["query"]["bool"]["minimum_should_match"] = 2;
+
+        $params = [];
+
+        $params["index"] = "bdpi";
+        $params["type"] = "producao";
+        //$params["_source"] = $fields;
+        //$params["size"] = $size;
+        $params["body"] = $query;
+
+        $data = $client_bdpi->search($params);
+
         $facet_bdpi = [];
-        if ($data["hits"]["total"] > 0){
+        if ($data["hits"]["total"] > 0) {
             $facet_bdpi["existe"] = "Sim";
-            foreach ($data["hits"]["hits"] as $match){
-                if (isset($match["_source"]["doi"])){
+            foreach ($data["hits"]["hits"] as $match) {
+                if (isset($match["_source"]["doi"])) {
                     $facet_bdpi["doi_bdpi"] = $match["_source"]["doi"];
                 }
             }

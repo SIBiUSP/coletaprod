@@ -129,7 +129,9 @@ $doc_curriculo_array["doc"]["type"] = "Curriculum";
 $doc_curriculo_array["doc"]["tag"] = $_REQUEST['tag'];
 $doc_curriculo_array["doc"]["unidadeUSP"][] = $_REQUEST['unidadeUSP'];
 $doc_curriculo_array["doc"]["codpes"] = $_REQUEST['codpes'];
-$doc_curriculo_array["doc"]["tipvin"] = $_REQUEST['tipvin'];            
+if (isset($_REQUEST['tipvin'])) {
+    $doc_curriculo_array["doc"]["tipvin"] = $_REQUEST['tipvin'];
+}            
 $doc_curriculo_array["doc"]["data_atualizacao"] = substr((string)$curriculo->attributes()->{'DATA-ATUALIZACAO'}, 4, 4)."-".substr((string)$curriculo->attributes()->{'DATA-ATUALIZACAO'}, 2, 2);
 $doc_curriculo_array["doc"]["nome_completo"] = (string)$curriculo->{'DADOS-GERAIS'}->attributes()->{'NOME-COMPLETO'};
 $doc_curriculo_array["doc"]["nome_em_citacoes_bibliograficas"] = (string)$curriculo->{'DADOS-GERAIS'}->attributes()->{'NOME-EM-CITACOES-BIBLIOGRAFICAS'};
@@ -516,7 +518,9 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})) {
         $doc["doc"]["tag"][] = $_REQUEST['tag'];
         $doc["doc"]["USP"]["unidadeUSP"][] = $_REQUEST['unidadeUSP'];
         $doc["doc"]["USP"]["codpes"] = $_REQUEST['codpes'];
-        $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+        if (isset($_REQUEST['tipvin'])) {
+            $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+        }        
         $doc["doc"]["datePublished"] = $dadosBasicosDoTrabalho['@attributes']["ANO-DO-TRABALHO"];
         $doc["doc"]["name"] = $dadosBasicosDoTrabalho['@attributes']["TITULO-DO-TRABALHO"];
         $doc["doc"]["Lattes"]["natureza"] = $dadosBasicosDoTrabalho['@attributes']['NATUREZA'];
@@ -563,6 +567,8 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})) {
             unset($array_result_ac);           
         }
 
+
+
         // Constroi sha256
         $sha_array[] = $doc["doc"]["lattes_ids"][0];
         $sha_array[] = $doc["doc"]["tipo"];
@@ -575,7 +581,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})) {
         $sha_array[] = $doc["doc"]["pageEnd"];
         $sha256 = hash('sha256', ''.implode("", $sha_array).'');
 
-
+        $doc["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc["doc"]["name"], $doc["doc"]["datePublished"]);
         $doc["doc"]["concluido"] = "Não";
         $doc["doc_as_upsert"] = true;
 
@@ -612,7 +618,9 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'ARTIGOS-PUBLICADOS'})) {
         $doc["doc"]["tag"][] = $_REQUEST['tag'];
         $doc["doc"]["USP"]["unidadeUSP"][] = $_REQUEST['unidadeUSP'];
         $doc["doc"]["USP"]["codpes"] = $_REQUEST['codpes'];
-        $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+        if (isset($_REQUEST['tipvin'])) {
+            $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+        }      
         $doc["doc"]["datePublished"] = $dadosBasicosDoTrabalho['@attributes']["ANO-DO-ARTIGO"];
         $doc["doc"]["name"] = $dadosBasicosDoTrabalho['@attributes']["TITULO-DO-ARTIGO"];
         $doc["doc"]["Lattes"]["natureza"] = $dadosBasicosDoTrabalho['@attributes']['NATUREZA'];
@@ -673,7 +681,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'ARTIGOS-PUBLICADOS'})) {
         }
 
 
-
+        $doc["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc["doc"]["name"], $doc["doc"]["datePublished"]);
         $doc["doc"]["concluido"] = "Não";
         $doc["doc_as_upsert"] = true;
 
@@ -711,7 +719,9 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'LIVROS-E-CAPITULOS'})) {
             $doc["doc"]["tag"][] = $_REQUEST['tag'];
             $doc["doc"]["USP"]["unidadeUSP"][] = $_REQUEST['unidadeUSP'];
             $doc["doc"]["USP"]["codpes"] = $_REQUEST['codpes'];
-            $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+            if (isset($_REQUEST['tipvin'])) {
+                $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+            }      
             $doc["doc"]["Lattes"]["tipo"] = $dadosBasicosDoTrabalho['@attributes']["TIPO"];
             $doc["doc"]["datePublished"] = $dadosBasicosDoTrabalho['@attributes']["ANO"];
             $doc["doc"]["name"] = $dadosBasicosDoTrabalho['@attributes']["TITULO-DO-LIVRO"];
@@ -772,7 +782,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'LIVROS-E-CAPITULOS'})) {
             }
 
 
-
+            $doc["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc["doc"]["name"], $doc["doc"]["datePublished"]);
             $doc["doc"]["concluido"] = "Não";
             $doc["doc_as_upsert"] = true;
 
@@ -808,7 +818,9 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'LIVROS-E-CAPITULOS'})) {
             $doc["doc"]["tag"][] = $_REQUEST['tag'];
             $doc["doc"]["USP"]["unidadeUSP"][] = $_REQUEST['unidadeUSP'];
             $doc["doc"]["USP"]["codpes"] = $_REQUEST['codpes'];
-            $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+            if (isset($_REQUEST['tipvin'])) {
+                $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+            }
             $doc["doc"]["Lattes"]["tipo"] = $dadosBasicosDoTrabalho['@attributes']["TIPO"];
             $doc["doc"]["name"] = $dadosBasicosDoTrabalho['@attributes']["TITULO-DO-CAPITULO-DO-LIVRO"];
             $doc["doc"]["datePublished"] = $dadosBasicosDoTrabalho['@attributes']["ANO"];            
@@ -862,7 +874,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'LIVROS-E-CAPITULOS'})) {
             $sha_array[] = $doc["doc"]["isPartOf"]["name"];
             $sha256 = hash('sha256', ''.implode("", $sha_array).'');
 
-
+            $doc["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc["doc"]["name"], $doc["doc"]["datePublished"]);
             $doc["doc"]["concluido"] = "Não";
             $doc["doc_as_upsert"] = true;
 
@@ -902,7 +914,9 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TEXTOS-EM-JORNAIS-OU-REVISTA
         $doc["doc"]["tag"][] = $_REQUEST['tag'];
         $doc["doc"]["USP"]["unidadeUSP"][] = $_REQUEST['unidadeUSP'];
         $doc["doc"]["USP"]["codpes"] = $_REQUEST['codpes'];
-        $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+        if (isset($_REQUEST['tipvin'])) {
+            $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+        }      
         $doc["doc"]["Lattes"]["natureza"] = $dadosBasicosDoTrabalho['@attributes']['NATUREZA'];        
         $doc["doc"]["name"] = $dadosBasicosDoTrabalho['@attributes']["TITULO-DO-TEXTO"];
         $doc["doc"]["datePublished"] = $dadosBasicosDoTrabalho['@attributes']["ANO-DO-TEXTO"];
@@ -962,7 +976,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TEXTOS-EM-JORNAIS-OU-REVISTA
         }
 
 
-
+        $doc["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc["doc"]["name"], $doc["doc"]["datePublished"]);
         $doc["doc"]["concluido"] = "Não";
         $doc["doc_as_upsert"] = true;
 
@@ -1001,7 +1015,9 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'DEMAIS-TIPOS-DE-PRODUCAO-BIB
             $doc["doc"]["tag"][] = $_REQUEST['tag'];
             $doc["doc"]["USP"]["unidadeUSP"][] = $_REQUEST['unidadeUSP'];
             $doc["doc"]["USP"]["codpes"] = $_REQUEST['codpes'];
-            $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+            if (isset($_REQUEST['tipvin'])) {
+                $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+            }      
             $doc["doc"]["Lattes"]["natureza"] = $dadosBasicosDoTrabalho['@attributes']['NATUREZA'];        
             $doc["doc"]["name"] = $dadosBasicosDoTrabalho['@attributes']["TITULO"];
             $doc["doc"]["datePublished"] = $dadosBasicosDoTrabalho['@attributes']["ANO"];
@@ -1057,7 +1073,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'DEMAIS-TIPOS-DE-PRODUCAO-BIB
             }
 
 
-
+            $doc["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc["doc"]["name"], $doc["doc"]["datePublished"]);
             $doc["doc"]["concluido"] = "Não";
             $doc["doc_as_upsert"] = true;
 
@@ -1091,7 +1107,9 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'DEMAIS-TIPOS-DE-PRODUCAO-BIB
             $doc["doc"]["tag"][] = $_REQUEST['tag'];
             $doc["doc"]["USP"]["unidadeUSP"][] = $_REQUEST['unidadeUSP'];
             $doc["doc"]["USP"]["codpes"] = $_REQUEST['codpes'];
-            $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+            if (isset($_REQUEST['tipvin'])) {
+                $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+            }      
             $doc["doc"]["Lattes"]["natureza"] = $dadosBasicosDoTrabalho['@attributes']['NATUREZA'];        
             $doc["doc"]["name"] = $dadosBasicosDoTrabalho['@attributes']["TITULO"];
             $doc["doc"]["datePublished"] = $dadosBasicosDoTrabalho['@attributes']["ANO"];
@@ -1152,7 +1170,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'DEMAIS-TIPOS-DE-PRODUCAO-BIB
             }
 
 
-
+            $doc["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc["doc"]["name"], $doc["doc"]["datePublished"]);
             $doc["doc"]["concluido"] = "Não";
             $doc["doc_as_upsert"] = true;
 
@@ -1192,7 +1210,9 @@ if (isset($curriculo->{'PRODUCAO-TECNICA'})) {
             $doc["doc"]["tag"][] = $_REQUEST['tag'];
             $doc["doc"]["USP"]["unidadeUSP"][] = $_REQUEST['unidadeUSP'];
             $doc["doc"]["USP"]["codpes"] = $_REQUEST['codpes'];
-            $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+            if (isset($_REQUEST['tipvin'])) {
+                $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+            }      
             $doc["doc"]["Lattes"]["natureza"] = $dadosBasicosDoTrabalho['@attributes']['NATUREZA'];        
             $doc["doc"]["name"] = $dadosBasicosDoTrabalho['@attributes']["TITULO-DO-SOFTWARE"];
             $doc["doc"]["datePublished"] = $dadosBasicosDoTrabalho['@attributes']["ANO"];
@@ -1202,7 +1222,7 @@ if (isset($curriculo->{'PRODUCAO-TECNICA'})) {
             $doc["doc"]["url"] = $dadosBasicosDoTrabalho['@attributes']["HOME-PAGE-DO-TRABALHO"];
             $doc["doc"]["Lattes"]["flagRelevancia"] = $dadosBasicosDoTrabalho['@attributes']["FLAG-RELEVANCIA"];
             $doc["doc"]["doi"] = $dadosBasicosDoTrabalho['@attributes']["DOI"];
-            $doc["doc"]["alternateName"] = $dadosBasicosDoTrabalho['@attributes']["TITULO-INGLES"];
+            $doc["doc"]["alternateName"] = $dadosBasicosDoTrabalho['@attributes']["TITULO-DO-SOFTWARE-INGLES"];
             $doc["doc"]["Lattes"]["flagDivulgacaoCientifica"] = $dadosBasicosDoTrabalho['@attributes']["FLAG-DIVULGACAO-CIENTIFICA"];
             $doc["doc"]["Lattes"]["flagPotencialInovacao"] = $dadosBasicosDoTrabalho['@attributes']["FLAG-POTENCIAL-INOVACAO"];
 
@@ -1249,7 +1269,7 @@ if (isset($curriculo->{'PRODUCAO-TECNICA'})) {
             }
 
 
-
+            $doc["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc["doc"]["name"], $doc["doc"]["datePublished"]);
             $doc["doc"]["concluido"] = "Não";
             $doc["doc_as_upsert"] = true;
 
@@ -1283,7 +1303,9 @@ if (isset($curriculo->{'PRODUCAO-TECNICA'})) {
             $doc["doc"]["tag"][] = $_REQUEST['tag'];
             $doc["doc"]["USP"]["unidadeUSP"][] = $_REQUEST['unidadeUSP'];
             $doc["doc"]["USP"]["codpes"] = $_REQUEST['codpes'];
-            $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];       
+            if (isset($_REQUEST['tipvin'])) {
+                $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+            }             
             $doc["doc"]["name"] = $dadosBasicosDoTrabalho['@attributes']["TITULO"];
             $doc["doc"]["datePublished"] = $dadosBasicosDoTrabalho['@attributes']["ANO-DESENVOLVIMENTO"];
             $doc["doc"]["country"] = $dadosBasicosDoTrabalho['@attributes']["PAIS"];
@@ -1335,7 +1357,7 @@ if (isset($curriculo->{'PRODUCAO-TECNICA'})) {
             }
 
 
-
+            $doc["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc["doc"]["name"], $doc["doc"]["datePublished"]);
             $doc["doc"]["concluido"] = "Não";
             $doc["doc_as_upsert"] = true;
 
@@ -1377,7 +1399,9 @@ if (isset($curriculo->{'OUTRA-PRODUCAO'})) {
                 $doc["doc"]["tag"][] = $_REQUEST['tag'];
                 $doc["doc"]["USP"]["unidadeUSP"][] = $_REQUEST['unidadeUSP'];
                 $doc["doc"]["USP"]["codpes"] = $_REQUEST['codpes'];
-                $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+                if (isset($_REQUEST['tipvin'])) {
+                    $doc["doc"]["USP"]["tipvin"] = $_REQUEST['tipvin'];
+                }      
                 $doc["doc"]["Lattes"]["natureza"] = $dadosBasicosDoTrabalho['@attributes']['NATUREZA'];        
                 $doc["doc"]["name"] = $dadosBasicosDoTrabalho['@attributes']["TITULO"];
                 $doc["doc"]["datePublished"] = $dadosBasicosDoTrabalho['@attributes']["ANO"];
@@ -1439,7 +1463,7 @@ if (isset($curriculo->{'OUTRA-PRODUCAO'})) {
                 }
 
 
-
+                $doc["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc["doc"]["name"], $doc["doc"]["datePublished"]);
                 $doc["doc"]["concluido"] = "Não";
                 $doc["doc_as_upsert"] = true;
 
