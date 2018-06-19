@@ -1489,7 +1489,7 @@ if (isset($curriculo->{'OUTRA-PRODUCAO'})) {
 
 
 
-//sleep(5); echo '<script>window.location = \'result_trabalhos.php?filter[]=lattes_ids:"'.$curriculo->attributes()->{'NUMERO-IDENTIFICADOR'}.'"\'</script>';
+sleep(5); echo '<script>window.location = \'result_trabalhos.php?filter[]=lattes_ids:"'.$curriculo->attributes()->{'NUMERO-IDENTIFICADOR'}.'"\'</script>';
 
 ?>
 
