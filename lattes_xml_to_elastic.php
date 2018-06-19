@@ -198,23 +198,23 @@ if (isset($curriculo->{'DADOS-GERAIS'}->{'FORMACAO-ACADEMICA-TITULACAO'})) {
     if (isset($curriculo->{'DADOS-GERAIS'}->{'FORMACAO-ACADEMICA-TITULACAO'}->{'GRADUACAO'})) {
         foreach ($curriculo->{'DADOS-GERAIS'}->{'FORMACAO-ACADEMICA-TITULACAO'}->{'GRADUACAO'} as $graduacao) {
             $graduacao = get_object_vars($graduacao);
-            $formacao_array["sequenciaFormacao"]=$graduacao['@attributes']["SEQUENCIA-FORMACAO"];
-            $formacao_array["nivel"]=$graduacao['@attributes']["NIVEL"];
-            $formacao_array["tituloDoTrabalhoDeConclusaoDeCurso"]=$graduacao['@attributes']["TITULO-DO-TRABALHO-DE-CONCLUSAO-DE-CURSO"];
-            $formacao_array["nomeDoOrientador"]=$graduacao['@attributes']["NOME-DO-ORIENTADOR"];
-            $formacao_array["codigoInstituicao"]=$graduacao['@attributes']["CODIGO-INSTITUICAO"];
-            $formacao_array["nomeInstituicao"]=$graduacao['@attributes']["NOME-INSTITUICAO"];
-            $formacao_array["codigoCurso"]=$graduacao['@attributes']["CODIGO-CURSO"];
-            $formacao_array["nomeCurso"]=$graduacao['@attributes']["NOME-CURSO"];
-            $formacao_array["codigoAreaCurso"]=$graduacao['@attributes']["CODIGO-AREA-CURSO"];
-            $formacao_array["statusDoCurso"]=$graduacao['@attributes']["STATUS-DO-CURSO"];
-            $formacao_array["anoDeInicio"]=$graduacao['@attributes']["ANO-DE-INICIO"];
-            $formacao_array["anoDeConclusao"]=$graduacao['@attributes']["ANO-DE-CONCLUSAO"];
-            $formacao_array["flagBolsa"]=$graduacao['@attributes']["FLAG-BOLSA"];
-            $formacao_array["codigoAgenciaFinanciadora"]=$graduacao['@attributes']["CODIGO-AGENCIA-FINANCIADORA"];
-            $formacao_array["nomeAgencia"]=$graduacao['@attributes']["NOME-AGENCIA"];
+            $formacao_array["sequenciaFormacao"] = $graduacao['@attributes']["SEQUENCIA-FORMACAO"];
+            $formacao_array["nivel"] = $graduacao['@attributes']["NIVEL"];
+            $formacao_array["tituloDoTrabalhoDeConclusaoDeCurso"] = $graduacao['@attributes']["TITULO-DO-TRABALHO-DE-CONCLUSAO-DE-CURSO"];
+            $formacao_array["nomeDoOrientador"] = $graduacao['@attributes']["NOME-DO-ORIENTADOR"];
+            $formacao_array["codigoInstituicao"] = $graduacao['@attributes']["CODIGO-INSTITUICAO"];
+            $formacao_array["nomeInstituicao"] = $graduacao['@attributes']["NOME-INSTITUICAO"];
+            $formacao_array["codigoCurso"] = $graduacao['@attributes']["CODIGO-CURSO"];
+            $formacao_array["nomeCurso"] = $graduacao['@attributes']["NOME-CURSO"];
+            $formacao_array["codigoAreaCurso"] = $graduacao['@attributes']["CODIGO-AREA-CURSO"];
+            $formacao_array["statusDoCurso"] = $graduacao['@attributes']["STATUS-DO-CURSO"];
+            $formacao_array["anoDeInicio"] = $graduacao['@attributes']["ANO-DE-INICIO"];
+            $formacao_array["anoDeConclusao"] = $graduacao['@attributes']["ANO-DE-CONCLUSAO"];
+            $formacao_array["flagBolsa"] = $graduacao['@attributes']["FLAG-BOLSA"];
+            $formacao_array["codigoAgenciaFinanciadora"] = $graduacao['@attributes']["CODIGO-AGENCIA-FINANCIADORA"];
+            $formacao_array["nomeAgencia"] = $graduacao['@attributes']["NOME-AGENCIA"];
             if (isset($graduacao['@attributes']["FORMACAO-ACADEMICA-TITULACAO"])) {
-                $formacao_array["formacaoAcademicaTitulacao"]=$graduacao['@attributes']["FORMACAO-ACADEMICA-TITULACAO"];
+                $formacao_array["formacaoAcademicaTitulacao"] = $graduacao['@attributes']["FORMACAO-ACADEMICA-TITULACAO"];
             }            
 
             $doc_curriculo_array["doc"]["formacao_academica_titulacao_graduacao"][] = $formacao_array;
@@ -225,21 +225,21 @@ if (isset($curriculo->{'DADOS-GERAIS'}->{'FORMACAO-ACADEMICA-TITULACAO'})) {
     if (isset($curriculo->{'DADOS-GERAIS'}->{'FORMACAO-ACADEMICA-TITULACAO'}->{'ESPECIALIZACAO'})) {
         foreach ($curriculo->{'DADOS-GERAIS'}->{'FORMACAO-ACADEMICA-TITULACAO'}->{'ESPECIALIZACAO'} as $especializacao) {
             $especializacao = get_object_vars($especializacao);
-            $formacao_array["sequenciaFormacao"]=$especializacao['@attributes']["SEQUENCIA-FORMACAO"];
-            $formacao_array["nivel"]=$especializacao['@attributes']["NIVEL"];
-            $formacao_array["tituloDaMonografia"]=$especializacao['@attributes']["TITULO-DA-MONOGRAFIA"];
-            $formacao_array["nomeDoOrientador"]=$especializacao['@attributes']["NOME-DO-ORIENTADOR"];
-            $formacao_array["codigoInstituicao"]=$especializacao['@attributes']["CODIGO-INSTITUICAO"];
-            $formacao_array["nomeInstituicao"]=$especializacao['@attributes']["NOME-INSTITUICAO"];
-            $formacao_array["codigoCurso"]=$especializacao['@attributes']["CODIGO-CURSO"];
-            $formacao_array["nomeCurso"]=$especializacao['@attributes']["NOME-CURSO"];
-            $formacao_array["statusDoCurso"]=$especializacao['@attributes']["STATUS-DO-CURSO"];
-            $formacao_array["anoDeInicio"]=$especializacao['@attributes']["ANO-DE-INICIO"];
-            $formacao_array["anoDeConclusao"]=$especializacao['@attributes']["ANO-DE-CONCLUSAO"];
-            $formacao_array["flagBolsa"]=$especializacao['@attributes']["FLAG-BOLSA"];
-            $formacao_array["codigoAgenciaFinanciadora"]=$especializacao['@attributes']["CODIGO-AGENCIA-FINANCIADORA"];
-            $formacao_array["nomeAgencia"]=$especializacao['@attributes']["NOME-AGENCIA"];
-            $formacao_array["cargaHoraria"]=$especializacao['@attributes']["CARGA-HORARIA"];
+            $formacao_array["sequenciaFormacao"] = $especializacao['@attributes']["SEQUENCIA-FORMACAO"];
+            $formacao_array["nivel"] = $especializacao['@attributes']["NIVEL"];
+            $formacao_array["tituloDaMonografia"] = $especializacao['@attributes']["TITULO-DA-MONOGRAFIA"];
+            $formacao_array["nomeDoOrientador"] = $especializacao['@attributes']["NOME-DO-ORIENTADOR"];
+            $formacao_array["codigoInstituicao"] = $especializacao['@attributes']["CODIGO-INSTITUICAO"];
+            $formacao_array["nomeInstituicao"] = $especializacao['@attributes']["NOME-INSTITUICAO"];
+            $formacao_array["codigoCurso"] = $especializacao['@attributes']["CODIGO-CURSO"];
+            $formacao_array["nomeCurso"] = $especializacao['@attributes']["NOME-CURSO"];
+            $formacao_array["statusDoCurso"] = $especializacao['@attributes']["STATUS-DO-CURSO"];
+            $formacao_array["anoDeInicio"] = $especializacao['@attributes']["ANO-DE-INICIO"];
+            $formacao_array["anoDeConclusao"] = $especializacao['@attributes']["ANO-DE-CONCLUSAO"];
+            $formacao_array["flagBolsa"] = $especializacao['@attributes']["FLAG-BOLSA"];
+            $formacao_array["codigoAgenciaFinanciadora"] = $especializacao['@attributes']["CODIGO-AGENCIA-FINANCIADORA"];
+            $formacao_array["nomeAgencia"] = $especializacao['@attributes']["NOME-AGENCIA"];
+            $formacao_array["cargaHoraria"] = $especializacao['@attributes']["CARGA-HORARIA"];
 
             $doc_curriculo_array["doc"]["formacao_academica_titulacao_especializacao"][] = $formacao_array;
             unset($formacao_array);
@@ -249,25 +249,25 @@ if (isset($curriculo->{'DADOS-GERAIS'}->{'FORMACAO-ACADEMICA-TITULACAO'})) {
     if (isset($curriculo->{'DADOS-GERAIS'}->{'FORMACAO-ACADEMICA-TITULACAO'}->{'MESTRADO'})) {
         foreach ($curriculo->{'DADOS-GERAIS'}->{'FORMACAO-ACADEMICA-TITULACAO'}->{'MESTRADO'} as $mestrado) {
             $mestrado = get_object_vars($mestrado);
-            $formacao_array["sequenciaFormacao"]=$mestrado['@attributes']["SEQUENCIA-FORMACAO"];
-            $formacao_array["nivel"]=$mestrado['@attributes']["NIVEL"];
-            $formacao_array["tituloDaDissertacaoTese"]=$mestrado['@attributes']["TITULO-DA-DISSERTACAO-TESE"];
-            $formacao_array["nomeDoOrientador"]=$mestrado['@attributes']["NOME-COMPLETO-DO-ORIENTADOR"];
-            $formacao_array["nomeDoCoOrientador"]=$mestrado['@attributes']["NOME-DO-CO-ORIENTADOR"];
-            $formacao_array["codigoInstituicao"]=$mestrado['@attributes']["CODIGO-INSTITUICAO"];
-            $formacao_array["nomeInstituicao"]=$mestrado['@attributes']["NOME-INSTITUICAO"];
-            $formacao_array["codigoCurso"]=$mestrado['@attributes']["CODIGO-CURSO"];
-            $formacao_array["codigoCursoCapes"]=$mestrado['@attributes']["CODIGO-CURSO-CAPES"];
-            $formacao_array["nomeCurso"]=$mestrado['@attributes']["NOME-CURSO"];
-            $formacao_array["codigoAreaCurso"]=$mestrado['@attributes']["CODIGO-AREA-CURSO"];
-            $formacao_array["statusDoCurso"]=$mestrado['@attributes']["STATUS-DO-CURSO"];
-            $formacao_array["anoDeInicio"]=$mestrado['@attributes']["ANO-DE-INICIO"];
-            $formacao_array["anoDeConclusao"]=$mestrado['@attributes']["ANO-DE-CONCLUSAO"];
-            $formacao_array["flagBolsa"]=$mestrado['@attributes']["FLAG-BOLSA"];
-            $formacao_array["tipoMestrado"]=$mestrado['@attributes']["TIPO-MESTRADO"];
-            $formacao_array["codigoAgenciaFinanciadora"]=$mestrado['@attributes']["CODIGO-AGENCIA-FINANCIADORA"];
-            $formacao_array["nomeAgencia"]=$mestrado['@attributes']["NOME-AGENCIA"];
-            $formacao_array["anoDeObtencaoDoTitulo"]=$mestrado['@attributes']["ANO-DE-OBTENCAO-DO-TITULO"];
+            $formacao_array["sequenciaFormacao"] = $mestrado['@attributes']["SEQUENCIA-FORMACAO"];
+            $formacao_array["nivel"] = $mestrado['@attributes']["NIVEL"];
+            $formacao_array["tituloDaDissertacaoTese"] = $mestrado['@attributes']["TITULO-DA-DISSERTACAO-TESE"];
+            $formacao_array["nomeDoOrientador"] = $mestrado['@attributes']["NOME-COMPLETO-DO-ORIENTADOR"];
+            $formacao_array["nomeDoCoOrientador"] = $mestrado['@attributes']["NOME-DO-CO-ORIENTADOR"];
+            $formacao_array["codigoInstituicao"] = $mestrado['@attributes']["CODIGO-INSTITUICAO"];
+            $formacao_array["nomeInstituicao"] = $mestrado['@attributes']["NOME-INSTITUICAO"];
+            $formacao_array["codigoCurso"] = $mestrado['@attributes']["CODIGO-CURSO"];
+            $formacao_array["codigoCursoCapes"] = $mestrado['@attributes']["CODIGO-CURSO-CAPES"];
+            $formacao_array["nomeCurso"] = $mestrado['@attributes']["NOME-CURSO"];
+            $formacao_array["codigoAreaCurso"] = $mestrado['@attributes']["CODIGO-AREA-CURSO"];
+            $formacao_array["statusDoCurso"] = $mestrado['@attributes']["STATUS-DO-CURSO"];
+            $formacao_array["anoDeInicio"] = $mestrado['@attributes']["ANO-DE-INICIO"];
+            $formacao_array["anoDeConclusao"] = $mestrado['@attributes']["ANO-DE-CONCLUSAO"];
+            $formacao_array["flagBolsa"] = $mestrado['@attributes']["FLAG-BOLSA"];
+            $formacao_array["tipoMestrado"] = $mestrado['@attributes']["TIPO-MESTRADO"];
+            $formacao_array["codigoAgenciaFinanciadora"] = $mestrado['@attributes']["CODIGO-AGENCIA-FINANCIADORA"];
+            $formacao_array["nomeAgencia"] = $mestrado['@attributes']["NOME-AGENCIA"];
+            $formacao_array["anoDeObtencaoDoTitulo"] = $mestrado['@attributes']["ANO-DE-OBTENCAO-DO-TITULO"];
 
             if (isset($mestrado["PALAVRAS-CHAVE"])) {
                 $array_result_pc = processaPalavrasChaveFormacaoLattes($mestrado["PALAVRAS-CHAVE"]);
@@ -564,6 +564,8 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})) {
         }
 
         // Constroi sha256
+        $sha_array[] = $doc["doc"]["lattes_ids"][0];
+        $sha_array[] = $doc["doc"]["tipo"];
         $sha_array[] = $doc["doc"]["Lattes"]["natureza"];
         $sha_array[] = $doc["doc"]["name"];
         $sha_array[] = $doc["doc"]["datePublished"];
@@ -659,6 +661,8 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'ARTIGOS-PUBLICADOS'})) {
         if (!empty($doc["doc"]["doi"])) {
             $sha256 = hash('sha256', $doc["doc"]["doi"]);
         } else {
+            $sha_array[] = $doc["doc"]["lattes_ids"][0];
+            $sha_array[] = $doc["doc"]["tipo"];
             $sha_array[] = $doc["doc"]["Lattes"]["natureza"];
             $sha_array[] = $doc["doc"]["name"];
             $sha_array[] = $doc["doc"]["datePublished"];
@@ -758,6 +762,8 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'LIVROS-E-CAPITULOS'})) {
             } elseif (!empty($doc["doc"]["isbn"])) {
                 $sha256 = hash('sha256', $doc["doc"]["isbn"]);
             } else {
+                $sha_array[] = $doc["doc"]["lattes_ids"][0];
+                $sha_array[] = $doc["doc"]["tipo"];
                 $sha_array[] = $doc["doc"]["Lattes"]["natureza"];
                 $sha_array[] = $doc["doc"]["name"];
                 $sha_array[] = $doc["doc"]["datePublished"];
@@ -847,7 +853,9 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'LIVROS-E-CAPITULOS'})) {
             }
 
             // Constroi sha256
-                
+
+            $sha_array[] = $doc["doc"]["lattes_ids"][0];
+            $sha_array[] = $doc["doc"]["tipo"];
             $sha_array[] = $doc["doc"]["Lattes"]["natureza"];
             $sha_array[] = $doc["doc"]["name"];
             $sha_array[] = $doc["doc"]["datePublished"];
@@ -942,6 +950,8 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TEXTOS-EM-JORNAIS-OU-REVISTA
         if (!empty($doc["doc"]["doi"])) {
             $sha256 = hash('sha256', $doc["doc"]["doi"]);
         } else {
+            $sha_array[] = $doc["doc"]["lattes_ids"][0];
+            $sha_array[] = $doc["doc"]["tipo"];
             $sha_array[] = $doc["doc"]["Lattes"]["natureza"];
             $sha_array[] = $doc["doc"]["name"];
             $sha_array[] = $doc["doc"]["datePublished"];
@@ -1037,10 +1047,11 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'DEMAIS-TIPOS-DE-PRODUCAO-BIB
             if (!empty($doc["doc"]["doi"])) {
                 $sha256 = hash('sha256', $doc["doc"]["doi"]);
             } else {
+                $sha_array[] = $doc["doc"]["lattes_ids"][0];
+                $sha_array[] = $doc["doc"]["tipo"];                
                 $sha_array[] = $doc["doc"]["Lattes"]["natureza"];
                 $sha_array[] = $doc["doc"]["name"];
                 $sha_array[] = $doc["doc"]["datePublished"];
-                $sha_array[] = $doc["doc"]["formacaoInstrumental"];
                 $sha_array[] = $doc["doc"]["url"];
                 $sha256 = hash('sha256', ''.implode("", $sha_array).'');
             }
@@ -1131,10 +1142,11 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'DEMAIS-TIPOS-DE-PRODUCAO-BIB
             if (!empty($doc["doc"]["doi"])) {
                 $sha256 = hash('sha256', $doc["doc"]["doi"]);
             } else {
+                $sha_array[] = $doc["doc"]["lattes_ids"][0];
+                $sha_array[] = $doc["doc"]["tipo"];                
                 $sha_array[] = $doc["doc"]["Lattes"]["natureza"];
                 $sha_array[] = $doc["doc"]["name"];
                 $sha_array[] = $doc["doc"]["datePublished"];
-                $sha_array[] = $doc["doc"]["formacaoInstrumental"];
                 $sha_array[] = $doc["doc"]["url"];
                 $sha256 = hash('sha256', ''.implode("", $sha_array).'');
             }
@@ -1227,6 +1239,8 @@ if (isset($curriculo->{'PRODUCAO-TECNICA'})) {
             if (!empty($doc["doc"]["doi"])) {
                 $sha256 = hash('sha256', $doc["doc"]["doi"]);
             } else {
+                $sha_array[] = $doc["doc"]["lattes_ids"][0];
+                $sha_array[] = $doc["doc"]["tipo"];                
                 $sha_array[] = $doc["doc"]["Lattes"]["natureza"];
                 $sha_array[] = $doc["doc"]["name"];
                 $sha_array[] = $doc["doc"]["datePublished"];
@@ -1311,6 +1325,8 @@ if (isset($curriculo->{'PRODUCAO-TECNICA'})) {
             if (!empty($doc["doc"]["doi"])) {
                 $sha256 = hash('sha256', $doc["doc"]["doi"]);
             } else {
+                $sha_array[] = $doc["doc"]["lattes_ids"][0];
+                $sha_array[] = $doc["doc"]["tipo"];                
                 $sha_array[] = $doc["doc"]["Lattes"]["natureza"];
                 $sha_array[] = $doc["doc"]["name"];
                 $sha_array[] = $doc["doc"]["datePublished"];
@@ -1413,6 +1429,8 @@ if (isset($curriculo->{'OUTRA-PRODUCAO'})) {
                 if (!empty($doc["doc"]["doi"])) {
                     $sha256 = hash('sha256', $doc["doc"]["doi"]);
                 } else {
+                    $sha_array[] = $doc["doc"]["lattes_ids"][0];
+                    $sha_array[] = $doc["doc"]["tipo"];                    
                     $sha_array[] = $doc["doc"]["Lattes"]["natureza"];
                     $sha_array[] = $doc["doc"]["name"];
                     $sha_array[] = $doc["doc"]["datePublished"];

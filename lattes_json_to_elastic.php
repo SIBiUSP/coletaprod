@@ -33,9 +33,9 @@
     }
                 
     if (isset($_GET["id_lattes"])) {
-        $cursor = dadosExternos::coleta_json_lattes($_GET["id_lattes"]);
+        $cursor = DadosExternos::coleta_json_lattes($_GET["id_lattes"]);
     } elseif (isset($_GET["path_download"])) {
-        $cursor = dadosExternos::coleta_json_download_lattes($_GET["path_download"]);
+        $cursor = DadosExternos::coleta_json_download_lattes($_GET["path_download"]);
     } else {
         echo '<p>Não foi informado nenhum ID</p>';
     }  

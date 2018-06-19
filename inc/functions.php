@@ -464,7 +464,7 @@ class paginaInicial {
 /**
  * Classe que obtem dados de fontes externas
  */
-class dadosExternos {
+class DadosExternos {
     
     static function query_bdpi($query_title,$query_year,$sha256) 
     {  
@@ -905,7 +905,7 @@ class processaLattes {
         }
 
 
-        $doc_obra_array["doc"]["bdpi"] = dadosExternos::query_bdpi_index($doc_obra_array["doc"]["titulo"],$doc_obra_array["doc"]["ano"]);
+        $doc_obra_array["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc_obra_array["doc"]["titulo"],$doc_obra_array["doc"]["ano"]);
         $doc_obra_array["doc"]["concluido"] = "Não";
         $doc_obra_array["doc_as_upsert"] = true;
 
