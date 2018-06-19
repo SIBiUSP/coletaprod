@@ -117,7 +117,7 @@
 <br/>
 <form class="uk-form" action="doi_to_elastic.php" method="get">
     <fieldset data-uk-margin>
-        <legend>Inserir um DOI de artigo que queira incluir (sem http://dx.doi.org/)</legend>
+        <legend>Inserir um DOI de artigo que queira incluir (sem http://doi.org/)</legend>
         <input type="text" placeholder="Insira um DOI" class="uk-form-width-medium" name="doi" data-validation="required">
         <input type="text" placeholder="TAG para formar um grupo" class="uk-form-width-medium" name="tag">
         <button class="uk-button-primary">Incluir</button><br/>                                    

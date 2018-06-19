@@ -503,6 +503,7 @@ class DadosExternos {
                     echo ''.$autores['person']['name'].', ';
                 }
                 if (isset($match["_source"]["doi"])) {
+                    echo '<p>DOI: '.$match["_source"]["doi"].'</p>';
                     $doc["doc"]["bdpi"]["doi_bdpi"] = $match["_source"]["doi"];
                 } 
                 echo '</p>';
@@ -599,7 +600,7 @@ class DadosExternos {
     {
         global $client; 
         global $index;
-        $url = "https://api.crossref.org/v1/works/http://dx.doi.org/$doi";
+        $url = "https://api.crossref.org/v1/works/http://doi.org/$doi";
         $json = file_get_contents($url);
         $data = json_decode($json, true);
 
@@ -1334,7 +1335,7 @@ class Exporters
         
         
         if (isset($r["_source"]['doi'])){                                            
-            $record[] = '000000001 8564  L $$zClicar sobre o botão para acesso ao texto completo$$uhttps://dx.doi.org/'.$r["_source"]["doi"].'$$3DOI';           
+            $record[] = '000000001 8564  L $$zClicar sobre o botão para acesso ao texto completo$$uhttps://doi.org/'.$r["_source"]["doi"].'$$3DOI';           
         } else {
             $record[] = '000000001 8564  L $$zClicar sobre o botão para acesso ao texto completo$$u$$3DOI';
         }                          

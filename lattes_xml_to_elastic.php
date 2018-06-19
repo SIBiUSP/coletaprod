@@ -131,8 +131,11 @@ $doc_curriculo_array["doc"]["unidadeUSP"][] = $_REQUEST['unidadeUSP'];
 $doc_curriculo_array["doc"]["codpes"] = $_REQUEST['codpes'];
 if (isset($_REQUEST['tipvin'])) {
     $doc_curriculo_array["doc"]["tipvin"] = $_REQUEST['tipvin'];
-}            
+}
+print_r($curriculo->attributes()->{'DATA-ATUALIZACAO'});            
 $doc_curriculo_array["doc"]["data_atualizacao"] = substr((string)$curriculo->attributes()->{'DATA-ATUALIZACAO'}, 4, 4)."-".substr((string)$curriculo->attributes()->{'DATA-ATUALIZACAO'}, 2, 2);
+echo "<br/>";
+print_r($doc_curriculo_array["doc"]["data_atualizacao"]);
 $doc_curriculo_array["doc"]["nome_completo"] = (string)$curriculo->{'DADOS-GERAIS'}->attributes()->{'NOME-COMPLETO'};
 $doc_curriculo_array["doc"]["nome_em_citacoes_bibliograficas"] = (string)$curriculo->{'DADOS-GERAIS'}->attributes()->{'NOME-EM-CITACOES-BIBLIOGRAFICAS'};
 if (isset($curriculo->{'DADOS-GERAIS'}->attributes()->{'NACIONALIDADE'})) {
@@ -1486,7 +1489,7 @@ if (isset($curriculo->{'OUTRA-PRODUCAO'})) {
 
 
 
-sleep(5); echo '<script>window.location = \'result_trabalhos.php?filter[]=lattes_ids:"'.$curriculo->attributes()->{'NUMERO-IDENTIFICADOR'}.'"\'</script>';
+//sleep(5); echo '<script>window.location = \'result_trabalhos.php?filter[]=lattes_ids:"'.$curriculo->attributes()->{'NUMERO-IDENTIFICADOR'}.'"\'</script>';
 
 ?>
 

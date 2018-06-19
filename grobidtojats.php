@@ -114,7 +114,7 @@ echo $proc->transformToXML($xml);
 // $record_blob[] = '000000001 7730  L $$t'.(string)$xml->teiHeader->fileDesc->sourceDesc->biblStruct->monogr->title.'$$x'.(string)$xml->teiHeader->fileDesc->sourceDesc->biblStruct->monogr->idno.'$$hv. , n. , p. - , AAAA\n';
 
 // if ($xml->teiHeader->fileDesc->sourceDesc->biblStruct->idno->attributes()->type == "DOI"){
-//     $record_blob[] = '000000001 8564  L $$zClicar sobre o botão para acesso ao texto completo$$uhttps://dx.doi.org/'.(string)$xml->teiHeader->fileDesc->sourceDesc->biblStruct->idno.'$$3DOI\n';
+//     $record_blob[] = '000000001 8564  L $$zClicar sobre o botão para acesso ao texto completo$$uhttps://doi.org/'.(string)$xml->teiHeader->fileDesc->sourceDesc->biblStruct->idno.'$$3DOI\n';
 // }
 
 // $record_blob[] = '000000001 945   L $$aP$$bARTIGO DE PERIODICO$$c01$$j'.substr($date, 0, 4).'$$l\n';
