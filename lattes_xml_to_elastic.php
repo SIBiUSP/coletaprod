@@ -598,6 +598,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TRABALHOS-EM-EVENTOS'})) {
         unset($detalhamentoDoTrabalho);
         unset($obra);
         unset($doc);
+        unset($sha_array);
         unset($sha256);
         flush();
 
@@ -697,6 +698,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'ARTIGOS-PUBLICADOS'})) {
         unset($detalhamentoDoTrabalho);
         unset($obra);
         unset($doc);
+        unset($sha_array);
         unset($sha256);
         flush();
 
@@ -800,6 +802,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'LIVROS-E-CAPITULOS'})) {
             unset($detalhamentoDoTrabalho);
             unset($obra);
             unset($doc);
+            unset($sha_array);
             unset($sha256);
             flush();
 
@@ -892,6 +895,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'LIVROS-E-CAPITULOS'})) {
             unset($detalhamentoDoTrabalho);
             unset($obra);
             unset($doc);
+            unset($sha_array);
             unset($sha256);
             flush();
 
@@ -992,6 +996,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'TEXTOS-EM-JORNAIS-OU-REVISTA
         unset($detalhamentoDoTrabalho);
         unset($obra);
         unset($doc);
+        unset($sha_array);
         unset($sha256);
         flush();
 
@@ -1089,6 +1094,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'DEMAIS-TIPOS-DE-PRODUCAO-BIB
             unset($detalhamentoDoTrabalho);
             unset($obra);
             unset($doc);
+            unset($sha_array);
             unset($sha256);
             flush();
 
@@ -1186,6 +1192,7 @@ if (isset($curriculo->{'PRODUCAO-BIBLIOGRAFICA'}->{'DEMAIS-TIPOS-DE-PRODUCAO-BIB
             unset($detalhamentoDoTrabalho);
             unset($obra);
             unset($doc);
+            unset($sha_array);
             unset($sha256);
             flush();
 
@@ -1285,6 +1292,7 @@ if (isset($curriculo->{'PRODUCAO-TECNICA'})) {
             unset($detalhamentoDoTrabalho);
             unset($obra);
             unset($doc);
+            unset($sha_array);
             unset($sha256);
             flush();
 
@@ -1373,6 +1381,7 @@ if (isset($curriculo->{'PRODUCAO-TECNICA'})) {
             unset($detalhamentoDoTrabalho);
             unset($obra);
             unset($doc);
+            unset($sha_array);
             unset($sha256);
             flush();
 
@@ -1479,6 +1488,7 @@ if (isset($curriculo->{'OUTRA-PRODUCAO'})) {
                 unset($detalhamentoDoTrabalho);
                 unset($obra);
                 unset($doc);
+                unset($sha_array);
                 unset($sha256);
                 flush();
 
