@@ -89,7 +89,8 @@
                         <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">Buscar</button>                
                     </div>    
                 </div>
-            </form>        
+            </form> 
+            <p><a href="result_trabalhos.php?notFilter[]=doi:%22%22&search[]=-_exists_:bdpi.doi_bdpi&filter[]=bdpi.existe:%22Sim%22">Inconsistência: Trabalhos com DOI no Lattes e não preenchido na BDPI</a></p>       
         </li>
         <li>
         
