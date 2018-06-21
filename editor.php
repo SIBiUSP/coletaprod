@@ -41,7 +41,7 @@
                 <?php print_r($cursor);?>
                 <br/><br/><br/>
  
-                <form class="uk-form uk-form-horizontal" action="result.php" method="get">
+                <form class="uk-form uk-form-horizontal" action="result_trabalhos.php" method="get">
                     <div class="uk-form-row">                
                 
                         
