@@ -92,28 +92,51 @@
 
 	    <div class="uk-width-1-1@s uk-width-1-1@m">
 	    
-		    <?php if (!empty($_SERVER["QUERY_STRING"])) : ?>
-		    				    
-			<p class="uk-margin-top" uk-margin>
-				<a class="uk-button uk-button-default uk-button-small" href="index.php">Começar novamente</a>	
-				<?php 
-				
-					if (!empty($_GET["search"])){
-                        foreach($_GET["search"] as $filters) {
-                            $filters_array[] = $filters;
-                            $name_field = explode(":",$filters);	
-                            $filters = str_replace($name_field[0].":","",$filters);				
-                            $diff["search"] = array_diff($_GET["search"],$filters_array);						
-                            $url_push = $_SERVER['SERVER_NAME'].$_SERVER["SCRIPT_NAME"].'?'.http_build_query($diff);
-                            echo '<a class="uk-button uk-button-default uk-button-small" href="http://'.$url_push.'">'.$filters.' <span uk-icon="icon: close; ratio: 1"></span></a>';
-                            unset($filters_array); 	
-                        }
-                    }	
-	
-				?>
-				
-			</p>
-		    <?php endif;?> 
+        <!-- List of filters - Start -->
+        <?php if (!empty($_SERVER["QUERY_STRING"])) : ?>
+        <p class="uk-margin-top" uk-margin>
+            <a class="uk-button uk-button-default uk-button-small" href="index.php"><?php echo $t->gettext('Começar novamente'); ?></a>	
+            <?php 
+            if (!empty($_GET["search"])) {
+                foreach ($_GET["search"] as $querySearch) {
+                    $querySearchArray[] = $querySearch;
+                    $name_field = explode(":", $querySearch);
+                    $querySearch = str_replace($name_field[0].":", "", $querySearch);
+                    $diff["search"] = array_diff($_GET["search"], $querySearchArray);
+                    $url_push = $_SERVER['SERVER_NAME'].$_SERVER["SCRIPT_NAME"].'?'.http_build_query($diff);
+                    echo '<a class="uk-button uk-button-default uk-button-small" href="http://'.$url_push.'">'.$querySearch.' <span uk-icon="icon: close; ratio: 1"></span></a>';
+                    unset($querySearchArray);
+                }
+            }
+                
+            if (!empty($_GET["filter"])) {
+                foreach ($_GET["filter"] as $filters) {
+                    $filters_array[] = $filters;
+                    $name_field = explode(":", $filters);
+                    $filters = str_replace($name_field[0].":", "", $filters);
+                    $diff["filter"] = array_diff($_GET["filter"], $filters_array);
+                    $url_push = $_SERVER['SERVER_NAME'].$_SERVER["SCRIPT_NAME"].'?'.http_build_query($diff);
+                    echo '<a class="uk-button uk-button-primary uk-button-small" href="http://'.$url_push.'">Filtrado por: '.$filters.' <span uk-icon="icon: close; ratio: 1"></span></a>';
+                    unset($filters_array);
+                }
+            }
+            
+            if (!empty($_GET["notFilter"])) {
+                foreach ($_GET["notFilter"] as $notFilters) {
+                    $notFiltersArray[] = $notFilters;
+                    $name_field = explode(":", $notFilters);
+                    $notFilters = str_replace($name_field[0].":", "", $notFilters);
+                    $diff["notFilter"] = array_diff($_GET["notFilter"], $notFiltersArray);
+                    $url_push = $_SERVER['SERVER_NAME'].$_SERVER["SCRIPT_NAME"].'?'.http_build_query($diff);
+                    echo '<a class="uk-button uk-button-danger uk-button-small" href="http://'.$url_push.'">Ocultando: '.$notFilters.' <span uk-icon="icon: close; ratio: 1"></span></a>';
+                    unset($notFiltersArray);
+                }
+            }                 
+            ?>
+            
+        </p>
+        <?php endif;?> 
+        <!-- List of filters - End -->
 	    
 	    </div>	
         <div class="uk-grid-divider" uk-grid>
@@ -182,7 +205,7 @@
 
                 ?>
                 </ul>
-                    <?php if(!empty($_SESSION['oauthuserdata'])): ?>
+                    <?php if (!empty($_SESSION['oauthuserdata'])) : ?>
                         <h3 class="uk-panel-title uk-margin-top">Informações administrativas</h3>
                         <ul class="uk-nav uk-nav-side uk-nav-parent-icon uk-margin-top" data-uk-nav="{multiple:true}">
                         <hr>
@@ -192,38 +215,44 @@
                         </ul>
                     <?php endif; ?>
                 <hr>
-                <form class="uk-form">
-                <fieldset>
-                    <legend>Limitar datas</legend>
-
-                    <script>
-                        $( function() {
-                        $( "#limitar-data" ).slider({
-                        range: true,
-                        min: 1900,
-                        max: 2030,
-                        values: [ 1900, 2030 ],
-                        slide: function( event, ui ) {
-                            $( "#date" ).val( "datePublished:[" + ui.values[ 0 ] + " TO " + ui.values[ 1 ] + "]" );
-                        }
-                        });
-                        $( "#date" ).val( "datePublished:[" + $( "#limitar-data" ).slider( "values", 0 ) +
-                        " TO " + $( "#limitar-data" ).slider( "values", 1 ) + "]");
-                        } );
-                    </script>
-                    <p>
-                    <label for="date">Selecionar período de tempo:</label>
-                    <input type="text" id="date" readonly style="border:0; color:#f6931f; font-weight:bold;" name="search[]">
-                    </p>        
-                    <div id="limitar-data" class="uk-margin-bottom"></div>        
-                    <?php if(!empty($_GET["search"])): ?>
-                        <?php foreach($_GET["search"] as $search_expression): ?>
-                            <input type="hidden" name="search[]" value="<?php echo str_replace('"','&quot;',$search_expression); ?>">
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                    <div class="uk-form-row"><button class="uk-button-primary">Limitar datas</button></div>
-                </fieldset>        
-                </form>
+                        <!-- Limitar por data - Início -->
+                        <form class="uk-text-small">
+                            <fieldset>
+                                <legend><?php echo 'Limitar por data'; ?></legend>
+                                <script>
+                                    $( function() {
+                                    $( "#limitar-data" ).slider({
+                                    range: true,
+                                    min: 1900,
+                                    max: 2030,
+                                    values: [ 1900, 2030 ],
+                                    slide: function( event, ui ) {
+                                        $( "#date" ).val( "datePublished:[" + ui.values[ 0 ] + " TO " + ui.values[ 1 ] + "]" );
+                                    }
+                                    });
+                                    $( "#date" ).val( "datePublished:[" + $( "#limitar-data" ).slider( "values", 0 ) +
+                                    " TO " + $( "#limitar-data" ).slider( "values", 1 ) + "]");
+                                    } );
+                                </script>
+                                <p>
+                                <label for="date"><?php echo 'Selecionar período de tempo'; ?>:</label>
+                                <input class="uk-input" type="text" id="date" readonly style="border:0; color:#f6931f;" name="search[]">
+                                </p>        
+                                <div id="limitar-data" class="uk-margin-bottom"></div>
+                                <?php if (!empty($_GET["search"])) : ?>
+                                    <?php foreach($_GET["search"] as $search_expression): ?>
+                                        <input type="hidden" name="search[]" value="<?php echo str_replace('"', '&quot;', $search_expression); ?>">
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                                <?php if (!empty($_GET["filter"])) : ?>
+                                    <?php foreach($_GET["filter"] as $filter_expression): ?>
+                                        <input type="hidden" name="filter[]" value="<?php echo str_replace('"', '&quot;', $filter_expression); ?>">
+                                    <?php endforeach; ?>
+                                <?php endif; ?>                                
+                                <button class="uk-button uk-button-primary uk-button-small"><?php echo 'Limitar datas'; ?></button>
+                            </fieldset>        
+                        </form>
+                        <!-- Limitar por data - Fim -->
                 <hr>     
                         
             </div>
@@ -232,31 +261,7 @@
         <div class="uk-width-3-4@s uk-width-4-6@m">
         
             <!-- Navegador de resultados - Início -->
-            <div class="uk-child-width-expand@s uk-grid-divider" uk-grid>
-                <div>
-                    <ul class="uk-pagination">
-                        <?php if ($page == 1) :?>
-                            <li><a href="#"><span class="uk-margin-small-right" uk-pagination-previous></span>Anterior</a></li>
-                        <?php else :?>
-                            <?php $get_data["page"] = $page-1 ; ?>
-                            <li><a href="result_trabalhos.php?<?php echo http_build_query($get_data); ?>"><span class="uk-margin-small-right" uk-pagination-previous></span> Anterior</a></li>
-                        <?php endif; ?>
-                    </ul>    
-                </div>
-                <div>
-                    <p class="uk-text-center"><?php print_r(number_format($total,0,',','.'));?> registros</p>
-                </div>
-                <div>
-                    <ul class="uk-pagination">
-                        <?php if ($total/$limit > $page): ?>
-                            <?php $get_data["page"] = $page+1 ; ?>
-                            <li class="uk-margin-auto-left"><a href="result_trabalhos.php?<?php echo http_build_query($get_data); ?>">Próxima <span class="uk-margin-small-left" uk-pagination-next></span></a></li>
-                        <?php else :?>
-                            <li class="uk-margin-auto-left"><a href="#">Próxima <span class="uk-margin-small-left" uk-pagination-next></span></a></li>
-                        <?php endif; ?>
-                    </ul>                            
-                </div>
-            </div>
+            <?php ui::pagination($page, $total, $limit, $t); ?>
             <!-- Navegador de resultados - Fim -->                    
                     
             <hr class="uk-grid-divider">           
