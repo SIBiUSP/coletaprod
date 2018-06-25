@@ -659,7 +659,9 @@ class DadosExternos {
         }    
         if (isset($data["message"]["published-online"]["date-parts"][0][0])) {
             $doc_obra_array["doc"]["datePublished"] = $data["message"]["published-online"]["date-parts"][0][0];
-        }     
+        } elseif (isset($data["message"]["published-print"]["date-parts"][0][0])) {
+            $doc_obra_array["doc"]["datePublished"] = $data["message"]["published-print"]["date-parts"][0][0];
+        }    
         if (isset($data["message"]["URL"])) {
             $doc_obra_array["doc"]["url"] = $data["message"]["URL"];
         }
