@@ -600,14 +600,16 @@ class DadosExternos {
     {
         global $client; 
         global $index;
-        $url = "https://api.crossref.org/v1/works/http://doi.org/$doi";
+        $doi = trim($doi);        
+        $url = "https://api.crossref.org/v1/works/$doi";
         $json = file_get_contents($url);
         $data = json_decode($json, true);
 
         $sha256 = hash('sha256', ''.$doi.'');
 	
-        print_r($data);
+        print_r($data["message"]);
 
+        $doc_obra_array["doc"]["type"] = "Work";
         $doc_obra_array["doc"]["source"] = "Base DOI - CrossRef";
         $doc_obra_array["doc"]["source_id"] = $doi;
         $doc_obra_array["doc"]["doi"] = $doi;     
