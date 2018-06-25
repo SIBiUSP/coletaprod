@@ -310,7 +310,7 @@
                                         Autores:
                                         <?php if (!empty($r["_source"]['author'])) : ?>
                                         <?php foreach ($r["_source"]['author'] as $autores) {
-                                            $authors_array[]='<a href="result_trabalhos.php?search[]=author.person.name.keyword:&quot;'.$autores["person"]["name"].'&quot;">'.$autores["person"]["name"].'</a>';
+                                            $authors_array[]='<a href="result_trabalhos.php?filter[]=author.person.name:&quot;'.$autores["person"]["name"].'&quot;">'.$autores["person"]["name"].'</a>';
                                         } 
                                         $array_aut = implode(", ",$authors_array);
                                         unset($authors_array);
@@ -322,8 +322,8 @@
                                     </li>
                                     
                                     <?php if (!empty($r["_source"]['artigoPublicado'])) : ?>
-                                        <li class="uk-h6">In: <a href="result_trabalhos.php?search[]=periodico.titulo_do_periodico.keyword:&quot;<?php echo $r["_source"]['artigoPublicado']['tituloDoPeriodicoOuRevista'];?>&quot;"><?php echo $r["_source"]['artigoPublicado']['tituloDoPeriodicoOuRevista'];?></a></li>
-                                        <li class="uk-h6">ISSN: <a href="result_trabalhos.php?search[]=periodico.issn.keyword:&quot;<?php echo $r["_source"]['artigoPublicado']['issn'];?>&quot;"><?php echo $r["_source"]['artigoPublicado']['issn'];?></a></li>                                        
+                                        <li class="uk-h6">In: <a href="result_trabalhos.php?filter[]=periodico.titulo_do_periodico:&quot;<?php echo $r["_source"]['artigoPublicado']['tituloDoPeriodicoOuRevista'];?>&quot;"><?php echo $r["_source"]['artigoPublicado']['tituloDoPeriodicoOuRevista'];?></a></li>
+                                        <li class="uk-h6">ISSN: <a href="result_trabalhos.php?filter[]=periodico.issn:&quot;<?php echo $r["_source"]['artigoPublicado']['issn'];?>&quot;"><?php echo $r["_source"]['artigoPublicado']['issn'];?></a></li>                                        
                                     <?php endif; ?>
                                     
                                     <?php if (!empty($r["_source"]['doi'])) : ?>
@@ -334,14 +334,14 @@
                                         Assuntos:
                                         <?php if (!empty($r["_source"]['palavras_chave'])) : ?>
                                         <?php foreach ($r["_source"]['palavras_chave'] as $assunto) : ?>
-                                            <a href="result_trabalhos.php?search[]=palavras_chave.keyword:&quot;<?php echo $assunto;?>&quot;"><?php echo $assunto;?></a>
+                                            <a href="result_trabalhos.php?filter[]=palavras_chave:&quot;<?php echo $assunto;?>&quot;"><?php echo $assunto;?></a>
                                         <?php endforeach;?>
                                         <?php endif; ?>
                                     </li>
                                     
                                     <?php if (!empty($r["_source"]['ids_match'])) : ?>  
                                     <?php foreach ($r["_source"]['ids_match'] as $id_match) : ?>
-                                        <?php compararRegistros::match_id($id_match["id_match"],$id_match["nota"]);?>
+                                        <?php compararRegistros::match_id($id_match["id_match"], $id_match["nota"]);?>
                                     <?php endforeach;?>
                                     <?php endif; ?>
                                     
