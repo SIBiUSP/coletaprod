@@ -74,7 +74,7 @@
                 <div class="uk-margin">
                     <label class="uk-form-label" for="publisher">Editora</label>
                     <div class="uk-form-controls">
-                        <input class="uk-input" id="publisher.organization.name" type="text" placeholder="Editora" name="publisher.organization.name" value="<?php echo $cursor['_source']['publisher']['organization']['name'] ?>">
+                        <input class="uk-input" id="publisher.organization.name" type="text" placeholder="Editora" name="publisher.organization.name" value="<?php if (isset($cursor['_source']['publisher']['organization']['name'])) { echo $cursor['_source']['publisher']['organization']['name']; } ?>">
                     </div>
                 </div>
             </fieldset>
