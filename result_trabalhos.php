@@ -1,41 +1,42 @@
 <!DOCTYPE html>
 <?php
-    include('inc/config.php'); 
-    include('inc/functions.php');
 
-    if (!empty($_POST)) {
-        foreach ($_POST as $key=>$value) {            
-            $var_concluido["doc"]["concluido"] = $value;
-            $var_concluido["doc"]["doc_as_upsert"] = true; 
-            elasticsearch::elastic_update($key, $type, $var_concluido);
-        }
-        sleep(6);
-        header("Refresh:0");
+require 'inc/config.php'; 
+require 'inc/functions.php';
+
+if (!empty($_POST)) {
+    foreach ($_POST as $key=>$value) {            
+        $var_concluido["doc"]["concluido"] = $value;
+        $var_concluido["doc"]["doc_as_upsert"] = true; 
+        elasticsearch::elastic_update($key, $type, $var_concluido);
     }
-    $_GET["filter"][] = "type:\"Work\"";
-    $result_get = get::analisa_get($_GET);
-    $query = $result_get['query'];
-    $limit = $result_get['limit'];
-    $page = $result_get['page'];
-    $skip = $result_get['skip'];
+    sleep(6);
+    header("Refresh:0");
+}
+$_GET["filter"][] = "type:\"Work\"";
+$result_get = get::analisa_get($_GET);
+$query = $result_get['query'];
+$limit = $result_get['limit'];
+$page = $result_get['page'];
+$skip = $result_get['skip'];
 
-    $query['sort'] = [
-        ['datePublished.keyword' => ['order' => 'desc']],
-    ];
-    
-    $params = [];
-    $params["index"] = $index;
-    $params["type"] = $type;
-    $params["size"] = $limit;
-    $params["from"] = $skip;
-    $params["body"] = $query;
-    
-    $cursor = $client->search($params);
-    $total = $cursor["hits"]["total"];
+$query['sort'] = [
+    ['datePublished.keyword' => ['order' => 'desc']],
+];
 
-    /*pagination - start*/
-    $get_data = $_GET;    
-    /*pagination - end*/      
+$params = [];
+$params["index"] = $index;
+$params["type"] = $type;
+$params["size"] = $limit;
+$params["from"] = $skip;
+$params["body"] = $query;
+
+$cursor = $client->search($params);
+$total = $cursor["hits"]["total"];
+
+/*pagination - start*/
+$get_data = $_GET;    
+/*pagination - end*/      
 
 ?>
 <html>
@@ -401,6 +402,9 @@
                                     <li class="uk-h6">
                                         <a href="tools/export.php?search[]=_id:<?php echo $r['_id'] ?>&format=alephseq" class="uk-margin-top">Exportar Alephseq</a>
                                     </li>
+                                    <li class="uk-h6">
+                                        <a href="editor.php?_id=<?php echo $r['_id'] ?>" class="uk-margin-top">Editar registro</a>
+                                    </li>                                    
                                     
                                     <p><a href="#" class="uk-margin-top" uk-toggle="target: #citacao<?php echo  $r['_id'];?>">Ver todos os dados deste registro</a></p>
                                     <div id="citacao<?php echo  $r['_id'];?>" hidden>                                        

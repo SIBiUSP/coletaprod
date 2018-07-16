@@ -1,128 +1,91 @@
 <!DOCTYPE html>
 <html lang="pt-br" dir="ltr">
     <head>
-        <?php 
-            include('inc/config.php');             
-            include('inc/meta-header.php');
-            include('inc/functions.php');
-            
-            if(!empty($_SESSION['oauthuserdata'])) { 
-                store_user($_SESSION['oauthuserdata'],$client);
-            }
+        <?php
+
+        require 'inc/config.php';             
+        require 'inc/meta-header.php';
+        require 'inc/functions.php'; 
         
-            /* Define variables */
-            define('authorUSP','authorUSP');
-            $elasticsearch = new elasticsearch();
-            $cursor = $elasticsearch->elastic_get($_GET["_id"],"trabalhos",NULL);
+        if (isset($_POST["update"])) {
+            //print_r($_POST);
+            $query["doc"]["name"] = $_POST["name"];
+            $query["doc"]["publisher"]["organization"]["name"] = $_POST["publisher_organization_name"];
+            $query["doc_as_upsert"] = true;
+            $resultado = elasticsearch::elastic_update($_POST["_id"], $type, $query);
+            //print_r($resultado);
+            sleep(5); 
+            echo '<script>window.location = \'result_trabalhos.php?filter[]=name:"'.$_POST["name"].'"\'</script>';
+        }
+
+    
+        /* Define variables */
+        $elasticsearch = new elasticsearch();
+        $cursor = $elasticsearch->elastic_get($_REQUEST["_id"], "trabalhos", null);
         ?> 
-        <title>Editor - Coleta Produção USP</title>
-        <!-- Facebook Tags - START -->
-        <meta property="og:locale" content="pt_BR">
-        <meta property="og:url" content="http://bdpi.usp.br">
-        <meta property="og:title" content="Coleta Produção USP - Página Principal">
-        <meta property="og:site_name" content="Coleta Produção USP">
-        <meta property="og:description" content="Memória documental da produção científica, técnica e artística gerada nas Unidades da Universidade de São Paulo.">
-        <meta property="og:image" content="http://www.imagens.usp.br/wp-content/uploads/USP.jpg">
-        <meta property="og:image:type" content="image/jpeg">
-        <meta property="og:image:width" content="800"> 
-        <meta property="og:image:height" content="600"> 
-        <meta property="og:type" content="website">
-        <!-- Facebook Tags - END -->
-        
+        <title>Editor - Coleta Produção USP</title>        
     </head>
 
-    <body>     
+    <body>
+        <div class="uk-container">
+        <?php require 'inc/navbar.php'; ?>         
+
+                    
+        <!-- < ?php print_r($cursor);?> <br/><br/><br/> -->
         
-        <?php include('inc/navbar.php'); ?>
-        
-        <div class="uk-container uk-container-center uk-margin-large-bottom">
-            <div class="uk-width-medium-1-1">
-                
-                <?php print_r($cursor);?>
-                <br/><br/><br/>
- 
-                <form class="uk-form uk-form-horizontal" action="result_trabalhos.php" method="get">
-                    <div class="uk-form-row">                
-                
-                        
-                        <label class="uk-form-label" for="form-h-s">Selecione a Base</label>
-                        <div class="uk-form-controls">
-                            <select id="form-h-s">
-                                <option name="base" value="01">Base 01 (Livros)</option>
-                                <option name="base" value="02">Base 02 (Seriados)</option>
-                                <option name="base" value="03">Base 03 (Teses)</option>
-                                <option name="base" value="04">Base 04 (Produção)</option>
-                            </select>
-                        </div>                                
 
+        <form class="uk-form-horizontal uk-margin-large" method="post" action="editor.php">
+            <legend class="uk-legend">Editor</legend>
+            <br/>
+            <input type="hidden" id="update" name="update" value="true">
+            <input type="hidden" id="_id" name="_id" value="<?php echo $_REQUEST["_id"]; ?>">
+            <fieldset class="uk-fieldset">
 
-                        <div class="uk-form-row">
-                            <label class="uk-form-label" for="form-h-t">Textarea</label>
-                            <div class="uk-form-controls">
-                                <textarea name="textarea" id="form-h-t" cols="30" rows="5" placeholder="Textarea text"></textarea>
-                            </div>
-                        </div>                              
-
-
-                        <div class="uk-form-row">
-                            <label class="uk-form-label" for="Título">Título</label>
-                            <div class="uk-form-controls">
-                                <textarea class="uk-width-1-1" name="245a" id="form-h-it" type="text"><?php print_r($cursor["_source"]["titulo"]);?></textarea>
-                            </div>
-                        </div>    
-                        
-<div class="form-group row list-inline">
-  <label for="references" class="col-sm-2 form-control-label">ID das citações</label>
-  <div class="col-sm-10">
-  <div class="input_fields_citation form-group">
-    <?php
-    if (!empty($cursor['citation'])) {
-        foreach ($cursor['citation'] as $ct) {
-            echo '<div><input type="text" class="form-control" id="exampleTextarea" name="citation[]" placeholder="ID da citação" value="'.$ct.'"><a href="#" class="remove_field">Remover</a></div>';
-        }
-    } else {
-        echo '<div><input type="text" class="form-control" id="exampleTextarea" name="citation[]" placeholder="ID da citação"><a href="#" class="remove_field">Remover</a></div>';
-    }
-    ?>
-  </div>
-</div>
-</div>
-<button class="add_field_citation">+ citações</button>                        
-
-
+                <legend class="uk-legend">Dados gerais sobre a obra</legend>            
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="form-horizontal-select">Base</label>
+                    <div class="uk-form-controls">
+                        <select class="uk-select" id="form-horizontal-select" name="BAS">
+                            <option value="04">Produção científica</option>
+                        </select>
                     </div>
-                
-                    <button class="uk-button-primary">Enviar</button><br/>
+                </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="doi">DOI - 024$a</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="doi" type="text" placeholder="Título" name="doi" value="<?php echo $cursor['_source']['doi'] ?>">
+                        <?php 
+                        if (isset($cursor['_source']['doi'])) {
+                            echo '<a href="https://doi.org/'.$cursor['_source']['doi'].'" target"_blank">Resolver DOI</a>';
+                        }
+                        ?>
+                    </div>
+                </div>                            
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="name">Título - 245$a</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="name" type="text" placeholder="Título" name="name" value="<?php echo $cursor['_source']['name'] ?>">
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="uk-fieldset">
 
-                </form>
-                <br/><br/><br/>
+                <legend class="uk-legend">Imprenta</legend>                   
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="publisher">Editora</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="publisher.organization.name" type="text" placeholder="Editora" name="publisher.organization.name" value="<?php echo $cursor['_source']['publisher']['organization']['name'] ?>">
+                    </div>
+                </div>
+            </fieldset>
+            <button class="uk-button uk-button-primary">Enviar</button>            
+        </form>        
 
-            </div>    
-            <?php include('inc/footer.php'); ?>
+
+        <br/><br/><br/>
+        <?php require 'inc/footer.php'; ?> 
         </div>
-        
-        
-        <?php include('inc/offcanvas.php'); ?>
 
-
-<script type="text/javascript">
-$(document).ready(function() {
-    var max_fields      = 100; //maximum input boxes allowed
-    var wrapper         = $(".input_fields_citation"); //Fields wrapper
-    var add_button      = $(".add_field_citation"); //Add button ID
-    var x = 1; //initlal text box count
-    $(add_button).click(function(e){ //on add input button click
-        e.preventDefault();
-        if(x < max_fields){ //max input box allowed
-            x++; //text box increment
-            $(wrapper).append('<div><input type="text" class="form-control" id="exampleTextarea" name="citation[]" placeholder="ID da citação"><a href="#" class="remove_field">Remover</a></div>'); //add input box
-        }
-    });
-    $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
-        e.preventDefault(); $(this).parent('div').remove(); x--;
-    })
-});
-</script>        
         
     </body>
 </html>
