@@ -878,17 +878,17 @@ class processaLattes {
         }
 
         // Constroi sha256
-        $sha256 = self::constroi_sha256 ($obra,$campos_sha256,$dadosBasicosNomeCampo,$detalhamentoNomeCampo);     
+        $sha256 = self::constroi_sha256($obra, $campos_sha256, $dadosBasicosNomeCampo, $detalhamentoNomeCampo);  
 
         // Comparador Local
         $i = 0;
         if (!empty($resultado_comparador_local["hits"]["hits"]) ) {
             foreach ($resultado_comparador_local["hits"]["hits"] as $result1) {                
-                if ($result1["_id"] != $sha256){
-                    if (!empty($result1["_id"])){
+                if ($result1["_id"] != $sha256) {
+                    if (!empty($result1["_id"])) {
                         $doc_obra_array["doc"]["ids_match"][$i]["id_match"] = $result1["_id"];
                     }
-                    if (isset($result1["_score"])){
+                    if (isset($result1["_score"])) {
                         $doc_obra_array["doc"]["ids_match"][$i]["nota"] = $result1["_score"];
                     }
                 }
@@ -897,7 +897,7 @@ class processaLattes {
         }
 
 
-        $doc_obra_array["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc_obra_array["doc"]["titulo"],$doc_obra_array["doc"]["ano"]);
+        $doc_obra_array["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc_obra_array["doc"]["titulo"], $doc_obra_array["doc"]["ano"]);
         $doc_obra_array["doc"]["concluido"] = "Não";
         $doc_obra_array["doc_as_upsert"] = true;
 
