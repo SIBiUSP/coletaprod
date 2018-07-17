@@ -130,7 +130,7 @@ class Record
         $doc["doc"]["isPartOf"]["issn"] = $row[$rowNum["ISSN"]];
         $doc["doc"]["publisher"]["organization"]["name"] = $row[$rowNum["Publisher"]];
         $doc["doc"]["scopus"]["citedby"] = $row[$rowNum["CitedBy"]];
-        $doc["doc"]["scopus"]["citedby"] = $row[$rowNum["References"]];        
+        $doc["doc"]["scopus"]["references"] = $row[$rowNum["References"]];        
         
 
         // Agência de fomento
