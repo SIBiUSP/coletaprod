@@ -177,7 +177,7 @@
 
                     echo '<hr><li>Concluído</li>';
                     $facets->facet("concluido",100,"Concluído",null,"_term",$_GET["search"]);
-                    $facets->facet("bdpi",100,"Está na BDPI?",null,"_term",$_GET["search"]);
+                    $facets->facet("bdpi",100,"Está no DEDALUS?",null,"_term",$_GET["search"]);
 
                 ?>
                 </ul>

@@ -90,7 +90,7 @@
                     </div>    
                 </div>
             </form> 
-            <p><a href="result_trabalhos.php?notFilter[]=doi:%22%22&search[]=-_exists_:bdpi.doi_bdpi&filter[]=bdpi.existe:%22Sim%22">Inconsistência: Trabalhos com DOI no Lattes e não preenchido na BDPI</a></p>       
+            <p><a href="result_trabalhos.php?notFilter[]=doi:%22%22&search[]=-_exists_:bdpi.doi_bdpi&filter[]=bdpi.existe:%22Sim%22">Inconsistência: Trabalhos com DOI no Lattes e não preenchido no DEDALUS</a></p>       
         </li>
         <li>
         
