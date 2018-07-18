@@ -381,7 +381,7 @@ if ($_GET["format"] == "table") {
         echo implode("\n",$record_array);
     }
     
-} elseif($_GET["format"] == "alephseq") {
+} elseif ($_GET["format"] == "alephseq") {
 
     $file="export_bdpi.seq";
     header("Content-Disposition: attachment; filename=$file");
@@ -389,12 +389,19 @@ if ($_GET["format"] == "table") {
     // Set directory to ROOT
     chdir('../');
     // Include essencial files
-    include('inc/config.php'); 
-    include('inc/functions.php');
+    include 'inc/config.php'; 
+    include 'inc/functions.php';
 
+    if (strpos($_GET["search"][0], '_id') !== false) {
+        $query["query"]["terms"]["_id"][] = str_replace("_id:", "", $_GET["search"][0]);
+        $result_get['page'] = 1;
+        $result_get['limit'] = 20;
+        $result_get['skip'] = 0;
+    } else {
+        $result_get = get::analisa_get($_GET);
+        $query = $result_get['query'];
+    }
 
-    $result_get = get::analisa_get($_GET);
-    $query = $result_get['query'];  
     $limit = $result_get['limit'];
     $page = $result_get['page'];
     $skip = $result_get['skip'];
@@ -416,15 +423,15 @@ if ($_GET["format"] == "table") {
     $params["from"] = $skip;
     $params["body"] = $query; 
 
-    $cursor = $client->search($params); 
+    $cursor = $client->search($params);
 
     foreach ($cursor["hits"]["hits"] as $r) { 
         /* Exportador RIS */
         $record_blob[] = Exporters::alephseq($r);
     }
     foreach ($record_blob as $record) {
-        $record_array = explode('\n',$record);
-        echo implode("\n",$record_array);
+        $record_array = explode('\n', $record);
+        echo implode("\n", $record_array);
     }   
 
 } else {
