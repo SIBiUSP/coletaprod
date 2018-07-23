@@ -8,8 +8,9 @@
         require 'inc/functions.php'; 
         
         if (isset($_POST["update"])) {
-            //print_r($_POST);
+            print_r($_POST);
             $query["doc"]["name"] = $_POST["name"];
+            $query["doc"]["datePublished"] = $_POST["datePublished"];
             $query["doc"]["publisher"]["organization"]["name"] = $_POST["publisher_organization_name"];
             $query["doc_as_upsert"] = true;
             $resultado = elasticsearch::elastic_update($_POST["_id"], $type, $query);
@@ -56,7 +57,7 @@
                         <input class="uk-input" id="doi" type="text" placeholder="Título" name="doi" value="<?php echo $cursor['_source']['doi'] ?>">
                         <?php 
                         if (isset($cursor['_source']['doi'])) {
-                            echo '<a href="https://doi.org/'.$cursor['_source']['doi'].'" target"_blank">Resolver DOI</a>';
+                            echo '<a href="https://doi.org/'.$cursor['_source']['doi'].'" target="_blank">Resolver DOI</a>';
                         }
                         ?>
                     </div>
@@ -77,6 +78,12 @@
                         <input class="uk-input" id="publisher.organization.name" type="text" placeholder="Editora" name="publisher.organization.name" value="<?php if (isset($cursor['_source']['publisher']['organization']['name'])) { echo $cursor['_source']['publisher']['organization']['name']; } ?>">
                     </div>
                 </div>
+                <div class="uk-margin">
+                    <label class="uk-form-label" for="datePublished">Data de publicação</label>
+                    <div class="uk-form-controls">
+                        <input class="uk-input" id="datePublished" type="text" placeholder="Data de publicação" name="datePublished" value="<?php if (isset($cursor['_source']['datePublished'])) { echo $cursor['_source']['datePublished']; } ?>">
+                    </div>
+                </div>                
             </fieldset>
             <button class="uk-button uk-button-primary">Enviar</button>            
         </form>        
