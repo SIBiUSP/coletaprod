@@ -476,7 +476,7 @@ class DadosExternos {
         $query["query"]["bool"]["should"][0]["multi_match"]["query"] = $query_title;
         $query["query"]["bool"]["should"][0]["multi_match"]["type"] = "cross_fields";
         $query["query"]["bool"]["should"][0]["multi_match"]["fields"][] = "name";
-        $query["query"]["bool"]["should"][0]["multi_match"]["minimum_should_match"] = "85%";
+        $query["query"]["bool"]["should"][0]["multi_match"]["minimum_should_match"] = "95%";
         $query["query"]["bool"]["should"][1]["multi_match"]["query"] = $query_year;
         $query["query"]["bool"]["should"][1]["multi_match"]["type"] = "best_fields";
         $query["query"]["bool"]["should"][1]["multi_match"]["fields"][] = "datePublished";
@@ -528,7 +528,7 @@ class DadosExternos {
         $query["query"]["bool"]["should"][0]["multi_match"]["query"] = $query_title;
         $query["query"]["bool"]["should"][0]["multi_match"]["type"] = "cross_fields";
         $query["query"]["bool"]["should"][0]["multi_match"]["fields"][] = "name";
-        $query["query"]["bool"]["should"][0]["multi_match"]["minimum_should_match"] = "85%";
+        $query["query"]["bool"]["should"][0]["multi_match"]["minimum_should_match"] = "95%";
         $query["query"]["bool"]["should"][1]["multi_match"]["query"] = $query_year;
         $query["query"]["bool"]["should"][1]["multi_match"]["type"] = "best_fields";
         $query["query"]["bool"]["should"][1]["multi_match"]["fields"][] = "datePublished";

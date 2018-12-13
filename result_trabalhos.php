@@ -423,7 +423,7 @@ $get_data = $_GET;
                                                                 foreach ($value as $valor) {
                                                                     if (is_array($valor)) {
                                                                             foreach ($valor as $valor1) {
-                                                                                echo ''.$valor1.'';
+                                                                                //echo ''.$valor1.'';
                                                                             }
                                                                         } else {
                                                                             echo ''.$valor.''; 

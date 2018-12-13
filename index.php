@@ -134,9 +134,27 @@
     </fieldset>
 </form>                         
 <br/>
+<form class="uk-form" action="incites_upload.php" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+    <fieldset data-uk-margin>
+        <legend>Enviar um arquivo do INCITES (CSV)</legend>
+        <input type="file" name="file">
+        <input type="text" placeholder="Tag para formar um grupo" class="uk-form-width-medium" name="tag">
+        <button class="uk-button-primary" name="btn_submit">Upload</button><br/>                                    
+    </fieldset>
+</form>
+<br/>
 <form class="uk-form" action="scopus_upload.php" method="post" accept-charset="utf-8" enctype="multipart/form-data">
     <fieldset data-uk-margin>
         <legend>Enviar um arquivo do Scopus (CSV - All available information)</legend>
+        <input type="file" name="file">
+        <input type="text" placeholder="Tag para formar um grupo" class="uk-form-width-medium" name="tag">
+        <button class="uk-button-primary" name="btn_submit">Upload</button><br/>                                    
+    </fieldset>
+</form>
+<br/>
+<form class="uk-form" action="scival_upload.php" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+    <fieldset data-uk-margin>
+        <legend>Enviar um arquivo do SCIVAL (CSV - All available information)</legend>
         <input type="file" name="file">
         <input type="text" placeholder="Tag para formar um grupo" class="uk-form-width-medium" name="tag">
         <button class="uk-button-primary" name="btn_submit">Upload</button><br/>                                    
