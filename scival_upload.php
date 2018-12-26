@@ -12,20 +12,14 @@ if (isset($_FILES['file'])) {
         if ($value == "Title") {
             $rowNum["title"] = $key;
         }
+        if ($value == "Authors") {
+            $rowNum["Authors"] = $key;
+        }
+        if ($value == "Number of Authors") {
+            $rowNum["numOfAuthors"] = $key;
+        }
         if ($value == "Year") {
             $rowNum["year"] = $key;
-        }
-        if ($value == "EID") {
-            $rowNum["EID"] = $key;
-        }
-        if ($value == "DOI") {
-            $rowNum["DOI"] = $key;
-        }
-        if ($value == "Language of Original Document") {
-            $rowNum["language"] = $key;
-        }
-        if ($value == "Publication-type") {
-            $rowNum["type"] = $key;
         }
         if ($value == "Scopus Source title") {
             $rowNum["sourceTitle"] = $key;
@@ -39,27 +33,56 @@ if (isset($_FILES['file'])) {
         if ($value == "Pages") {
             $pages = explode("-", $key);
             $rowNum["PageStart"] = $pages[0];
-            if (isset($pages[1])){
+            if (isset($pages[1])) {
                 $rowNum["PageEnd"] = $pages[1];
             } else {
                 $rowNum["PageEnd"] = "N/D";
-            }
-            
+            }            
         }
         if ($value == "ISSN") {
             $rowNum["ISSN"] = $key;
         }
+        if ($value == "Source-type") {
+            $rowNum["SourceType"] = $key;
+        }  
+        if ($value == "Views") {
+            $rowNum["views"] = $key;
+        }
+        if ($value == "Citations") {
+            $rowNum["citations"] = $key;
+        } 
+        if ($value == "Abstract") {
+            $rowNum["Abstract"] = $key;
+        }        
+        if ($value == "EID") {
+            $rowNum["EID"] = $key;
+        }
+        if ($value == "DOI") {
+            $rowNum["DOI"] = $key;
+        }
+        if ($value == "Publication-type") {
+            $rowNum["type"] = $key;
+        }
+        if ($value == "Institutions") {
+            $rowNum["Institutions"] = $key;
+        }
+        if ($value == "Country") {
+            $rowNum["country"] = $key;
+        }                   
+        if ($value == "Topic name") {
+            $rowNum["about"] = $key;
+        }
+
+
+
+        if ($value == "Language of Original Document") {
+            $rowNum["language"] = $key;
+        }
         if ($value == "Publisher") {
             $rowNum["Publisher"] = $key;
         }
-        if ($value == "Abstract") {
-            $rowNum["Abstract"] = $key;
-        }
         if ($value == "Funding Details") {
             $rowNum["FundingDetails"] = $key;
-        } 
-        if ($value == "Citations") {
-            $rowNum["CitedBy"] = $key;
         }
         if ($value == "References") {
             $rowNum["References"] = $key;
@@ -67,27 +90,20 @@ if (isset($_FILES['file'])) {
         if ($value == "Author Keywords") {
             $rowNum["AuthorKeywords"] = $key;
         }
-        if ($value == "Index Keywords") {
-            $rowNum["IndexKeywords"] = $key;
-        }
+
         if ($value == "Authors with affiliations") {
             $rowNum["AuthorsWithAffiliations"] = $key;
         }
-        if ($value == "Authors") {
-            $rowNum["Authors"] = $key;
-        }
-        if ($value == "Affiliations") {
-            $rowNum["Affiliations"] = $key;
-        }
+
         unset($pages);                                 
     }
 
 
     while (($row = fgetcsv($fh, 8192, ",")) !== false) {
         $doc = Record::Build($row, $rowNum, $_POST["tag"]);
-        if (!is_null($doc["doc"]["name"]) & !is_null($doc["doc"]["datePublished"])) {
-            $doc["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc["doc"]["name"], $doc["doc"]["datePublished"]);
-        }      
+        //if (!is_null($doc["doc"]["name"]) & !is_null($doc["doc"]["datePublished"])) {
+        //    $doc["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc["doc"]["name"], $doc["doc"]["datePublished"]);
+        //}      
         $sha256 = hash('sha256', ''.$doc["doc"]["source_id"].'');
         //print_r($doc);
         if (!is_null($sha256)) {
@@ -95,7 +111,7 @@ if (isset($_FILES['file'])) {
         }        
         //print_r($resultado_scopus);
         //print_r($doc["doc"]["source_id"]);
-        echo "<br/><br/><br/>";
+        //echo "<br/><br/><br/>";
         flush();        
 
     }
@@ -103,7 +119,7 @@ if (isset($_FILES['file'])) {
 }
 
 sleep(5);
-echo '<script>window.location = \'result_trabalhos.php?filter[]=type:"Work"&filter[]=tag:"'.$_POST["tag"].'"\'</script>';
+//echo '<script>window.location = \'result_trabalhos.php?filter[]=type:"Work"&filter[]=tag:"'.$_POST["tag"].'"\'</script>';
 
 class Record
 {
@@ -111,35 +127,69 @@ class Record
     {
 
         $doc["doc"]["type"] = "Work";
-        $doc["doc"]["source"] = "Base Scival";
-        $doc["doc"]["name"] = str_replace('"', '', $row[$rowNum["title"]]);
-        $doc["doc"]["datePublished"] = $row[$rowNum["year"]];
-        $doc["doc"]["source_id"] = $row[$rowNum["EID"]];
+        $doc["doc"]["source"] = "SciVal";
         $doc["doc"]["tag"][] = $tag;
-        $doc["doc"]["doi"] = $row[$rowNum["DOI"]];
-        if (isset($rowNum["language"])){
-            $doc["doc"]["language"] = $row[$rowNum["language"]];
-        }        
-        //$doc["doc"]["description"] = $row[$rowNum["Abstract"]];
+        $doc["doc"]["name"] = str_replace('"', '', $row[$rowNum["title"]]);
 
-        if ($row[$rowNum["type"]] == "Article") {
-            $doc["doc"]["tipo"] = "Artigo publicado";
-        } elseif ($row[$rowNum["type"]] == "Conference Paper") {
-            $doc["doc"]["tipo"] = "Trabalhos em eventos";
-        } else {
-            $doc["doc"]["tipo"] = $row[$rowNum["type"]];
+        // Authors
+        $authorsArray = explode(".,", $row[$rowNum["Authors"]]);
+        $i_autAff=0;
+        foreach ($authorsArray as $autAff) {
+            $doc["doc"]["author"][$i_autAff]["person"]["name"] = $autAff;
+            $i_autAff++;
         }
 
-        $doc["doc"]["isPartOf"]["name"] = $row[$rowNum["sourceTitle"]];
+        $doc["doc"]["numOfAuthors"] = $row[$rowNum["numOfAuthors"]];
+        $doc["doc"]["datePublished"] = $row[$rowNum["year"]];
+        $doc["doc"]["isPartOf"]["name"] = strtoupper($row[$rowNum["sourceTitle"]]);
         $doc["doc"]["isPartOf"]["volume"] = $row[$rowNum["Volume"]];
         $doc["doc"]["isPartOf"]["fasciculo"] = $row[$rowNum["Issue"]];
         $doc["doc"]["pageStart"] = $row[$rowNum["PageStart"]];
         if ($rowNum["PageEnd"] != "N/D") {
             $doc["doc"]["pageEnd"] = $row[$rowNum["PageEnd"]];
-        }        
+        }           
         $doc["doc"]["isPartOf"]["issn"] = $row[$rowNum["ISSN"]];
+        $doc["doc"]["isPartOf"]["SourceType"] = $row[$rowNum["SourceType"]];
+        $doc["doc"]["metrics"]["views"] = $row[$rowNum["views"]];
+        $doc["doc"]["metrics"]["source"] = "Scopus";
+        $doc["doc"]["metrics"]["citations"] = $row[$rowNum["citations"]];
+
+        $doc["doc"]["description"] = $row[$rowNum["Abstract"]];
+
+        if ($row[$rowNum["DOI"]] != "-") {
+            $doc["doc"]["doi"] = $row[$rowNum["DOI"]];
+        } 
+        $doc["doc"]["source_id"] = $row[$rowNum["EID"]];
+
+        $doc["doc"]["tipo"] = $row[$rowNum["type"]];
+
+        $countryInstitutionsArray = explode(",", $row[$rowNum["country"]]);
+        foreach ($countryInstitutionsArray as $countryInstitutions) {
+            $doc["doc"]["countryInstitution"][] = $countryInstitutions;
+        }
+
+        if (isset($rowNum["language"])) {
+            $doc["doc"]["language"] = $row[$rowNum["language"]];
+        }      
+
+        // Institutions
+        $institutionsArray = explode(",", $row[$rowNum["Institutions"]]);
+        $i_insttutions = 0;
+        foreach ($institutionsArray as $institutionsAff) {
+            $doc["doc"]["institutions"][$i_insttutions] = $institutionsAff;
+            $i_insttutions++;
+        }
+
+        $aboutArray = explode(",", $row[$rowNum["about"]]);
+        foreach ($aboutArray as $about) {
+            $doc["doc"]["about"][] = strtoupper($about);
+        }        
+        
+
+   
+
         //$doc["doc"]["publisher"]["organization"]["name"] = $row[$rowNum["Publisher"]];
-        $doc["doc"]["scopus"]["citedby"] = $row[$rowNum["CitedBy"]];
+        
         //$doc["doc"]["scopus"]["references"] = $row[$rowNum["References"]];        
         
 
@@ -164,13 +214,7 @@ class Record
         // $palavras_chave_scopus = explode(";", $row[$rowNum["IndexKeywords"]]);
         // $doc["doc"]["palavras_chave"] = array_merge($palavras_chave_authors, $palavras_chave_scopus);
 
-        // Autores
-        $authorsArray = explode(".,", $row[$rowNum["Authors"]]);
-        $i_autAff=0;
-        foreach ($authorsArray as $autAff) {
-            $doc["doc"]["author"][$i_autAff]["person"]["name"] = $autAff;
-            $i_autAff++;
-        }
+
         // $autores_nome_array = explode(",", $row[0]);
         // $autores_afiliacao_array = explode(";", $row[$rowNum["Affiliations"]]);
         // for ($i=0;$i<count($autores_nome_array);$i++) {
