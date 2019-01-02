@@ -6,7 +6,7 @@ require 'inc/functions.php';
 if (isset($_FILES['file'])) {
 
     $fh = fopen($_FILES['file']['tmp_name'], 'r+');
-    $row = fgetcsv($fh, 8192, ",");
+    $row = fgetcsv($fh, 108192, ",");
 
     foreach ($row as $key => $value) {
         if ($value == "Title") {
@@ -75,31 +75,31 @@ if (isset($_FILES['file'])) {
 
 
 
-        if ($value == "Language of Original Document") {
-            $rowNum["language"] = $key;
-        }
-        if ($value == "Publisher") {
-            $rowNum["Publisher"] = $key;
-        }
-        if ($value == "Funding Details") {
-            $rowNum["FundingDetails"] = $key;
-        }
-        if ($value == "References") {
-            $rowNum["References"] = $key;
-        }
-        if ($value == "Author Keywords") {
-            $rowNum["AuthorKeywords"] = $key;
-        }
+        // if ($value == "Language of Original Document") {
+        //     $rowNum["language"] = $key;
+        // }
+        // if ($value == "Publisher") {
+        //     $rowNum["Publisher"] = $key;
+        // }
+        // if ($value == "Funding Details") {
+        //     $rowNum["FundingDetails"] = $key;
+        // }
+        // if ($value == "References") {
+        //     $rowNum["References"] = $key;
+        // }
+        // if ($value == "Author Keywords") {
+        //     $rowNum["AuthorKeywords"] = $key;
+        // }
 
-        if ($value == "Authors with affiliations") {
-            $rowNum["AuthorsWithAffiliations"] = $key;
-        }
+        // if ($value == "Authors with affiliations") {
+        //     $rowNum["AuthorsWithAffiliations"] = $key;
+        // }
 
         unset($pages);                                 
     }
 
 
-    while (($row = fgetcsv($fh, 8192, ",")) !== false) {
+    while (($row = fgetcsv($fh, 108192, ",")) !== false) {
         $doc = Record::Build($row, $rowNum, $_POST["tag"]);
         //if (!is_null($doc["doc"]["name"]) & !is_null($doc["doc"]["datePublished"])) {
         //    $doc["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc["doc"]["name"], $doc["doc"]["datePublished"]);
@@ -112,14 +112,14 @@ if (isset($_FILES['file'])) {
         //print_r($resultado_scopus);
         //print_r($doc["doc"]["source_id"]);
         //echo "<br/><br/><br/>";
-        flush();        
+        flush();    
 
     }
-    fclose($row);
+    
 }
 
 sleep(5);
-//echo '<script>window.location = \'result_trabalhos.php?filter[]=type:"Work"&filter[]=tag:"'.$_POST["tag"].'"\'</script>';
+echo '<script>window.location = \'result_trabalhos.php?filter[]=type:"Work"&filter[]=tag:"'.$_POST["tag"].'"\'</script>';
 
 class Record
 {
@@ -128,6 +128,7 @@ class Record
 
         $doc["doc"]["type"] = "Work";
         $doc["doc"]["source"] = "SciVal";
+        $doc["doc"]["match"]["tag"][] = "SciVal";
         $doc["doc"]["tag"][] = $tag;
         $doc["doc"]["name"] = str_replace('"', '', $row[$rowNum["title"]]);
 
@@ -139,7 +140,9 @@ class Record
             $i_autAff++;
         }
 
-        $doc["doc"]["numOfAuthors"] = $row[$rowNum["numOfAuthors"]];
+        if (is_numeric($row[$rowNum["numOfAuthors"]])) {
+            $doc["doc"]["numOfAuthors"] = $row[$rowNum["numOfAuthors"]];
+        }        
         $doc["doc"]["datePublished"] = $row[$rowNum["year"]];
         $doc["doc"]["isPartOf"]["name"] = strtoupper($row[$rowNum["sourceTitle"]]);
         $doc["doc"]["isPartOf"]["volume"] = $row[$rowNum["Volume"]];

@@ -6,7 +6,7 @@ require 'inc/functions.php';
 if (isset($_FILES['file'])) {
 
     $fh = fopen($_FILES['file']['tmp_name'], 'r+');
-    $row = fgetcsv($fh, 8192, ",");
+    $row = fgetcsv($fh, 108192, ",");
 
     foreach ($row as $key => $value) {
         if ($value == "Accession Number") {
@@ -86,7 +86,7 @@ if (isset($_FILES['file'])) {
     }
 
 
-    while (($row = fgetcsv($fh, 8192, ",")) !== false) {
+    while (($row = fgetcsv($fh, 108192, ",")) !== false) {
         $doc = Record::Build($row, $rowNum, $_POST["tag"]);
         //if (!is_null($doc["doc"]["name"]) & !is_null($doc["doc"]["datePublished"])) {
         //    $doc["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc["doc"]["name"], $doc["doc"]["datePublished"]);
@@ -115,11 +115,14 @@ class Record
 
         $doc["doc"]["type"] = "Work";
         $doc["doc"]["source"] = "InCites";
+        $doc["doc"]["match"]["tag"][] = "InCites";
         $doc["doc"]["name"] = str_replace('"', '', $row[$rowNum["title"]]);
         $doc["doc"]["datePublished"] = $row[$rowNum["year"]];
         $doc["doc"]["source_id"] = $row[$rowNum["EID"]];
         $doc["doc"]["tag"][] = $tag;
-        $doc["doc"]["doi"] = $row[$rowNum["DOI"]];
+        if ($row[$rowNum["DOI"]] != "n/a") {        
+            $doc["doc"]["doi"] = $row[$rowNum["DOI"]];
+        }
         if (isset($rowNum["language"])) {
             $doc["doc"]["language"] = $row[$rowNum["language"]];
         }        

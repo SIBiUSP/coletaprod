@@ -6,7 +6,7 @@
     require 'inc/config.php'; 
     require 'inc/functions.php'; 
 
-    $query["query"]["query_string"]["query"] = "-_exists_:match.string AND _exists_:matchTag AND datePublished:[2012 TO 2016]";
+    $query["query"]["query_string"]["query"] = "-_exists_:match.string AND _exists_:match.tag AND datePublished:[2012 TO 2016]";
     $query['sort'] = [
         ['datePublished.keyword' => ['order' => 'desc']],
     ];      
@@ -15,7 +15,7 @@
     $params["index"] = $index;
     $params["type"] = $type;
     $params["size"] = 300;
-    $params["_source"] = ["doi","matchTag","name"];   
+    $params["_source"] = ["doi","match.tag","name"];   
     $params["body"] = $query;
 
     $cursor = $client->search($params);
@@ -35,24 +35,26 @@
 
     }
 
-    function query_wos($record) {
+    function query_wos($record) 
+    {
         if (!empty($record["_source"]["doi"])) {
-            query_coletaprod_doi($record["_source"]["doi"], $record["_id"], $record["_source"]["matchTag"]);
+            query_coletaprod_doi($record["_source"]["doi"], $record["_id"], $record["_source"]["match"]["tag"]);
         } else {
             //echo "<br/>Não tem doi<br/>";
             $name = str_replace('"', '', $record["_source"]["name"]);
             $name = str_replace('\\', '', $name);
-            query_coletaprod_title($name, $record["_id"], $record["_source"]["matchTag"]);
+            query_coletaprod_title($name, $record["_id"], $record["_source"]["match"]["tag"]);
         }
 
     }
 
-    function query_coletaprod_doi($doi, $original_id, $matchTagArray) {
+    function query_coletaprod_doi($doi, $original_id, $matchTagArray) 
+    {
         //echo "<br/><br/><br/>TEM DOI<br/>";
         global $index;
         global $type;
         global $client;
-        $query["query"]["query_string"]["query"] = "doi:\"$doi\" AND _exists_:matchTag";    
+        $query["query"]["query_string"]["query"] = "doi:\"$doi\" AND _exists_:match.tag";    
         $params = [];
         $params["index"] = $index;
         $params["type"] = $type;
@@ -64,8 +66,8 @@
         
         $result_matchTag = $matchTagArray;
         foreach ($cursor["hits"]["hits"] as $r) {
-            if (isset($r["_source"]["matchTag"])) {
-                $result_matchTag = array_merge($result_matchTag, $r["_source"]["matchTag"]);
+            if (isset($r["_source"]["match"]["tag"])) {
+                $result_matchTag = array_merge($result_matchTag, $r["_source"]["match"]["tag"]);
             } else {
                 $result_matchTag = $result_matchTag;
             }            
@@ -73,10 +75,10 @@
         $result_matchTag_final = array_unique($result_matchTag);
         sort($result_matchTag_final);
 
-        $doc["doc"]["matchTag"] = $result_matchTag_final;
+        $doc["doc"]["match"]["tag"] = $result_matchTag_final;
         $doc["doc"]["match"]["data"] = date("Ymd");
         $doc["doc"]["match"]["count"] = count($result_matchTag_final);
-        $doc["doc"]["match"]["string"] = implode(" - ",$result_matchTag_final);
+        $doc["doc"]["match"]["string"] = implode(" - ", $result_matchTag_final);
         $doc["doc_as_upsert"] = true;
         //echo "<br/><br/><br/><br/>";
         //print_r($doc);
@@ -85,12 +87,13 @@
 
     }
 
-    function query_coletaprod_title($title, $original_id, $matchTagArray) {
+    function query_coletaprod_title($title, $original_id, $matchTagArray) 
+    {
         //echo "<br/><br/><br/>Sim<br/>";
         global $index;
         global $type;
         global $client;
-        $query["query"]["query_string"]["query"] = "datePublished:[2012 TO 2016] AND name:\"$title\" AND _exists_:matchTag";    
+        $query["query"]["query_string"]["query"] = "datePublished:[2012 TO 2016] AND name:\"$title\" AND _exists_:match.tag"; 
         $params = [];
         $params["index"] = $index;
         $params["type"] = $type;
@@ -102,8 +105,8 @@
 
         $result_matchTag = $matchTagArray;
         foreach ($cursor["hits"]["hits"] as $r) {
-            if (isset($r["_source"]["matchTag"])) {
-                $result_matchTag = array_merge($result_matchTag, $r["_source"]["matchTag"]);
+            if (isset($r["_source"]["match"]["tag"])) {
+                $result_matchTag = array_merge($result_matchTag, $r["_source"]["match"]["tag"]);
             } else {
                 $result_matchTag = $result_matchTag;
             }            
@@ -111,10 +114,10 @@
         $result_matchTag_final = array_unique($result_matchTag);
         sort($result_matchTag_final);
 
-        $doc["doc"]["matchTag"] = $result_matchTag_final;
+        $doc["doc"]["match"]["tag"] = $result_matchTag_final;
         $doc["doc"]["match"]["data"] = date("Ymd");
         $doc["doc"]["match"]["count"] = count($result_matchTag_final);
-        $doc["doc"]["match"]["string"] = implode(" - ",$result_matchTag_final);
+        $doc["doc"]["match"]["string"] = implode(" - ", $result_matchTag_final);
         $doc["doc_as_upsert"] = true;
         //echo "<br/><br/>Título<br/><br/>";
         //print_r($doc);
@@ -122,7 +125,8 @@
         //print_r($result_elastic);    
     } 
 
-    function query_bdpi($query_title,$query_year,$sysno,$type) { 
+    function query_bdpi($query_title,$query_year,$sysno,$type) 
+    { 
         global $client;
         global $index;
         global $type;       

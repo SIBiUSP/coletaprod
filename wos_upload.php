@@ -6,7 +6,7 @@ require 'inc/functions.php';
 if (isset($_FILES['file'])) {
 
     $fh = fopen($_FILES['file']['tmp_name'], 'r+');
-    $row = fgetcsv($fh, 8192, "\t");
+    $row = fgetcsv($fh, 108192, "\t");
 
     foreach ($row as $key => $value) {
         $rowNum["type"] = 0;
@@ -82,17 +82,25 @@ if (isset($_FILES['file'])) {
     }
 
 
-    while (($row = fgetcsv($fh, 8192, "\t")) !== false) {
+    while (($row = fgetcsv($fh, 1888192, "\t")) !== false) {
         $doc = Record::Build($row, $rowNum, $_POST["tag"]);
-        if (!is_null($doc["doc"]["name"]) & !is_null($doc["doc"]["datePublished"])) {
-            $doc["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc["doc"]["name"], $doc["doc"]["datePublished"]);
-        }      
-        $sha256 = hash('sha256', ''.$doc["doc"]["source_id"].'');
-        print_r($doc);
-        if (!is_null($sha256)) {
-            $resultado_scopus = elasticsearch::elastic_update($sha256, $type, $doc);
-        }        
-        print_r($resultado_scopus);
+        //if (!is_null($doc["doc"]["name"]) & !is_null($doc["doc"]["datePublished"])) {
+        //    $doc["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc["doc"]["name"], $doc["doc"]["datePublished"]);
+        //}
+        if (isset($doc["doc"]["source_id"])) {
+            $sha256 = hash('sha256', ''.$doc["doc"]["source_id"].'');
+        } else {
+            echo "ERRO: SEM ID";
+            print_r($row);
+            echo "<br/><br/><br/>";
+            print_r($doc);
+        }
+        
+        //print_r($doc);
+        //if (!is_null($sha256)) {
+            $resultado_wos = elasticsearch::elastic_update($sha256, $type, $doc);
+        //}        
+        //print_r($resultado_wos);
         print_r($doc["doc"]["source_id"]);
         echo "<br/><br/><br/>";
         flush();
@@ -110,24 +118,27 @@ class Record
 
         $doc["doc"]["type"] = "Work";
         $doc["doc"]["source"] = "Base Web of Science";
+        $doc["doc"]["match"]["tag"][] = "WoS";
         $doc["doc"]["name"] = str_replace('"', '', $row[$rowNum["title"]]);
         $doc["doc"]["datePublished"] = $row[$rowNum["year"]];
         $doc["doc"]["source_id"] = $row[$rowNum["EID"]];
         $doc["doc"]["tag"][] = $tag;
-        $doc["doc"]["doi"] = $row[$rowNum["DOI"]];
+        if (!empty($row[$rowNum["DOI"]])) {
+            $doc["doc"]["doi"] = $row[$rowNum["DOI"]];
+        }        
         $doc["doc"]["language"] = $row[$rowNum["language"]];
         $doc["doc"]["description"] = $row[$rowNum["Abstract"]];
 
         if ($row[$rowNum["type"]] == "J") {
-            $doc["doc"]["tipo"] = "Artigo publicado";
-        } elseif ($row[$rowNum["type"]] == "Conference Paper") {
-            $doc["doc"]["tipo"] = "Trabalhos em eventos";
+            $doc["doc"]["tipo"] = "Article";
         } else {
             $doc["doc"]["tipo"] = $row[$rowNum["type"]];
         }
 
         $doc["doc"]["isPartOf"]["name"] = $row[$rowNum["sourceTitle"]];
-        $doc["doc"]["isPartOf"]["volume"] = $row[$rowNum["Volume"]];
+        if (is_numeric($row[$rowNum["Volume"]])) {
+            $doc["doc"]["isPartOf"]["volume"] = $row[$rowNum["Volume"]];
+        }
         $doc["doc"]["isPartOf"]["fasciculo"] = $row[$rowNum["Issue"]];
         $doc["doc"]["pageStart"] = $row[$rowNum["PageStart"]];
         $doc["doc"]["pageEnd"] = $row[$rowNum["PageEnd"]];
@@ -168,6 +179,7 @@ class Record
             $doc["doc"]["author"][$i_autAff]["person"]["name"] = $autAff;
             $i_autAff++;
         }
+        $doc["doc"]["numOfAuthors"] = count($doc["doc"]["author"]);
         $doc["doc_as_upsert"] = true;
         return $doc;
 
