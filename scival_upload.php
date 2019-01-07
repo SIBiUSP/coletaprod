@@ -128,6 +128,7 @@ class Record
 
         $doc["doc"]["type"] = "Work";
         $doc["doc"]["source"] = "SciVal";
+        unset($doc["doc"]["match"]["tag"]);
         $doc["doc"]["match"]["tag"][] = "SciVal";
         $doc["doc"]["tag"][] = $tag;
         $doc["doc"]["name"] = str_replace('"', '', $row[$rowNum["title"]]);
