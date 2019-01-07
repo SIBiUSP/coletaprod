@@ -6,7 +6,7 @@
     require 'inc/config.php'; 
     require 'inc/functions.php'; 
 
-    $query["query"]["query_string"]["query"] = "-_exists_:match.string AND _exists_:match.tag AND datePublished:[2012 TO 2016]";
+    $query["query"]["query_string"]["query"] = "-_exists_:match.string AND _exists_:match.tag AND datePublished:[2013 TO 2016]";
     $query['sort'] = [
         ['datePublished.keyword' => ['order' => 'desc']],
     ];      
@@ -14,8 +14,8 @@
     $params = [];
     $params["index"] = $index;
     $params["type"] = $type;
-    $params["size"] = 300;
-    $params["_source"] = ["doi","match.tag","name"];   
+    $params["size"] = 100;
+    $params["_source"] = ["doi","match.tag","name","author","datePublished"];   
     $params["body"] = $query;
 
     $cursor = $client->search($params);
@@ -24,27 +24,19 @@
     echo 'Registros faltantes: '.$total.'';
     echo '<br/><br/>';
 
-    foreach ($cursor["hits"]["hits"] as $r) {
-
-        //print_r($r);
-        query_wos($r);
-        // echo 'Título: '.$r["_source"]["name"].' e ano: '.$r["_source"]["datePublished"].' e sysno: '.$r["_id"].'';
-        // echo '<br/>';
-        // query_bdpi($r["_source"]["name"], $r["_source"]["datePublished"], $r["_id"], $r["_source"]["type"]);
-
-
-    }
-
-    function query_wos($record) 
-    {
-        if (!empty($record["_source"]["doi"])) {
+    foreach ($cursor["hits"]["hits"] as $record) {
+        //print_r($record["_id"]);
+        if (!empty($record["_source"]["doi"])) {             
             query_coletaprod_doi($record["_source"]["doi"], $record["_id"], $record["_source"]["match"]["tag"]);
         } else {
-            //echo "<br/>Não tem doi<br/>";
             $name = str_replace('"', '', $record["_source"]["name"]);
             $name = str_replace('\\', '', $name);
-            query_coletaprod_title($name, $record["_id"], $record["_source"]["match"]["tag"]);
+            $author_name = "";
+            //query_coletaprod_title($name, $record["_id"], $record["_source"]["match"]["tag"]);
+            comparaprod($name, $author_name, $record["_source"]["datePublished"], $record["_id"], $record["_source"]["match"]["tag"]);
         }
+        //echo "<br/><br/><br/>";
+
 
     }
 
@@ -93,7 +85,7 @@
         global $index;
         global $type;
         global $client;
-        $query["query"]["query_string"]["query"] = "datePublished:[2012 TO 2016] AND name:\"$title\" AND _exists_:match.tag"; 
+        $query["query"]["query_string"]["query"] = "datePublished:[2013 TO 2016] AND name:\"$title\" AND _exists_:match.tag"; 
         $params = [];
         $params["index"] = $index;
         $params["type"] = $type;
@@ -119,100 +111,72 @@
         $doc["doc"]["match"]["count"] = count($result_matchTag_final);
         $doc["doc"]["match"]["string"] = implode(" - ", $result_matchTag_final);
         $doc["doc_as_upsert"] = true;
-        //echo "<br/><br/>Título<br/><br/>";
-        //print_r($doc);
         $result_elastic = elasticsearch::elastic_update($original_id, $type, $doc);
-        //print_r($result_elastic);    
     } 
 
-    function query_bdpi($query_title,$query_year,$sysno,$type) 
-    { 
-        global $client;
+    function comparaprod($title, $author_name, $year, $original_id, $matchTagArray) 
+    {
         global $index;
-        global $type;       
+        global $type;
+        global $client;
+
         $query = '
         {
-            "min_score": 80,
+            "min_score": 10,
             "query":{
                 "bool": {
                     "should": [	
                         {
                             "multi_match" : {
-                                "query":      "'.str_replace('"', '', $query_title).'",
+                                "query":      "'.str_replace('"', '', $title).'",
                                 "type":       "cross_fields",
                                 "fields":     [ "name" ],
                                 "minimum_should_match": "90%" 
                              }
-                        },
+                        },                        	    
                         {
                             "multi_match" : {
-                                "query":      "'.$type.'",
-                                "type":       "cross_fields",
-                                "fields":     [ "type" ],
-                                "minimum_should_match": "90%" 
-                             }
-                        },	                        	    
-                        {
-                            "multi_match" : {
-                                "query":      "'.$query_year.'",
+                                "query":      "'.$year.'",
                                 "type":       "best_fields",
                                 "fields":     [ "datePublished" ],
                                 "minimum_should_match": "75%" 
                             }
                         }
-                    ],
-                    "must_not" : {
-                        "term" : { "sysno" : "'.$sysno.'" }
-                      },                    
-                    "minimum_should_match" : 2               
+                    ],                    
+                    "minimum_should_match" : 1              
                 }
             }
         }
-        ';
-
+        ';        
+        
+        
         $params = [];
         $params["index"] = $index;
         $params["type"] = $type;
-        $params["size"] = 100;
-        $params["body"] = $query; 
-    
+        $params["size"] = 1000;
+        $params["body"] = $query;    
         $cursor = $client->search($params);
-
-        //print_r($cursor);
-
-        if ($cursor["hits"]["total"] > 0) {
-
-            echo "Sim";
-            print_r($cursor);
+        $total = $cursor["hits"]["total"];         
 
 
-            // echo '<div class="uk-alert">';
-            // echo '<h3>Registros similares na BDPI</h3>';
-            // foreach ($data["hits"]["hits"] as $match){
-            //     echo '<p>Nota de proximidade: '.$match["_score"].' - <a href="http://bdpi.usp.br/single.php?_id='.$match["_id"].'">'.$match["_source"]["type"].' - '.$match["_source"]["name"].' ('.$match["_source"]["datePublished"].')</a><br/> Autores: ';   
-            //     foreach ($match["_source"]['author'] as $autores) {
-            //         echo ''.$autores['person']['name'].', ';
-            //     }
-            //     if (isset($match["_source"]["doi"])){
-            //         $doc["doc"]["bdpi"]["doi_bdpi"] = $match["_source"]["doi"];
-            //     } else {
-                    
-            //     }
-            //     echo '</p>';
-            // }
-            // echo '</div>';            
-
-            // $doc["doc"]["bdpi"]["existe"] = "Sim";
-            // $doc["doc_as_upsert"] = true;
-            // //$result_elastic = elasticsearch::elastic_update($sha256,"trabalhos",$doc);
-        } else {
-            $doc["doc"]["dedup"]["data"] = date("Ymd");
-            $doc["doc_as_upsert"] = true;
-            $result_elastic = elasticsearch::elastic_update($sysno, $type, $doc);
-            print_r($result_elastic);            
-
+        $result_matchTag = $matchTagArray;
+        foreach ($cursor["hits"]["hits"] as $r) {
+            if (isset($r["_source"]["match"]["tag"])) {
+                $result_matchTag = array_merge($result_matchTag, $r["_source"]["match"]["tag"]);
+            } else {
+                $result_matchTag = $result_matchTag;
+            }            
         }
-    } 
+        $result_matchTag_final = array_unique($result_matchTag);
+        sort($result_matchTag_final);
+
+        $doc["doc"]["match"]["tag"] = $result_matchTag_final;
+        $doc["doc"]["match"]["data"] = date("Ymd");
+        $doc["doc"]["match"]["count"] = count($result_matchTag_final);
+        $doc["doc"]["match"]["string"] = implode(" - ", $result_matchTag_final);
+        $doc["doc_as_upsert"] = true;
+        $result_elastic = elasticsearch::elastic_update($original_id, $type, $doc);
+    }
     
     header("Refresh: 0");
 
