@@ -115,6 +115,7 @@ class Record
 
         $doc["doc"]["type"] = "Work";
         $doc["doc"]["source"] = "InCites";
+        unset($doc["doc"]["match"]["tag"]);
         $doc["doc"]["match"]["tag"][] = "InCites";
         $doc["doc"]["name"] = str_replace('"', '', $row[$rowNum["title"]]);
         $doc["doc"]["datePublished"] = $row[$rowNum["year"]];
