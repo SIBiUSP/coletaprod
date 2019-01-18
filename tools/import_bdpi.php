@@ -4,23 +4,39 @@
 // Set directory to ROOT
 chdir('../');
 // Include essencial files
-require 'inc/config.php'; 
-require 'inc/functions.php'; 
+require 'inc/config.php';
+require 'inc/functions.php';
 
 $query["query"]["query_string"]["query"] = "datePublished:[2013 TO 2016] AND base:\"Produção científica\"";
 $query['sort'] = [
     ['datePublished.keyword' => ['order' => 'desc']],
-];      
+];
 
 $params = [];
 $params["index"] = "bdpi";
 $params["type"] = "producao";
 $params["size"] = 50;
 $params["scroll"] = "30s";
-$params["_source"] = ["doi","name","author","datePublished","type","language","country","isPartOf","unidadeUSP","releasedEvent","USP.titleSearchCrossrefDOI"]; 
+$params["_source"] = ["doi","name","author","datePublished","type","language","country","isPartOf","unidadeUSP","releasedEvent","USP.titleSearchCrossrefDOI"];
 $params["body"] = $query;
 
 $cursor = $client_bdpi->search($params);
+
+foreach ($cursor["hits"]["hits"] as $r) {
+    $doc["doc"] = $r["_source"];
+    $doc["doc"]["source"] = "BDPI";
+    $doc["doc"]["tipo"] = $r["_source"]["type"];
+    $doc["doc"]["type"] = "Work";
+    unset($doc["doc"]["match"]["tag"]);
+    $doc["doc"]["match"]["tag"][] = "BDPI";
+    if (isset($r["_source"]["USP"]["titleSearchCrossrefDOI"])) {
+        $doc["doc"]["doi"] = $r["_source"]["USP"]["titleSearchCrossrefDOI"];
+    }
+    $doc["doc_as_upsert"] = true;
+    $result_elastic = elasticsearch::elastic_update($r["_id"], $type, $doc);
+    //print_r($result_elastic);
+    //echo "<br/><br/><br/>";
+}
 
 while (isset($cursor['hits']['hits']) && count($cursor['hits']['hits']) > 0) {
     $scroll_id = $cursor['_scroll_id'];
@@ -32,7 +48,7 @@ while (isset($cursor['hits']['hits']) && count($cursor['hits']['hits']) > 0) {
     );
 
     foreach ($cursor["hits"]["hits"] as $r) {
-        $doc["doc"] = $r["_source"];    
+        $doc["doc"] = $r["_source"];
         $doc["doc"]["source"] = "BDPI";
         $doc["doc"]["tipo"] = $r["_source"]["type"];
         $doc["doc"]["type"] = "Work";
@@ -43,10 +59,10 @@ while (isset($cursor['hits']['hits']) && count($cursor['hits']['hits']) > 0) {
         }
         $doc["doc_as_upsert"] = true;
         $result_elastic = elasticsearch::elastic_update($r["_id"], $type, $doc);
-        //print_r($result_elastic); 
+        //print_r($result_elastic);
         //echo "<br/><br/><br/>";
     }
 
-}    
+}
 
 ?>
