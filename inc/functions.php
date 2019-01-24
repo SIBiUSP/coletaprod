@@ -472,7 +472,7 @@ class DadosExternos {
         global $client_bdpi;
         
         $query_title =  str_replace('"', '', $query_title);
-        $query["min_score"] = 35;
+        $query["min_score"] = 50;
         $query["query"]["bool"]["should"][0]["multi_match"]["query"] = $query_title;
         $query["query"]["bool"]["should"][0]["multi_match"]["type"] = "cross_fields";
         $query["query"]["bool"]["should"][0]["multi_match"]["fields"][] = "name";
@@ -481,7 +481,7 @@ class DadosExternos {
         $query["query"]["bool"]["should"][1]["multi_match"]["type"] = "best_fields";
         $query["query"]["bool"]["should"][1]["multi_match"]["fields"][] = "datePublished";
         $query["query"]["bool"]["should"][1]["multi_match"]["operator"] = "and";
-        $query["query"]["bool"]["should"][1]["multi_match"]["minimum_should_match"] = "75%";
+        $query["query"]["bool"]["should"][1]["multi_match"]["minimum_should_match"] = "100%";
         $query["query"]["bool"]["minimum_should_match"] = 2;
 
         $params = [];
@@ -514,6 +514,10 @@ class DadosExternos {
             $doc["doc_as_upsert"] = true;
             //print_r($doc);
             $result_elastic = elasticsearch::elastic_update($sha256, "trabalhos", $doc);
+        } else {
+            $doc["doc"]["bdpi"]["existe"] = "Não";
+            $doc["doc_as_upsert"] = true;
+            $result_elastic = elasticsearch::elastic_update($sha256, "trabalhos", $doc);
         }
         return $data;
     }
@@ -524,7 +528,7 @@ class DadosExternos {
         global $client_bdpi;
         
         $query_title =  str_replace('"', '', $query_title);
-        $query["min_score"] = 50;
+        $query["min_score"] = 40;
         $query["query"]["bool"]["should"][0]["multi_match"]["query"] = $query_title;
         $query["query"]["bool"]["should"][0]["multi_match"]["type"] = "cross_fields";
         $query["query"]["bool"]["should"][0]["multi_match"]["fields"][] = "name";
@@ -533,7 +537,7 @@ class DadosExternos {
         $query["query"]["bool"]["should"][1]["multi_match"]["type"] = "best_fields";
         $query["query"]["bool"]["should"][1]["multi_match"]["fields"][] = "datePublished";
         $query["query"]["bool"]["should"][1]["multi_match"]["operator"] = "and";
-        $query["query"]["bool"]["should"][1]["multi_match"]["minimum_should_match"] = "75%";
+        $query["query"]["bool"]["should"][1]["multi_match"]["minimum_should_match"] = "100%";
         $query["query"]["bool"]["minimum_should_match"] = 2;
 
         $params = [];
@@ -544,7 +548,7 @@ class DadosExternos {
         //$params["size"] = $size;
         $params["body"] = $query;
 
-        $data = $client_bdpi->search($params);
+        $data = $client_bdpi->search($params);        
 
         $facet_bdpi = [];
         if ($data["hits"]["total"] > 0) {
