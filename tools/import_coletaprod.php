@@ -4,13 +4,13 @@
 // Set directory to ROOT
 chdir('../');
 // Include essencial files
-require 'inc/config.php'; 
-require 'inc/functions.php'; 
+require 'inc/config.php';
+require 'inc/functions.php';
 
 $query["query"]["query_string"]["query"] = "datePublished:[2013 TO 2016] AND source:\"Base Lattes\"";
 $query['sort'] = [
     ['datePublished.keyword' => ['order' => 'desc']],
-];      
+];
 
 $params = [];
 $params["index"] = "coletaprod";
@@ -22,6 +22,15 @@ $params["body"] = $query;
 $cursor = $client_coletaprod->search($params);
 $total = $cursor["hits"]["total"];
 
+foreach ($cursor["hits"]["hits"] as $r) {
+    $doc["doc"] = $r["_source"];
+    $doc["doc"]["source"] = "Lattes";
+    unset($doc["doc"]["match"]);
+    $doc["doc"]["match"]["tag"][] = "Lattes";
+    $doc["doc_as_upsert"] = true;
+    $result_elastic = elasticsearch::elastic_update($r["_id"], $type, $doc);
+}
+
 while (isset($cursor['hits']['hits']) && count($cursor['hits']['hits']) > 0) {
     $scroll_id = $cursor['_scroll_id'];
 
@@ -32,7 +41,7 @@ while (isset($cursor['hits']['hits']) && count($cursor['hits']['hits']) > 0) {
     );
 
     foreach ($cursor["hits"]["hits"] as $r) {
-        $doc["doc"] = $r["_source"];    
+        $doc["doc"] = $r["_source"];
         $doc["doc"]["source"] = "Lattes";
         unset($doc["doc"]["match"]);
         $doc["doc"]["match"]["tag"][] = "Lattes";
@@ -40,6 +49,6 @@ while (isset($cursor['hits']['hits']) && count($cursor['hits']['hits']) > 0) {
         $result_elastic = elasticsearch::elastic_update($r["_id"], $type, $doc);
     }
 
-}    
+}
 
 ?>
