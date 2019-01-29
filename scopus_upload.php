@@ -53,7 +53,7 @@ if (isset($_FILES['file'])) {
         }
         if ($value == "Funding Details") {
             $rowNum["FundingDetails"] = $key;
-        } 
+        }
         if ($value == "Cited by") {
             $rowNum["CitedBy"] = $key;
         }
@@ -74,7 +74,7 @@ if (isset($_FILES['file'])) {
         }
         if ($value == "Affiliations") {
             $rowNum["Affiliations"] = $key;
-        }                                 
+        }
     }
 
 
@@ -82,12 +82,12 @@ if (isset($_FILES['file'])) {
         $doc = Record::Build($row, $rowNum, $_POST["tag"]);
         if (!is_null($doc["doc"]["name"]) & !is_null($doc["doc"]["datePublished"])) {
             $doc["doc"]["bdpi"] = DadosExternos::query_bdpi_index($doc["doc"]["name"], $doc["doc"]["datePublished"]);
-        }      
+        }
         $sha256 = hash('sha256', ''.$doc["doc"]["source_id"].'');
         //print_r($doc);
         if (!is_null($sha256)) {
             $resultado_scopus = elasticsearch::elastic_update($sha256, $type, $doc);
-        }        
+        }
         print_r($resultado_scopus);
         print_r($doc["doc"]["source_id"]);
         echo "<br/><br/><br/>";
@@ -106,23 +106,20 @@ class Record
 
         $doc["doc"]["type"] = "Work";
         $doc["doc"]["source"] = "Base Scopus";
+        $doc["doc"]["match"]["tag"][] = "Scopus";
         $doc["doc"]["name"] = str_replace('"', '', $row[$rowNum["title"]]);
         $doc["doc"]["datePublished"] = $row[$rowNum["year"]];
         $doc["doc"]["source_id"] = $row[$rowNum["EID"]];
         $doc["doc"]["tag"][] = $tag;
-        $doc["doc"]["doi"] = $row[$rowNum["DOI"]];
+        if (!empty($row[$rowNum["DOI"]]) && $row[$rowNum["DOI"]] != "") {
+          $doc["doc"]["doi"] = $row[$rowNum["DOI"]];
+        }
         $doc["doc"]["language"] = $row[$rowNum["language"]];
         $doc["doc"]["description"] = $row[$rowNum["Abstract"]];
 
-        if ($row[$rowNum["type"]] == "Article") {
-            $doc["doc"]["tipo"] = "Artigo publicado";
-        } elseif ($row[$rowNum["type"]] == "Conference Paper") {
-            $doc["doc"]["tipo"] = "Trabalhos em eventos";
-        } else {
-            $doc["doc"]["tipo"] = $row[$rowNum["type"]];
-        }
+        $doc["doc"]["tipo"] = $row[$rowNum["type"]];
 
-        $doc["doc"]["isPartOf"]["name"] = $row[$rowNum["sourceTitle"]];
+        $doc["doc"]["isPartOf"]["name"] = strtoupper($row[$rowNum["sourceTitle"]]);
         $doc["doc"]["isPartOf"]["volume"] = $row[$rowNum["Volume"]];
         $doc["doc"]["isPartOf"]["fasciculo"] = $row[$rowNum["Issue"]];
         $doc["doc"]["pageStart"] = $row[$rowNum["PageStart"]];
@@ -130,8 +127,8 @@ class Record
         $doc["doc"]["isPartOf"]["issn"] = $row[$rowNum["ISSN"]];
         $doc["doc"]["publisher"]["organization"]["name"] = $row[$rowNum["Publisher"]];
         $doc["doc"]["scopus"]["citedby"] = $row[$rowNum["CitedBy"]];
-        $doc["doc"]["scopus"]["references"] = $row[$rowNum["References"]];        
-        
+        $doc["doc"]["scopus"]["references"] = $row[$rowNum["References"]];
+
 
         // Agência de fomento
         $agencia_de_fomento_array = explode(";", $row[$rowNum["FundingDetails"]]);
@@ -145,7 +142,7 @@ class Record
                 $doc["doc"]["funder"][$i_funder]["name"] = ''.$funderArray[1].' ('.$funderArray[0].')';
             } else {
                 $doc["doc"]["funder"][$i_funder]["name"] = $funderArray[0];
-            }            
+            }
             $i_funder++;
         }
 
@@ -168,7 +165,7 @@ class Record
         // for ($i=0;$i<count($autores_nome_array);$i++) {
         //     $doc["doc"]["autores"][$i]["nomeCompletoDoAutor"] = $autores_nome_array[$i];
         //     $doc["doc"]["autores"][$i]["nomeAfiliacao"] = $autores_afiliacao_array[$i];
-        // }                
+        // }
 
         $doc["doc_as_upsert"] = true;
         return $doc;
@@ -179,5 +176,3 @@ class Record
 }
 
 ?>
-
-

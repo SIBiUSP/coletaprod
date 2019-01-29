@@ -48,13 +48,13 @@ if (isset($_FILES['file'])) {
         }
         if ($value == "PI") {
             $rowNum["PublisherCity"] = $key;
-        }        
+        }
         if ($value == "AB") {
             $rowNum["Abstract"] = $key;
         }
         if ($value == "FU") {
             $rowNum["FundingDetails"] = $key;
-        } 
+        }
         if ($value == "TC") {
             $rowNum["CitedBy"] = $key;
         }
@@ -78,7 +78,7 @@ if (isset($_FILES['file'])) {
         }
         if ($value == "CT") {
             $rowNum["ConferenceTitle"] = $key;
-        }                                           
+        }
     }
 
 
@@ -95,11 +95,11 @@ if (isset($_FILES['file'])) {
             echo "<br/><br/><br/>";
             print_r($doc);
         }
-        
+
         //print_r($doc);
         //if (!is_null($sha256)) {
             $resultado_wos = elasticsearch::elastic_update($sha256, $type, $doc);
-        //}        
+        //}
         //print_r($resultado_wos);
         print_r($doc["doc"]["source_id"]);
         echo "<br/><br/><br/>";
@@ -123,9 +123,9 @@ class Record
         $doc["doc"]["datePublished"] = $row[$rowNum["year"]];
         $doc["doc"]["source_id"] = $row[$rowNum["EID"]];
         $doc["doc"]["tag"][] = $tag;
-        if (!empty($row[$rowNum["DOI"]])) {
+        if (!empty($row[$rowNum["DOI"]]) && $row[$rowNum["DOI"]] != "") {
             $doc["doc"]["doi"] = $row[$rowNum["DOI"]];
-        }        
+        }
         $doc["doc"]["language"] = $row[$rowNum["language"]];
         $doc["doc"]["description"] = $row[$rowNum["Abstract"]];
 
@@ -147,8 +147,8 @@ class Record
         $doc["doc"]["publisher"]["organization"]["location"] = $row[$rowNum["PublisherCity"]];
         $doc["doc"]["wos"]["citedby"] = $row[$rowNum["CitedBy"]];
         $doc["doc"]["wos"]["references"] = $row[$rowNum["References"]];
-        $doc["doc"]["EducationEvent"]["name"] = $row[$rowNum["ConferenceTitle"]];  
-        
+        $doc["doc"]["EducationEvent"]["name"] = $row[$rowNum["ConferenceTitle"]];
+
 
         // Agência de fomento
         $agencia_de_fomento_array = explode(";", $row[$rowNum["FundingDetails"]]);
@@ -156,14 +156,14 @@ class Record
         foreach ($agencia_de_fomento_array as $funder) {
             $funderArray = explode("[", $funder);
             if (count($funderArray) > 1) {
-                $doc["doc"]["funder"][$i_funder]["name"] = ''.$funderArray[0].'';                
+                $doc["doc"]["funder"][$i_funder]["name"] = ''.$funderArray[0].'';
                 $projectNumberArray = explode(",", $funderArray[1]);
                 foreach ($projectNumberArray as $projectNumber) {
                     $doc["doc"]["funder"][$i_funder]["projectNumber"] = ''.$projectNumber.'';
                 }
             } else {
                 $doc["doc"]["funder"][$i_funder]["name"] = $funderArray[0];
-            }            
+            }
             $i_funder++;
         }
 
@@ -189,5 +189,3 @@ class Record
 }
 
 ?>
-
-

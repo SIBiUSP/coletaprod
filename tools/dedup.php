@@ -4,26 +4,26 @@
 // Set directory to ROOT
 chdir('../');
 // Include essencial files
-require 'inc/config.php'; 
-require 'inc/functions.php'; 
+require 'inc/config.php';
+require 'inc/functions.php';
 
-$query["query"]["query_string"]["query"] = "datePublished:[2013 TO 2016]";
+$query["query"]["query_string"]["query"] = "datePublished:[2007 TO 2016]";
 $query['sort'] = [
     ['datePublished.keyword' => ['order' => 'desc']],
-];      
+];
 
 $params = [];
 $params["index"] = $index;
 $params["type"] = $type;
 $params["size"] = 50;
 $params["scroll"] = "30s";
-//$params["_source"] = ["doi","name","author","datePublished","type","language","country","isPartOf","unidadeUSP","releasedEvent","USP.titleSearchCrossrefDOI"]; 
+//$params["_source"] = ["doi","name","author","datePublished","type","language","country","isPartOf","unidadeUSP","releasedEvent","USP.titleSearchCrossrefDOI"];
 $params["body"] = $query;
 
 $cursor = $client->search($params);
 
 while (isset($cursor['hits']['hits']) && count($cursor['hits']['hits']) > 0) {
-    $newIndex = "dedup";
+    $newIndex = "ibdedup";
 
     $scroll_id = $cursor['_scroll_id'];
 
@@ -34,8 +34,8 @@ while (isset($cursor['hits']['hits']) && count($cursor['hits']['hits']) > 0) {
     );
 
     foreach ($cursor["hits"]["hits"] as $r) {
-        
-        $doc["doc"] = $r["_source"];    
+
+        $doc["doc"] = $r["_source"];
 
         if (isset($r["_source"]["doi"])) {
             $sha256 = hash('sha256', ''.$r["_source"]["doi"].'');
@@ -44,10 +44,10 @@ while (isset($cursor['hits']['hits']) && count($cursor['hits']['hits']) > 0) {
         }
         $doc["doc_as_upsert"] = true;
         $result_elastic = elasticsearch::elastic_update($sha256, $type, $doc, $newIndex);
-        //print_r($result_elastic); 
+        //print_r($result_elastic);
         //echo "<br/><br/><br/>";
     }
 
-}    
+}
 
 ?>
