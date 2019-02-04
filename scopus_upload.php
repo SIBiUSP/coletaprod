@@ -149,7 +149,7 @@ class Record
         // Palavras chave
         $palavras_chave_authors = explode(";", $row[$rowNum["AuthorKeywords"]]);
         $palavras_chave_scopus = explode(";", $row[$rowNum["IndexKeywords"]]);
-        $doc["doc"]["palavras_chave"] = array_merge($palavras_chave_authors, $palavras_chave_scopus);
+        $doc["doc"]["about"] = array_merge($palavras_chave_authors, $palavras_chave_scopus);
 
         // Autores
         $authorsArray = explode(";", $row[$rowNum["AuthorsWithAffiliations"]]);
@@ -158,6 +158,7 @@ class Record
             $autAffArray = explode("., ", $autAff);
             $doc["doc"]["author"][$i_autAff]["person"]["name"] = $autAffArray[0];
             $doc["doc"]["author"][$i_autAff]["person"]["affiliation"]["name"] = $autAffArray[1];
+            $doc["doc"]["institutions"][] = $autAffArray[1];
             $i_autAff++;
         }
         // $autores_nome_array = explode(",", $row[0]);

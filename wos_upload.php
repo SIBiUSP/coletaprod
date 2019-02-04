@@ -170,7 +170,7 @@ class Record
         // Palavras chave
         $palavras_chave_authors = explode(";", $row[$rowNum["AuthorKeywords"]]);
         $palavras_chave_scopus = explode(";", $row[$rowNum["IndexKeywords"]]);
-        $doc["doc"]["palavras_chave"] = array_merge($palavras_chave_authors, $palavras_chave_scopus);
+        $doc["doc"]["about"] = array_merge($palavras_chave_authors, $palavras_chave_scopus);
 
         // Autores
         $authorsArray = explode(";", $row[$rowNum["Authors"]]);
@@ -179,6 +179,15 @@ class Record
             $doc["doc"]["author"][$i_autAff]["person"]["name"] = $autAff;
             $i_autAff++;
         }
+
+        // AuthorsWithAffiliations
+        $AffiliationsArray = explode(";", $row[$rowNum["AuthorsWithAffiliations"]]);
+        foreach ($AffiliationsArray as $Aff) {
+            preg_match('/(\[.*?\])(.*)/', $Aff, $output_array);
+            $doc["doc"]["institutions"][] = trim($output_array[2]);
+        }
+
+
         $doc["doc"]["numOfAuthors"] = count($doc["doc"]["author"]);
         $doc["doc_as_upsert"] = true;
         return $doc;
