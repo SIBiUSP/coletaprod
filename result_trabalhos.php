@@ -449,14 +449,9 @@ $get_data = $_GET;
                     </ul>
                     </div>
                     <hr class="uk-grid-divider">
-                    <div class="uk-grid uk-margin-top">
-                        <div class="uk-width-1-2"><p class="uk-text-center"><?php print_r($total);?> registros</p></div>
-                        <div class="uk-width-1-2">
-                            <ul class="uk-pagination" data-uk-pagination="{items:<?php print_r($total);?>,itemsOnPage:<?php print_r($limit);?>,displayedPages:3,edges:1,currentPage:<?php print_r($page-1);?>}"></ul>                         
-                        </div>
-                    </div>                   
-                    
-
+                    <!-- Navegador de resultados - Início -->
+                    <?php ui::pagination($page, $total, $limit, $t); ?>
+                    <!-- Navegador de resultados - Fim --> 
                     
                 </div>
             </div>
