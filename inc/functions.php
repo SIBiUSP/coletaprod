@@ -1284,22 +1284,22 @@ class Exporters
         $record[] = '000000001 044   L $$a';
         if ($author_number > 1) {
             if (isset($r["_source"]['author'][0]["person"]["name"])) {
-                $record[] = '000000001 1001  L $$a'.$r["_source"]['author'][0]["person"]["name"].'';
+                $record[] = '000000001 1001  L $$a'.$r["_source"]['author'][0]["person"]["name"].'$$d$$1$$4$$5$$7$$8$$9';
             } else {
-                $record[] = '000000001 1001  L $$a'.$r["_source"]['author'][0]["nomeParaCitacao"].'';
+                $record[] = '000000001 1001  L $$a'.$r["_source"]['author'][0]["nomeParaCitacao"].'$$d$$1$$4$$5$$7$$8$$9';
             }                                            
             for ($i = 1; $i < $author_number; $i++) {
                 if (isset($r["_source"]['author'][$i]["person"]["name"])) {
-                    $record[] = '000000001 7001  L $$a'.$r["_source"]['author'][$i]["person"]["name"].'';                    
+                    $record[] = '000000001 7001  L $$a'.$r["_source"]['author'][$i]["person"]["name"].'$$d$$1$$4$$5$$7$$8$$9';                    
                 } else {
-                    $record[] = '000000001 7001  L $$a'.$r["_source"]['author'][$i]["nomeParaCitacao"].'';
+                    $record[] = '000000001 7001  L $$a'.$r["_source"]['author'][$i]["nomeParaCitacao"].'$$d$$1$$4$$5$$7$$8$$9';
                 }
             }
         } else {
             if (isset($r["_source"]['author'][0]["person"]["name"])) {
-                $record[] = '000000001 1001  L $$a'.$r["_source"]['author'][0]["nomeParaCitacao"].'';
+                $record[] = '000000001 1001  L $$a'.$r["_source"]['author'][0]["nomeParaCitacao"].'$$d$$1$$4$$5$$7$$8$$9';
             } else {
-                $record[] = '000000001 1001  L $$a'.$r["_source"]['author'][0]["person"]["name"].'';
+                $record[] = '000000001 1001  L $$a'.$r["_source"]['author'][0]["person"]["name"].'$$d$$1$$4$$5$$7$$8$$9';
             }
         }                                            
         $record[] = '000000001 24510 L $$a'.$r["_source"]["name"].'';                                            
