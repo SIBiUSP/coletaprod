@@ -1316,7 +1316,11 @@ class Exporters
             $record[] = '000000001 300   L $$a';
         }
 
-        $record[] = '000000001 500   L $$a';
+        if (isset($r["_source"]['doi'])) {
+            $record[] = '000000001 500   L $$aDisponível em <https://doi.org/'.$r["_source"]["doi"].'>. Acesso em ';
+        } else {
+            $record[] = '000000001 500   L $$a';
+        }
 
         if (isset($r["_source"]["artigoPublicado"])) {
             $record[] = '000000001 5101  L $$aIndexado no:';
