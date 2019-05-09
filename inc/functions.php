@@ -1306,7 +1306,7 @@ class Exporters
         if (isset($r["_source"]["trabalhoEmEventos"])) {  
             $record[] = '000000001 260   L $$a'.((isset($r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"]) && $r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"])? $r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"] : '').'$$b'.((isset($r["_source"]["trabalhoEmEventos"]["nomeDaEditora"]) && $r["_source"]["trabalhoEmEventos"]["nomeDaEditora"])? $r["_source"]["trabalhoEmEventos"]["nomeDaEditora"] : '').'$$c'.$r["_source"]["datePublished"].'';
         } else {
-            $record[] = '000000001 260   L $$a$$b$$c';
+            $record[] = '000000001 260   L $$a$$b$$c'.$r["_source"]["datePublished"].'';
         }
         if (isset($r["_source"]["trabalhoEmEventos"])) {
             $record[] = '000000001 300   L $$ap. -, res.';
