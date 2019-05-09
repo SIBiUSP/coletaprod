@@ -638,7 +638,7 @@ class DadosExternos {
                 $doc_obra_array["doc"]["pageStart"] = $data["message"]["page"];
             }      
             if (isset($data["message"]["publisher"])) {
-                $doc_obra_array["doc"]["pageEnd"] = $data["message"]["publisher"];
+                $doc_obra_array["doc"]["publisher"]["organization"]["name"] = $data["message"]["publisher"];
             }
             if (isset($data["message"]["cited-count"])) {
                 $doc_obra_array["doc"]["citacoesRecebidas"] = $data["message"]["cited-count"];
@@ -1283,20 +1283,20 @@ class Exporters
         $record[] = '000000001 0410  L $$a';
         $record[] = '000000001 044   L $$a';
         if ($author_number > 1) {
-            if (isset($r["_source"]['author'][0]["person"]["name"])) {
-                $record[] = '000000001 1001  L $$a'.$r["_source"]['author'][0]["person"]["name"].'$$d$$1$$4$$5$$7$$8$$9';
-            } else {
+            if (isset($r["_source"]['author'][0]["nomeParaCitacao"])) {
                 $record[] = '000000001 1001  L $$a'.$r["_source"]['author'][0]["nomeParaCitacao"].'$$d$$1$$4$$5$$7$$8$$9';
+            } else {
+                $record[] = '000000001 1001  L $$a'.$r["_source"]['author'][0]["person"]["name"].'$$d$$1$$4$$5$$7$$8$$9';                
             }                                            
             for ($i = 1; $i < $author_number; $i++) {
-                if (isset($r["_source"]['author'][$i]["person"]["name"])) {
-                    $record[] = '000000001 7001  L $$a'.$r["_source"]['author'][$i]["person"]["name"].'$$d$$1$$4$$5$$7$$8$$9';                    
-                } else {
+                if (isset($r["_source"]['author'][$i]["nomeParaCitacao"])) {
                     $record[] = '000000001 7001  L $$a'.$r["_source"]['author'][$i]["nomeParaCitacao"].'$$d$$1$$4$$5$$7$$8$$9';
+                } else {
+                    $record[] = '000000001 7001  L $$a'.$r["_source"]['author'][$i]["person"]["name"].'$$d$$1$$4$$5$$7$$8$$9';
                 }
             }
         } else {
-            if (isset($r["_source"]['author'][0]["person"]["name"])) {
+            if (isset($r["_source"]['author'][0]["nomeParaCitacao"])) {
                 $record[] = '000000001 1001  L $$a'.$r["_source"]['author'][0]["nomeParaCitacao"].'$$d$$1$$4$$5$$7$$8$$9';
             } else {
                 $record[] = '000000001 1001  L $$a'.$r["_source"]['author'][0]["person"]["name"].'$$d$$1$$4$$5$$7$$8$$9';
@@ -1306,7 +1306,7 @@ class Exporters
         if (isset($r["_source"]["trabalhoEmEventos"])) {  
             $record[] = '000000001 260   L $$a'.((isset($r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"]) && $r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"])? $r["_source"]["trabalhoEmEventos"]["cidadeDaEditora"] : '').'$$b'.((isset($r["_source"]["trabalhoEmEventos"]["nomeDaEditora"]) && $r["_source"]["trabalhoEmEventos"]["nomeDaEditora"])? $r["_source"]["trabalhoEmEventos"]["nomeDaEditora"] : '').'$$c'.$r["_source"]["datePublished"].'';
         } else {
-            $record[] = '000000001 260   L $$a$$b$$c'.$r["_source"]["datePublished"].'';
+            $record[] = '000000001 260   L $$a$$b'.$r["_source"]["publisher"]["organization"]["name"].'$$c'.$r["_source"]["datePublished"].'';
         }
         if (isset($r["_source"]["trabalhoEmEventos"])) {
             $record[] = '000000001 300   L $$ap. -, res.';
