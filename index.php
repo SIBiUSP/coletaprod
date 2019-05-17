@@ -12,7 +12,7 @@
         <title>Coleta Produção USP</title>
         <!-- Facebook Tags - START -->
         <meta property="og:locale" content="pt_BR">
-        <meta property="og:url" content="http://bdpife2.sibi.usp.br/coletaprod">
+        <meta property="og:url" content="http://coletaprod.sibi.usp.br/coletaprod">
         <meta property="og:title" content="Coleta Produção USP - Página Principal">
         <meta property="og:site_name" content="Coleta Produção USP">
         <meta property="og:description" content="Sistema de coleta de produção em diversas fontes.">
@@ -43,10 +43,7 @@
                 <div class="uk-margin" uk-grid>
                     <label class="uk-form-label" for="form-stacked-text">Pesquisa por trabalho - <a href="result_trabalhos.php">Ver todos</a></label>                    
                     <div class="uk-form-controls">
-                        <input type="text" placeholder="Pesquise por termo ou título" class="uk-input uk-form-width-large" name="search[]">                                        
-                        <input type="hidden" name="fields[]" value="titulo">
-                        <input type="hidden" name="fields[]" value="autores.nomeCompletoDoAutor">
-                        <input type="hidden" name="fields[]" value="palavras_chave">
+                        <input type="text" placeholder="Pesquise por termo ou título" class="uk-input uk-form-width-large" name="search[]">
                     </div>
                     <div>
                         <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">Buscar</button>
@@ -57,8 +54,7 @@
                 <div class="uk-margin" uk-grid>
                     <label class="uk-form-label" for="form-stacked-text">Pesquisa por TAG</label>
                     <div class="uk-form-controls">
-                        <input type="text" placeholder="Pesquise por tag" class="uk-input uk-form-width-large" name="search[]">
-                        <input type="hidden" name="fields[]" value="tag">
+                        <input type="text" placeholder="Pesquise por tag" class="uk-input uk-form-width-large" name="filter[]" value="tag:">
                     </div>
                     <div>
                         <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">Buscar TAG</button>
@@ -68,8 +64,7 @@
                 <div class="uk-margin" uk-grid>
                     <label class="uk-form-label" for="form-stacked-text">Pesquisa por Número USP</label>
                     <div class="uk-form-controls">
-                        <input type="text" placeholder="Pesquise por Número USP" class="uk-input uk-form-width-large" name="search[]">
-                        <input type="hidden" name="fields[]" value="codpes.keyword">
+                        <input type="text" placeholder="Pesquise por Número USP" class="uk-input uk-form-width-large" name="filter[]" value="USP.codpes:">
                     </div>
                     <div>
                         <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">Buscar Número USP</button>
