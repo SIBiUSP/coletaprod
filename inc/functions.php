@@ -1271,7 +1271,7 @@ class Exporters
                                         
         $record = [];
         $record[] = "000000001 FMT   L BK";
-        $record[] = "000000001 LDR   L ^^^^^nam^^22^^^^^Ia^4500";
+        $record[] = "000000001 LDR   L ^^^^^nab^^22^^^^^Ia^4500";
         $record[] = '000000001 BAS   L $$a04';
         $record[] = "000000001 008   L ^^^^^^s^^^^^^^^^^^^^^^^^^^^^^000^0^^^^^d";
         if (isset($r["_source"]['doi'])) {
