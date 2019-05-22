@@ -160,6 +160,9 @@
     <fieldset data-uk-margin>
         <legend>Incluir um URL OAI-PMH</legend>
         <input type="text" placeholder="Insira um URL OAI válido" class="uk-form-width-medium" name="oai" data-validation="required">
+        <input type="text" placeholder="Formato de metadados" class="uk-form-width-medium" name="metadataPrefix">
+        <input type="text" placeholder="Set (opcional)" class="uk-form-width-medium" name="set">
+        <input type="text" placeholder="Fonte" class="uk-form-width-medium" name="source">
         <input type="text" placeholder="Tag para formar um grupo" class="uk-form-width-medium" name="tag">
         <button class="uk-button-primary" name="btn_submit">Incluir</button><br/>                                    
     </fieldset>

@@ -19,7 +19,78 @@ if (isset($_GET["oai"])) {
     foreach($results as $item) {
         $metadata_formats[] = $item->{"metadataPrefix"};
     }
-    if (in_array("nlm", $metadata_formats)) {
+
+    if (isset($_GET["metadataPrefix"])) { 
+
+        if ($_GET["metadataPrefix"] == "oai_dc") {  
+
+            if (isset($_GET["set"])) {
+                $recs = $myEndpoint->listRecords('oai_dc', null, null, $_GET["set"]);
+            } else {
+                $recs = $myEndpoint->listRecords('oai_dc');
+            } 
+            foreach($recs as $rec) {
+
+                $data = $rec->metadata->children('http://www.openarchives.org/OAI/2.0/oai_dc/');
+                $rows = $data->children('http://purl.org/dc/elements/1.1/');
+                //var_dump($rows);
+
+
+                $sha256 = hash('sha256', ''.$rec->{'header'}->{'identifier'}.'');
+                $query["doc"]["type"] = "Work";
+                $query["doc"]["tipo"] = (string)$rows->type[0];
+                $query["doc"]["tag"] = $_GET['tag'];
+                $query["doc"]["source"] = $_GET['source'];
+                $query["doc"]["name"] =  (string)$rows->title[0];
+                $query["doc"]["datePublished"] = substr((string)$rows->date[0], 0, 4);
+                $query["doc"]["language"][] = (string)$rows->language[0];
+
+                $i = 0;
+                foreach ($rows->creator as $authors) {
+                    $query["doc"]["author"][$i]["person"]["name"] = (string)$authors;
+                    $i++;
+                }                
+
+                foreach ($rows->subject as $subject) {
+                    $query["doc"]["about"][] = (string)$subject;
+                }
+                foreach ($rows->description as $description) {
+                    $query["doc"]["description"][] = (string)$description;
+                }
+                foreach ($rows->publisher as $publisher) {
+                    $query["doc"]["publisher"]["organization"]["name"] = (string)$publisher;
+                }
+
+                foreach ($rows->identifier as $identifier) {
+                    if (strpos($identifier, 'doi:') !== false) {
+                        $query["doc"]["doi"] = str_replace("doi:", "", (string)$identifier);
+                    } else {
+                        $query["doc"]["url"][] = (string)$identifier;
+                    }
+                    
+                }
+                
+                $query["doc_as_upsert"] = true;
+
+                //var_dump($query);
+                //echo "<br/><br/>";
+
+                $resultado = elasticsearch::elastic_update($sha256, $type, $query);
+                //print_r($resultado);
+                unset($query);
+                flush();                
+                
+            }
+
+        } else {
+            echo "Formato de metadados não aceito!";
+        }     
+
+     
+
+    } else {
+
+      if (in_array("nlm", $metadata_formats)) {
 
         $recs = $myEndpoint->listRecords('nlm');
 
@@ -220,7 +291,6 @@ if (isset($_GET["oai"])) {
 
       }
 
-
     } else {
 
         $recs = $myEndpoint->listRecords('rfc1807');
@@ -284,7 +354,11 @@ if (isset($_GET["oai"])) {
                     flush();
             }
         }
+    }      
+
     }
+
+
 
 } else {
     echo "URL não informada";
