@@ -328,7 +328,8 @@ $get_data = $_GET;
                                     <?php endif; ?>
                                     
                                     <?php if (!empty($r["_source"]['doi'])) : ?>
-                                        <li class="uk-h6">DOI: <a href="https://doi.org/<?php echo $r["_source"]['doi'];?>"><?php echo $r["_source"]['doi'];?></a> - <a href="doi_to_elastic.php?doi=<?php echo $r['_source']['doi'];?>&tag=<?php echo $r['_source']['tag'][0];?>">Coletar dados da Crossref</a></li>                                        
+                                        <li class="uk-h6"><p>DOI: <a href="https://doi.org/<?php echo $r["_source"]['doi'];?>"><?php echo $r["_source"]['doi'];?></a></p>
+                                        <p><a href="doi_to_elastic.php?doi=<?php echo $r['_source']['doi'];?>&tag=<?php echo $r['_source']['tag'][0];?>">Coletar dados da Crossref</a></p></li>                                        
                                     <?php endif; ?>                                        
                                     
                                     <li class="uk-h6">
