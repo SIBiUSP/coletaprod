@@ -1317,7 +1317,7 @@ class Exporters
         }
 
         if (isset($r["_source"]['doi'])) {
-            $record[] = '000000001 500   L $$aDisponível em <https://doi.org/'.$r["_source"]["doi"].'>. Acesso em ';
+            $record[] = '000000001 500   L $$aDisponível em: <https://doi.org/'.$r["_source"]["doi"].'>. Acesso em: ';
         } else {
             $record[] = '000000001 500   L $$a';
         }
@@ -1358,7 +1358,9 @@ class Exporters
         if (isset($r["_source"]["isPartOf"])) {
             $record[] = '000000001 945   L $$aP$$bARTIGO DE PERIODICO$$c01$$j'.$r["_source"]["datePublished"].'$$l';
         }                                            
-        $record[] = '000000001 946   L $$a';    
+        $record[] = '000000001 946   L $$a';   
+        
+        sort($record);
 
         $record_blob = implode("\\n", $record);
 
