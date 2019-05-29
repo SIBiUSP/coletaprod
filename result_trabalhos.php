@@ -13,7 +13,11 @@ if (!empty($_POST)) {
     sleep(6);
     header("Refresh:0");
 }
-if (!in_array("type:\"Work\"",$_GET["filter"])) {
+if (isset($_GET["filter"])) {
+    if (!in_array("type:\"Work\"", $_GET["filter"])) {
+        $_GET["filter"][] = "type:\"Work\"";
+    }
+} else {
     $_GET["filter"][] = "type:\"Work\"";
 }
 $result_get = get::analisa_get($_GET);
