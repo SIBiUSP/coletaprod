@@ -13,7 +13,9 @@ if (!empty($_POST)) {
     sleep(6);
     header("Refresh:0");
 }
-$_GET["filter"][] = "type:\"Work\"";
+if (!in_array("type:\"Work\"",$_GET["filter"])) {
+    $_GET["filter"][] = "type:\"Work\"";
+}
 $result_get = get::analisa_get($_GET);
 $query = $result_get['query'];
 $limit = $result_get['limit'];
