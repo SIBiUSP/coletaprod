@@ -1354,7 +1354,7 @@ class Exporters
         }                                            
         $record[] = '000000001 946   L $$a';   
         
-        sort($record);
+        //sort($record);
 
         $record_blob = implode("\\n", $record);
 
