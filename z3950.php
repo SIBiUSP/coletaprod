@@ -62,7 +62,7 @@ if (!empty($_GET["title"])) {
 
 //Consultas                
     z3950::query_z3950($query, "dedalus.usp.br:9991/usp01", "USP - DEDALUS", $type); 
-    z3950::query_z3950($query, "biblioteca2.senado.leg.br:9991/sen01", "Biblioteca do Senado", $type);
+    z3950::query_z3950($query, "biblioteca2.senado.gov.br:9991/sen01", "Biblioteca do Senado", $type);
     z3950::query_z3950($query, "lx2.loc.gov:210/LCDB", "Library of Congress", $type);
     z3950::query_z3950($query, "marte.biblioteca.upm.es:2200", "Universidade Politécnica de Madrid", $type);
     z3950::query_z3950($query, "sirsi.library.utoronto.ca:2200", "University of Toronto", $type);
