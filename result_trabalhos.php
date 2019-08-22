@@ -27,7 +27,7 @@ $page = $result_get['page'];
 $skip = $result_get['skip'];
 
 $query['sort'] = [
-    ['datePublished.keyword' => ['order' => 'desc']],
+    ['datePublished' => ['order' => 'desc']],
 ];
 
 $params = [];

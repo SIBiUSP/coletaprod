@@ -499,8 +499,9 @@ if (isset($curriculo->{'DADOS-GERAIS'}->{'FORMACAO-ACADEMICA-TITULACAO'}->{'LIVR
 //     }
             
     $doc_curriculo_array["doc_as_upsert"] = true;
-                
-    $resultado_curriculo = elasticsearch::store_record($curriculo->attributes()->{'NUMERO-IDENTIFICADOR'}, "trabalhos", $doc_curriculo_array);
+    
+    $identificador = (string)$curriculo->attributes()->{'NUMERO-IDENTIFICADOR'};                
+    $resultado_curriculo = elasticsearch::store_record($identificador, "trabalhos", $doc_curriculo_array);
     print_r($resultado_curriculo);
 
 
