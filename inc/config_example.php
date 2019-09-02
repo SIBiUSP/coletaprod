@@ -15,9 +15,9 @@
 	];
 
     /* Endereço da BDPI - Para o comparador */
-	$host_bdpi = [
-		''
-	];
+	// $host_bdpi = [
+	// 	''
+	// ];
 
     /* Configurações do Elasticsearch */
     $index = "";
@@ -30,5 +30,5 @@
 	$client = \Elasticsearch\ClientBuilder::create()->setHosts($hosts)->build(); 
 
     /* Load Elasticsearch Client for BDPI */ 
-	$client_bdpi = \Elasticsearch\ClientBuilder::create()->setHosts($host_bdpi)->build(); 
+	//$client_bdpi = \Elasticsearch\ClientBuilder::create()->setHosts($host_bdpi)->build(); 
 
