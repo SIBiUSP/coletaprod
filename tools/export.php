@@ -411,9 +411,9 @@ if ($_GET["format"] == "table") {
             ['name.keyword' => ['order' => 'asc']],
         ];
     } else {
-        $query['sort'] = [
-            ['datePublished.keyword' => ['order' => 'desc']],
-        ];
+        // $query['sort'] = [
+        //     ['datePublished.keyword' => ['order' => 'desc']],
+        // ];
     }
 
     $params = [];

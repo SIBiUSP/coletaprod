@@ -60,6 +60,34 @@ if (isset($testIndex) && $testIndex == false) {
     $responseCreateIndex = $client->indices()->create($createIndexParams);
 }
 
+/* Definição de idioma */
+
+if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+    if (empty($_SESSION['localeToUse'])) {
+        $_SESSION['localeToUse'] = Locale::acceptFromHttp($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+    }
+} else {
+    if (empty($_SESSION['localeToUse'])) {
+        $_SESSION['localeToUse'] = Locale::getDefault();
+    }
+}
+
+if (!empty($_GET['locale'])) {
+    $_SESSION['localeToUse'] = $_GET["locale"];
+}
+
+
+use Gettext\Translator;
+
+//Create the translator instance
+$t = new Translator();
+
+if ($_SESSION['localeToUse'] == 'pt_BR') {
+    //$t->loadTranslations(__DIR__.'/../Locale/pt_BR/LC_MESSAGES/pt_BR.php');
+} else {
+    //$t->loadTranslations(__DIR__.'/../Locale/en_US/LC_MESSAGES/en.php');
+}
+
 
 
 
@@ -736,6 +764,10 @@ class DadosExternos {
             }
         }
 
+        if (isset($data["message"]["funder"])) {
+            $doc_obra_array["doc"]["sponsor"]["funder"] = $data["message"]["funder"];
+        }        
+
         $i = 0;
         foreach ($data["message"]["author"]  as $autores) {
             $doc_obra_array["doc"]["author"][$i]["person"]["name"] = $autores["given"]." ".$autores["family"];
@@ -1376,7 +1408,19 @@ class Exporters
 
         if (isset($r["_source"]["artigoPublicado"])) {
             $record[] = '000000001 5101  L $$aIndexado no:';
-        }                                               
+        }
+        
+        if (isset($r["_source"]["sponsor"]["funder"])) {
+            foreach ($r["_source"]["sponsor"]["funder"] as $funder) {
+                if (count($funder["award"]) > 0) {
+                    $funder_string = '$$f'.implode("\$\$f", $funder["award"]).'';
+                } else {
+                    $funder_string = "";
+                }
+                $record[] = '000000001 536   L $$a'.$funder["name"].''.$funder_string.'';
+            }
+            
+        }              
         
         $record[] = '000000001 650 7 L $$a';
         $record[] = '000000001 650 7 L $$a';

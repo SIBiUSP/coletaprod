@@ -26,9 +26,9 @@ $limit = $result_get['limit'];
 $page = $result_get['page'];
 $skip = $result_get['skip'];
 
-$query['sort'] = [
-    ['datePublished' => ['order' => 'desc']],
-];
+//$query['sort'] = [
+//    ['datePublished' => ['order' => 'desc']],
+//];
 
 $params = [];
 $params["index"] = $index;
@@ -424,6 +424,7 @@ $get_data = $_GET;
                                                     </tr>
                                                 </thead>    
                                                 <tbody>
+                                                    <?php print("<pre>".print_r($r["_source"], true)."</pre>");; ?>
                                                     <?php foreach ($r["_source"] as $key => $value) {
                                                             echo '<tr><td>'.$key.'</td><td>';
                                                             if (is_array($value)) {
