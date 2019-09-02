@@ -2,8 +2,66 @@
 /**
  * Arquivo de classes e funções do ColetaProd
  */
-
+include('config.php');
 include('functions_core/functions_core.php');
+
+/* Load libraries for PHP composer */ 
+require (__DIR__.'/../vendor/autoload.php'); 
+
+/* Connect to Elasticsearch */
+try {
+    $client = \Elasticsearch\ClientBuilder::create()->setHosts($hosts)->build(); 
+    //print("<pre>".print_r($client,true)."</pre>");
+    $indexParams['index']  = $index;   
+    $testIndex = $client->indices()->exists($indexParams);
+} catch (Exception $e) {    
+    $error_connection_message = '<div class="alert alert-danger" role="alert">Elasticsearch não foi encontrado.</div>';
+}
+
+/* Create index if not exists */
+if (isset($testIndex) && $testIndex == false) {
+    $createIndexParams = [
+        'index' => $index,
+        'body' => [
+            'settings' => [
+                'number_of_shards' => 1,
+                'number_of_replicas' => 0,
+                'analysis' => [
+                    'filter' => [
+                        'portuguese_stop' => [
+                            'type' => 'stop',
+                            'stopwords' => 'portuguese'
+                        ],
+                        'my_ascii_folding' => [
+                            'type' => 'asciifolding',
+                            'preserve_original' => true
+                        ],
+                        'portuguese_stemmer' => [
+                            'type' => 'stemmer',
+                            'language' =>  'light_portuguese'
+                        ]
+                    ],
+                    'analyzer' => [
+                        'portuguese' => [
+                            'tokenizer' => 'standard',
+                            'filter' =>  [ 
+                                'standard', 
+                                'lowercase', 
+                                'my_ascii_folding',
+                                'portuguese_stop',
+                                'portuguese_stemmer'
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ];
+    $responseCreateIndex = $client->indices()->create($createIndexParams);
+}
+
+
+
 
 function pregReplaceVariableName($string) {
 

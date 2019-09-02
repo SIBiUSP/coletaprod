@@ -29,6 +29,8 @@
               
 <div class="uk-container">
 
+    <?php isset($error_connection_message) ? print_r($error_connection_message) : "" ?>
+
     <h1 class="uk-heading-line uk-text-center uk-margin-top"><span>Coleta Produção USP</span></h1>
     <p>Coleta produção de diversas fontes para preenchimento do Cadastro de Produção Intelectual, para uso interno das Bibliotecas da Universidade de São Paulo</p>
     <br/><br/>
