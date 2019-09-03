@@ -17,7 +17,7 @@ if (isset($_FILES['file'])) {
 
 
 // initialise the curl request
-$request = curl_init('143.107.154.38:8070/api/processFulltextDocument');
+$request = curl_init('localhost:8070/api/processFulltextDocument');
 //$request = curl_init('143.107.154.38:8070/api/processReferences');
 //$content = file_get_contents('http://www.producao.usp.br/bitstream/handle/BDPI/51488/13068_2017_Article_999.pdf');
 

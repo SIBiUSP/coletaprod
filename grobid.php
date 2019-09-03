@@ -17,7 +17,7 @@ if (isset($_FILES['file'])) {
 
 
 // initialise the curl request
-$request = curl_init('143.107.154.38:8070/api/processFulltextDocument');
+$request = curl_init('localhost:8070/api/processFulltextDocument');
 
 
 //$content = file_get_contents('http://www.producao.usp.br/bitstream/handle/BDPI/51488/13068_2017_Article_999.pdf');
@@ -39,8 +39,6 @@ $result = curl_exec($request);
 
 $xml = simplexml_load_string($result);
 
-
-
 /* Exportador AlephSequential */
 
 $record_blob[] = '000000001 FMT   L BK\n';
@@ -48,9 +46,13 @@ $record_blob[] = '000000001 LDR   L ^^^^^nab^^22^^^^^Ia^4500\n';
 $record_blob[] = '000000001 BAS   L $$a04\n';
 $record_blob[] = '000000001 008   L ^^^^^^s^^^^^^^^^^^^^^^^^^^^^^000^0^^^^^d\n';
 
-if ($xml->teiHeader->fileDesc->sourceDesc->biblStruct->idno->attributes()->type == "DOI"){
-    $record_blob[] = '000000001 0247  L $$a'.(string)$xml->teiHeader->fileDesc->sourceDesc->biblStruct->idno.'$$2DOI\n';
+if (isset($xml->teiHeader->fileDesc->sourceDesc->biblStruct->idno)){
+    if ($xml->teiHeader->fileDesc->sourceDesc->biblStruct->idno->attributes()->type == "DOI"){
+        $record_blob[] = '000000001 0247  L $$a'.(string)$xml->teiHeader->fileDesc->sourceDesc->biblStruct->idno.'$$2DOI\n';
+    }
 }
+
+
 
 $record_blob[] = '000000001 040   L $$aUSP/SIBI\n';
 $record_blob[] = '000000001 0410  L $$a\n';
