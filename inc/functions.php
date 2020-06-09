@@ -12,9 +12,12 @@ require (__DIR__.'/../vendor/autoload.php');
 try {
     $client = \Elasticsearch\ClientBuilder::create()->setHosts($hosts)->build(); 
     //print("<pre>".print_r($client,true)."</pre>");
+    //$index = "coletaprod";
+    //die($index);
     $indexParams['index']  = $index;   
     $testIndex = $client->indices()->exists($indexParams);
 } catch (Exception $e) {    
+    //die($e);
     $error_connection_message = '<div class="alert alert-danger" role="alert">Elasticsearch não foi encontrado.</div>';
 }
 
